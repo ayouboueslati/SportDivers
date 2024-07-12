@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Place this script in project /android/app/
+#Place this script in project/android/app/
 
 cd ..
 
@@ -8,8 +8,10 @@ set -e
 # debug log
 set -x
 
+java -version   
+
 cd ..
-git clone -b stable https://github.com/flutter/flutter.git
+git clone -b beta https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
 
 flutter channel stable
@@ -17,6 +19,6 @@ flutter doctor
 
 echo "Installed flutter to `pwd`/flutter"
 
-flutter pub get
-
-exit 0
+# Proceed with Flutter build as before
+flutter build apk --release
+mkdir -p android/app/build/outputs/apk/; mv build/app/outputs/apk/release/app-release.apk $_
