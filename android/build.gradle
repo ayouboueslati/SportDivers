@@ -1,8 +1,13 @@
 buildscript {
     repositories {
-        google()
-        mavenCentral()
-    }
+    google()
+    jcenter()  
+    mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://www.jitpack.io' }
+    maven { url 'https://maven.appcenter.ms' }
+}
+
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
         classpath 'com.google.gms:google-services:4.3.10'
