@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-#Place this script in project/android/app/
 
+# Debugging information
+echo "Running appcenter-post-clone.sh"
+pwd
+ls -R
+
+# Proceed with the original script
 cd ..
 
 # fail if any command fails
