@@ -9,6 +9,6 @@ import com.microsoft.appcenter.crashes.Crashes
 class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCenter.start(application, "222ea411-f9a0-4e97-9de7-6a159658240a", Analytics::class.java, Crashes::class.java)
+        AppCenter.start(application, "5d6d517a-f682-404f-aefe-c22577cb8db6", Analytics::class.java, Crashes::class.java)
     }
 }

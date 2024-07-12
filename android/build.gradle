@@ -1,16 +1,18 @@
 buildscript {
+    ext.kotlin_version = '1.9.22'
     repositories {
     google()
-    jcenter()  
     mavenCentral()
-    maven { url 'https://maven.fabric.io/public' }
-    maven { url 'https://www.jitpack.io' }
-    maven { url 'https://maven.appcenter.ms' }
 }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // START: FlutterFire Configuration
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.10'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
