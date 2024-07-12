@@ -4,18 +4,8 @@ import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/auth/otp/forgotpassword.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
-import 'package:appcenter_sdk_flutter/appcenter_sdk_flutter.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await AppCenter.start(secret: '5d6d517a-f682-404f-aefe-c22577cb8db6');
-  FlutterError.onError = (final details) async {
-    await AppCenterCrashes.trackException(
-      message: details.exception.toString(),
-      type: details.exception.runtimeType,
-      stackTrace: details.stack,
-    );
-  };
+void main() {
   runApp(MyApp());
 }
 

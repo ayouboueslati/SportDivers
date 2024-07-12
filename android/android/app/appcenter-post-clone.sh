@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#Place this script in project /android/app/
+# Place this script in project /android/app/
 
 cd ..
 

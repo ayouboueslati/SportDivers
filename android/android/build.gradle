@@ -1,16 +1,16 @@
 buildscript {
-    ext.kotlin_version = '1.8.20'  // Update to the latest stable version of Kotlin
-
+    ext.kotlin_version = '1.8.20'  
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.google.com' }
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://www.jitpack.io' }
         maven { url 'https://maven.appcenter.ms' }
     }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.0'
+        classpath 'com.microsoft.appcenter:appcenter-gradle-plugin:5.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -19,9 +19,10 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.google.com' }
         maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://www.jitpack.io' }
-        maven { url 'https://maven.appcenter.ms' }
+        maven { url 'https://maven.appcenter.ms' } 
     }
 }
 
