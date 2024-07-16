@@ -1,10 +1,33 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'CardPicture.dart'; // Import your CardPicture widget here
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  File? _profileImage; // Track the selected profile image file
+
+  void _selectProfileImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -12,28 +35,66 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 50),
-              child: const Column(
+              child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage('assets/images/cr7.jpg'),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    'PAVITHRAN',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Forward',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _selectProfileImage,
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundImage: _profileImage != null
+                              ? FileImage(_profileImage!)
+                              : AssetImage('assets/images/cr7.jpg')
+                                  as ImageProvider,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Ronaldo',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            // const Text(
+                            //   'ST',
+                            //   style: TextStyle(
+                            //     color: Colors.black,
+                            //     fontSize: 16,
+                            //   ),
+                            // ),
+                            const SizedBox(height: 10),
+                            Column(
+                              children: [
+                                IconTextRow(
+                                  icon: Icons.check_circle,
+                                  iconColor: Colors.green,
+                                  text: 'Matches played',
+                                  textStyle:
+                                      TextStyle(fontSize: screenWidth * 0.05),
+                                  count: 11,
+                                ),
+                                const SizedBox(height: 10),
+                                IconTextRow(
+                                  icon: Icons.cancel,
+                                  iconColor: Colors.red,
+                                  text: 'Absent',
+                                  textStyle:
+                                      TextStyle(fontSize: screenWidth * 0.05),
+                                  count: 6,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -124,12 +185,14 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildStatItem(String label, String value) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 22,
+          style: TextStyle(
+            fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -138,7 +201,7 @@ class ProfileScreen extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: screenWidth * 0.04,
             color: Colors.grey[400],
           ),
         ),
@@ -160,6 +223,45 @@ class ProfileScreen extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+}
+
+class IconTextRow extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String text;
+  final int count;
+  final TextStyle? textStyle;
+
+  const IconTextRow({
+    Key? key,
+    required this.icon,
+    required this.iconColor,
+    required this.text,
+    required this.count,
+    required this.textStyle,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, color: iconColor),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            text,
+            style: textStyle,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          count.toString(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

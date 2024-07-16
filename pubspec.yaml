@@ -49,6 +49,7 @@ dependencies:
   fl_chart: ^0.68.0
   simple_animations: ^5.0.2
   appcenter_sdk_flutter: ^0.5.1
+  image_picker: ^1.1.2
   
 
 dev_dependencies:
