@@ -10,11 +10,7 @@ set -e
 # Debug log
 set -x
 
-# Set Java version to 17
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-export PATH=$JAVA_HOME/bin:$PATH
-
-# Check Java version
+# Print the current Java version
 java -version
 
 # Clone the Flutter repository and set up Flutter
