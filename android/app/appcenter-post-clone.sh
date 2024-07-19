@@ -5,16 +5,19 @@ echo "Running appcenter-post-clone.sh"
 pwd
 ls -R
 
-# Proceed with the original script
-cd ..
-
-# fail if any command fails
+# Fail if any command fails
 set -e
-# debug log
+# Debug log
 set -x
 
-java -version   
+# Set Java version to 17
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
 
+# Check Java version
+java -version
+
+# Clone the Flutter repository and set up Flutter
 cd ..
 git clone -b beta https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
