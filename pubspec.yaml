@@ -55,6 +55,8 @@ dependencies:
   video_player: ^2.9.1
   fijkplayer: ^0.11.0
   chewie: ^1.8.1
+
+  package_info_plus: ^8.0.0
   
   
 
