@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CardPicture extends StatelessWidget {
   final String? imagePath;
@@ -18,7 +17,7 @@ class CardPicture extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         width: 200,
         decoration: BoxDecoration(
           color: Colors.grey[200],

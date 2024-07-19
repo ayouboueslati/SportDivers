@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'CardPicture.dart'; // Import your CardPicture widget here
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);
@@ -45,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           radius: 60,
                           backgroundImage: _profileImage != null
                               ? FileImage(_profileImage!)
-                              : AssetImage('assets/images/cr7.jpg')
+                              : const AssetImage('assets/images/cr7.jpg')
                                   as ImageProvider,
                         ),
                       ),
@@ -180,9 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _logout(BuildContext context) {
-    print('User logged out');
-  }
+  void _logout(BuildContext context) {}
 
   Widget _buildStatItem(String label, String value) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -213,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       title: Text(
         label,
-        style: TextStyle(color: Colors.white70),
+        style: const TextStyle(color: Colors.white70),
       ),
       trailing: Text(
         value,

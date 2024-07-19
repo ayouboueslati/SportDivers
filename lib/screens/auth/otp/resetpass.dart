@@ -78,13 +78,13 @@ class ResetPasswordScreen extends StatelessWidget {
                     context, ModalRoute.withName(LoginScreen.id));
               },
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Reset Password',
                 style: TextStyle(
                   fontSize: 18,

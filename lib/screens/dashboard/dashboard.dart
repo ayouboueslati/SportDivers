@@ -38,9 +38,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       body: playerStats == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -48,7 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Statistics View:',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
@@ -75,39 +75,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Navigator.pushNamed(
                                 context, CoachDashboardScreen.id);
                           },
-                          child: Text('Go to Coach Dashboard Screen'),
+                          child: const Text('Go to Coach Dashboard Screen'),
                         ),
                       ]
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 20),
+                  const Text(
                     'Ratings',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildLineChart(playerStats!.rating),
-                  SizedBox(height: 30),
-                  Text(
+                  const SizedBox(height: 30),
+                  const Text(
                     'Goals',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildBarChart(playerStats!.goals),
-                  SizedBox(height: 30),
-                  Text(
+                  const SizedBox(height: 30),
+                  const Text(
                     'Assists',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildPieChart(playerStats!.assists),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   if (!isLargeScreen) ...[
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, CoachDashboardScreen.id);
                       },
-                      child: Text('Go to Coach Dashboard Screen'),
+                      child: const Text('Go to Coach Dashboard Screen'),
                     ),
                   ],
                 ],
@@ -158,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           barGroups: barChartData,
           borderData: FlBorderData(
             show: true,
-            border: Border(
+            border: const Border(
               bottom: BorderSide(width: 1),
               left: BorderSide(width: 1),
             ),

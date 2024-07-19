@@ -19,7 +19,7 @@ class OTPScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const SizedBox(height: 40.0),
-            Text(
+            const Text(
               'OTP Verification',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -40,7 +40,7 @@ class OTPScreen extends StatelessWidget {
             const SizedBox(height: 40.0),
             TextFormField(
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'OTP',
                 labelStyle: TextStyle(color: Colors.blueAccent),
                 focusedBorder: OutlineInputBorder(
@@ -61,13 +61,13 @@ class OTPScreen extends StatelessWidget {
                 Navigator.pushNamed(context, ResetPasswordScreen.id);
               },
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Verify OTP',
                 style: TextStyle(
                   fontSize: 18,

@@ -50,6 +50,12 @@ dependencies:
   simple_animations: ^5.0.2
   appcenter_sdk_flutter: ^0.5.1
   image_picker: ^1.1.2
+  http: ^1.2.2
+  provider: ^6.1.2
+  video_player: ^2.9.1
+  fijkplayer: ^0.11.0
+  chewie: ^1.8.1
+  
   
 
 dev_dependencies:
@@ -91,6 +97,9 @@ flutter:
     - assets/images/scarlet-witch.jpg
     - assets/images/spiderman.jpg
     - assets/images/thor.png
+    - assets/video.mp4
+    - assets/video1.mp4
+    - assets/video2.mp4
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

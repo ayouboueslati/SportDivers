@@ -1,7 +1,7 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/dashboard/dashboard.dart';
-import 'package:footballproject/screens/messages/chat_screen.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
@@ -48,9 +48,9 @@ class _BottomnavbarState extends State<Bottomnavbar> {
     super.initState();
     _widgetOptions = <Widget>[
       ProfileScreen(),
-      TrainingScheduleScreen(),
+      const TrainingScheduleScreen(),
       //ChatScreen(user: chatUser),
-      FriendScreen(),
+      const FriendScreen(),
       DashboardScreen(),
     ];
   }
@@ -59,6 +59,13 @@ class _BottomnavbarState extends State<Bottomnavbar> {
     setState(() {
       _bottomNavIndex = index;
     });
+  }
+
+  void _navigateToTutorialScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => VideoApp()),
+    );
   }
 
   @override
@@ -70,9 +77,9 @@ class _BottomnavbarState extends State<Bottomnavbar> {
       body: _widgetOptions.elementAt(_bottomNavIndex),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // andle FAB action
+          _navigateToTutorialScreen(context);
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.video_collection_outlined),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(

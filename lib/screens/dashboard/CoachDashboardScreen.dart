@@ -41,7 +41,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 title: Text(trainingDate == null
                     ? 'Select Training Date'
                     : 'Training Date: ${DateFormat('yyyy-MM-dd').format(trainingDate!)}'),
-                trailing: Icon(Icons.calendar_today),
+                trailing: const Icon(Icons.calendar_today),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -63,7 +63,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 title: Text(trainingTime == null
                     ? 'Select Training Time'
                     : 'Training Time: ${trainingTime!.format(context)}'),
-                trailing: Icon(Icons.access_time),
+                trailing: const Icon(Icons.access_time),
                 onTap: () async {
                   TimeOfDay? pickedTime = await showTimePicker(
                     context: context,

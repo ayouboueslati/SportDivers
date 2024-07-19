@@ -15,7 +15,7 @@ class ForgotPasswordScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const SizedBox(height: 40.0),
-            Text(
+            const Text(
               'Forgot Password',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -36,7 +36,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             const SizedBox(height: 40.0),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 labelStyle: TextStyle(color: Colors.blueAccent),
                 focusedBorder: OutlineInputBorder(
@@ -57,13 +57,13 @@ class ForgotPasswordScreen extends StatelessWidget {
                 Navigator.pushNamed(context, OTPScreen.id);
               },
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Send OTP',
                 style: TextStyle(
                   fontSize: 18,
@@ -77,7 +77,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text(
+              child: const Text(
                 'Back to Login',
                 style: TextStyle(
                   color: Colors.blueAccent,

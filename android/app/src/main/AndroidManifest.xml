@@ -4,7 +4,8 @@
     <application
         android:label="footballproject"
         android:name="${applicationName}"
-        android:icon="@mipmap/football_logo">
+        android:icon="@mipmap/football_logo"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,0 +1,4 @@
+enum TeacherpaymentMethod {
+  salary,
+  perHour,
+}

@@ -27,17 +27,18 @@ class FriendScreen extends StatelessWidget {
               ),
             ),
             child: Container(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 15,
               ),
               child: Row(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     decoration: chat.unread
                         ? BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(40)),
                             border: Border.all(
                               width: 2,
                               color: Theme.of(context).primaryColor,
@@ -68,7 +69,7 @@ class FriendScreen extends StatelessWidget {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.65,
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       left: 20,
                     ),
                     child: Column(
@@ -80,7 +81,7 @@ class FriendScreen extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   chat.sender.name,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -102,7 +103,7 @@ class FriendScreen extends StatelessWidget {
                             ),
                             Text(
                               chat.time,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w300,
                                 color: Colors.black54,
@@ -110,14 +111,14 @@ class FriendScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Container(
                           alignment: Alignment.topLeft,
                           child: Text(
                             chat.text,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 13,
                               color: Colors.black54,
                             ),

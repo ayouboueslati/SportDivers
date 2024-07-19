@@ -1,0 +1,4 @@
+enum StudentpaymentMethod {
+  perMonth,
+  perSession,
+}
