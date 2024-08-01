@@ -6,7 +6,6 @@ import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({Key? key}) : super(key: key);
-
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
@@ -44,7 +43,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -69,15 +68,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           });
                         },
                       ),
-                      if (isLargeScreen) ...[
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, CoachDashboardScreen.id);
-                          },
-                          child: const Text('Go to Coach Dashboard Screen'),
-                        ),
-                      ]
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -102,14 +92,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 10),
                   _buildPieChart(playerStats!.assists),
                   const SizedBox(height: 30),
-                  if (!isLargeScreen) ...[
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, CoachDashboardScreen.id);
-                      },
-                      child: const Text('Go to Coach Dashboard Screen'),
-                    ),
-                  ],
                 ],
               ),
             ),

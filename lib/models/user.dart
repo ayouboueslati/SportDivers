@@ -1,7 +1,7 @@
 import 'package:footballproject/models/accountType.dart';
 import 'package:footballproject/models/adminProfile.dart';
 import 'package:footballproject/models/chatRoom.dart';
-import 'package:footballproject/models/message_model.dart';
+import 'package:footballproject/models/message.dart';
 import 'package:footballproject/models/staffProfile.dart';
 import 'package:footballproject/models/studentProfile.dart';
 import 'package:footballproject/models/teacherProfile.dart';
@@ -47,4 +47,48 @@ class User {
     required this.sentMessages,
     required this.seenMessages,
   });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      email: json['email'],
+      password: '', // Do not fetch password
+      accountType: AccountType.values.firstWhere(
+          (e) => e.toString() == 'AccountType.${json['accountType']}'),
+      isActive: json['isActive'],
+      createdAt: DateTime.parse(json['createdAt']),
+      deactivationDate: json['deactivationDate'] != null
+          ? DateTime.parse(json['deactivationDate'])
+          : null,
+      deactivationReason: json['deactivationReason'],
+      deactivationComment: json['deactivationComment'],
+      adminProfile: json['adminProfile'] != null
+          ? AdminProfile.fromJson(json['adminProfile'])
+          : null,
+      studentProfile: json['studentProfile'] != null
+          ? StudentProfile.fromJson(json['studentProfile'])
+          : null,
+      teacherProfile: json['teacherProfile'] != null
+          ? TeacherProfile.fromJson(json['teacherProfile'])
+          : null,
+      staffProfile: json['staffProfile'] != null
+          ? StaffProfile.fromJson(json['staffProfile'])
+          : null,
+      chatRoomsFirst: (json['chatRoomsFirst'] as List)
+          .map((data) => Chatroom.fromJson(data))
+          .toList(),
+      chatRoomsSecond: (json['chatRoomsSecond'] as List)
+          .map((data) => Chatroom.fromJson(data))
+          .toList(),
+      tutorials: (json['tutorials'] as List)
+          .map((data) => Tutorial.fromJson(data))
+          .toList(),
+      sentMessages: (json['sentMessages'] as List)
+          .map((data) => Message.fromJson(data))
+          .toList(),
+      seenMessages: (json['seenMessages'] as List)
+          .map((data) => Message.fromJson(data))
+          .toList(),
+    );
+  }
 }

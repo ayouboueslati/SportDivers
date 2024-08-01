@@ -1,8 +1,8 @@
 import 'package:footballproject/models/attendances.dart';
-import 'package:footballproject/models/field.dart';
-import 'package:footballproject/models/schedule.dart';
 import 'package:footballproject/models/teacherPayment.dart';
 import 'package:footballproject/models/teacherProfile.dart';
+import 'package:footballproject/models/field.dart';
+import 'package:footballproject/models/schedule.dart';
 import 'package:footballproject/models/weekday.dart';
 
 class Session {
@@ -29,4 +29,25 @@ class Session {
     required this.attendances,
     required this.teacherPayments,
   });
+
+  factory Session.fromJson(Map<String, dynamic> json) {
+    return Session(
+      id: json['id'],
+      designation: json['designation'],
+      weekday: Weekday.values
+          .firstWhere((e) => e.toString() == 'Weekday.${json['weekday']}'),
+      startTime: json['startTime'],
+      endTime: json['endTime'],
+      schedule: Schedule.fromJson(json['schedule']),
+      teacher: TeacherProfile.fromJson(json['teacher']),
+      field: json['field'] != null ? Field.fromJson(json['field']) : null,
+      attendances: (json['attendances'] as List)
+          .map((data) => Attendance.fromJson(data))
+          .toList(),
+      teacherPayments: (json['teacherPayments'] as List)
+          .map((data) => TeacherpaymentMethod.values.firstWhere(
+              (e) => e.toString() == 'TeacherpaymentMethod.${data}'))
+          .toList(),
+    );
+  }
 }

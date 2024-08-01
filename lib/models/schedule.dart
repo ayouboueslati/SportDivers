@@ -19,4 +19,18 @@ class Schedule {
     required this.group,
     required this.sessions,
   });
+
+  factory Schedule.fromJson(Map<String, dynamic> json) {
+    return Schedule(
+      id: json['id'],
+      designation: json['designation'],
+      description: json['description'],
+      startDate: DateTime.parse(json['startDate']),
+      endDate: DateTime.parse(json['endDate']),
+      group: Group.fromJson(json['group']),
+      sessions: (json['sessions'] as List)
+          .map((data) => Session.fromJson(data))
+          .toList(),
+    );
+  }
 }

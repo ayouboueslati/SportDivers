@@ -26,4 +26,24 @@ class Tutorial {
     required this.categories,
     required this.users,
   });
+
+  factory Tutorial.fromJson(Map<String, dynamic> json) {
+    return Tutorial(
+      id: json['id'],
+      designation: json['designation'],
+      date: DateTime.parse(json['date']),
+      link: json['link'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      isRemoved: json['isRemoved'],
+      groups:
+          (json['groups'] as List).map((data) => Group.fromJson(data)).toList(),
+      categories: (json['categories'] as List)
+          .map((data) => Category.fromJson(data))
+          .toList(),
+      users:
+          (json['users'] as List).map((data) => User.fromJson(data)).toList(),
+    );
+  }
 }

@@ -12,4 +12,13 @@ class TeacherHourCost {
     required this.teacher,
     required this.teacherPk,
   });
+
+  factory TeacherHourCost.fromJson(Map<String, dynamic> json) {
+    return TeacherHourCost(
+      id: json['id'],
+      cost: json['cost'],
+      teacher: TeacherProfile.fromJson(json['teacher']),
+      teacherPk: json['teacherPk'],
+    );
+  }
 }

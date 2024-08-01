@@ -52,4 +52,42 @@ class TeacherProfile {
     required this.hourCosts,
     required this.payments,
   });
+
+  factory TeacherProfile.fromJson(Map<String, dynamic> json) {
+    return TeacherProfile(
+      id: json['id'],
+      user: User.fromJson(json['user']),
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      phone: json['phone'],
+      birthdate: DateTime.parse(json['birthdate']),
+      address: json['address'],
+      gender: Gender.values
+          .firstWhere((e) => e.toString() == 'Gender.${json['gender']}'),
+      profilePicture: json['profilePicture'],
+      diploma: json['diploma'],
+      diplomaPhoto: json['diplomaPhoto'],
+      cin: json['cin'],
+      cinPhoto: json['cinPhoto'],
+      jobContract: json['jobContract'],
+      paymentMethod:
+          TeacherpaymentMethodExtension.fromString(json['paymentMethod']),
+      salary: json['salary'].toDouble(),
+      groups:
+          (json['groups'] as List).map((item) => Group.fromJson(item)).toList(),
+      categories: (json['categories'] as List)
+          .map((item) => Category.fromJson(item))
+          .toList(),
+      sessions: (json['sessions'] as List)
+          .map((item) => Session.fromJson(item))
+          .toList(),
+      hourCosts: (json['hourCosts'] as List)
+          .map((item) => TeacherHourCost.fromJson(item))
+          .toList(),
+      payments: (json['payments'] as List)
+          .map((item) =>
+              TeacherpaymentMethodExtension.fromString(item as String))
+          .toList(),
+    );
+  }
 }

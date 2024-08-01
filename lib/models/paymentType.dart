@@ -5,3 +5,10 @@ enum Paymenttype {
   postalPayment,
   bankCard,
 }
+
+extension PaymenttypeExtension on Paymenttype {
+  static Paymenttype fromString(String value) {
+    return Paymenttype.values
+        .firstWhere((e) => e.toString() == 'Paymenttype.$value');
+  }
+}

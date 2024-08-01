@@ -12,4 +12,15 @@ class Role {
     required this.description,
     required this.staff,
   });
+
+  factory Role.fromJson(Map<String, dynamic> json) {
+    return Role(
+      id: json['id'],
+      designation: json['designation'],
+      description: json['description'],
+      staff: (json['staff'] as List)
+          .map((data) => StaffProfile.fromJson(data))
+          .toList(),
+    );
+  }
 }

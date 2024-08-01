@@ -16,4 +16,15 @@ class AdminProfile {
     required this.lastName,
     this.profilePicture,
   });
+
+  factory AdminProfile.fromJson(Map<String, dynamic> json) {
+    return AdminProfile(
+      id: json['id'],
+      user: User.fromJson(json['user']),
+      userPk: json['userPk'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      profilePicture: json['profilePicture'],
+    );
+  }
 }

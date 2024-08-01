@@ -23,4 +23,19 @@ class Payment {
     required this.user,
     required this.paymentType,
   });
+
+  factory Payment.fromJson(Map<String, dynamic> json) {
+    return Payment(
+      id: json['id'],
+      date: DateTime.parse(json['date']),
+      amount: json['amount'].toDouble(),
+      description: json['description'],
+      chargeType: ChargeType.values.firstWhere(
+          (e) => e.toString() == 'ChargeType.' + json['chargeType']),
+      group: json['group'] != null ? Group.fromJson(json['group']) : null,
+      user: User.fromJson(json['user']),
+      paymentType: Paymenttype.values.firstWhere(
+          (e) => e.toString() == 'Paymenttype.' + json['paymentType']),
+    );
+  }
 }

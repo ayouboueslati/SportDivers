@@ -1,6 +1,7 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
+import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/training/timetable.dart';
@@ -8,9 +9,13 @@ import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/models/user_model.dart';
 
 class Bottomnavbar extends StatefulWidget {
-  const Bottomnavbar({Key? key}) : super(key: key);
+  const Bottomnavbar({Key? key, required this.role, this.userData})
+      : super(key: key);
 
-  static const String id = 'bottom_navbar'; // Ensure the id is correctly set
+  static const String id = 'bottom_navbar';
+
+  final String role;
+  final Map<String, dynamic>? userData;
 
   @override
   State<Bottomnavbar> createState() => _BottomnavbarState();
@@ -19,18 +24,12 @@ class Bottomnavbar extends StatefulWidget {
 class _BottomnavbarState extends State<Bottomnavbar> {
   int _bottomNavIndex = 0;
 
-  // Sample user for ChatScreen, replace with actual user data
-  final User chatUser = User(
-    id: 1,
-    name: 'John Doe',
-    imageUrl: 'assets/images/user1.png',
-    isOnline: true,
-  );
+  late final User chatUser;
 
   final List<IconData> iconList = [
     Icons.person,
     Icons.calendar_today,
-    Icons.group,
+    Icons.chat,
     Icons.dashboard,
   ];
 
@@ -46,12 +45,18 @@ class _BottomnavbarState extends State<Bottomnavbar> {
   @override
   void initState() {
     super.initState();
+    chatUser = User(
+      id: int.tryParse(widget.userData?['id']?.toString() ?? '0') ?? 0,
+      name: widget.userData?['name'] ?? 'John Doe',
+      imageUrl: widget.userData?['imageUrl'] ?? 'assets/images/user1.png',
+      isOnline: widget.userData?['isOnline'] ?? true,
+    );
+
     _widgetOptions = <Widget>[
-      ProfileScreen(),
+      ProfileScreen(userData: widget.userData),
       const TrainingScheduleScreen(),
-      //ChatScreen(user: chatUser),
       const FriendScreen(),
-      DashboardScreen(),
+      widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
     ];
   }
 

@@ -17,4 +17,15 @@ class Attendance {
     required this.user,
     required this.userPk,
   });
+
+  factory Attendance.fromJson(Map<String, dynamic> json) {
+    return Attendance(
+      id: json['id'],
+      date: DateTime.parse(json['date']),
+      group: Group.fromJson(json['group']),
+      groupPk: json['groupPk'],
+      user: User.fromJson(json['user']),
+      userPk: json['userPk'],
+    );
+  }
 }

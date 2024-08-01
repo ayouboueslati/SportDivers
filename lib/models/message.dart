@@ -13,9 +13,22 @@ class Message {
     required this.id,
     required this.content,
     required this.createdAt,
-    required this.updatedAt,
-    required this.isRemoved,
+    this.updatedAt,
+    this.isRemoved,
     required this.sender,
     required this.recipient,
   });
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      id: json['id'],
+      content: json['content'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      isRemoved: json['isRemoved'],
+      sender: User.fromJson(json['sender']),
+      recipient: User.fromJson(json['recipient']),
+    );
+  }
 }
