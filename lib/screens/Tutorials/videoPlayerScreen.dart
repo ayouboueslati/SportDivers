@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
   final ChewieController chewieController;
 
-  VideoPlayerScreen({required this.chewieController});
+  const VideoPlayerScreen({Key? key, required this.chewieController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,11 @@ class VideoPlayerScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          chewieController.videoPlayerController.value.isPlaying
-              ? chewieController.videoPlayerController.pause()
-              : chewieController.videoPlayerController.play();
+          if (chewieController.videoPlayerController.value.isPlaying) {
+            chewieController.videoPlayerController.pause();
+          } else {
+            chewieController.videoPlayerController.play();
+          }
         },
         child: Icon(
           chewieController.videoPlayerController.value.isPlaying

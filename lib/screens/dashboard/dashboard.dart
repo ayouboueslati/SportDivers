@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:footballproject/screens/Service/PlayerStatisticsService.dart';
 import 'package:footballproject/models/PlayerStatistics.dart';
-import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
-  DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
@@ -32,9 +31,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var isLargeScreen = screenSize.width > 600;
-
     return Scaffold(
       body: playerStats == null
           ? const Center(child: CircularProgressIndicator())

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'dart:io';
 import '../constantsProvider.dart';
 
 class AuthenticationProvider extends ChangeNotifier {
@@ -115,19 +114,18 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future<String> requestPasswordReset({required String email}) async {
-    // Construct the URL with query parameters
-    final Uri url =
-        Uri.parse('${Constants.baseUrl}/auth/request-password-reset')
-            .replace(queryParameters: {'email': email});
+    // Encode the email in base64
+    final encodedEmail = base64Encode(utf8.encode(email));
+
+    // Construct the URL with the encoded email as a query parameter
+    final Uri url = Uri.parse(
+        '${Constants.baseUrl}/auth/request-password-reset?email=$encodedEmail');
 
     try {
       final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json'},
       );
-
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         return 'Password reset link sent successfully.';
@@ -137,7 +135,6 @@ class AuthenticationProvider extends ChangeNotifier {
             'Failed to request password reset: ${responseBody['message']}');
       }
     } catch (e) {
-      print('Error: $e');
       throw Exception('Error occurred while requesting password reset: $e');
     }
   }

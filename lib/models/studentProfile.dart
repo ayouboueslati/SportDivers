@@ -55,34 +55,49 @@ class StudentProfile {
 
   factory StudentProfile.fromJson(Map<String, dynamic> json) {
     return StudentProfile(
-      id: json['id'],
-      user: User.fromJson(json['user']),
-      firstName: json['firstName'],
-      lastName: json['lastName'],
+      id: json['id'] ?? '',
+      user: User.fromJson(json['user'] ?? {}),
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
       phone: json['phone'],
-      birthdate: DateTime.parse(json['birthdate']),
+      birthdate: DateTime.parse(json['birthdate'] ?? DateTime.now().toString()),
       address: json['address'],
-      gender: Gender.values
-          .firstWhere((e) => e.toString() == 'Gender.${json['gender']}'),
-      inscriptionDate: DateTime.parse(json['inscriptionDate']),
+      gender: json['gender'] != null
+          ? Gender.values.firstWhere(
+              (e) => e.toString().split('.').last == json['gender'],
+              orElse: () => Gender.male, // Default value
+            )
+          : Gender.male, // Default value
+      inscriptionDate:
+          DateTime.parse(json['inscriptionDate'] ?? DateTime.now().toString()),
       profilePicture: json['profilePicture'],
       gradebook: json['gradebook'],
       birthCertificate: json['birthCertificate'],
       observation: json['observation'],
-      average: json['average']?.toDouble(),
-      discountType: StudentdiscountType.values.firstWhere(
-          (e) => e.toString() == 'StudentdiscountType.${json['discountType']}'),
-      discount: json['discount'].toDouble(),
-      paymentMethod: StudentpaymentMethod.values.firstWhere((e) =>
-          e.toString() == 'StudentpaymentMethod.${json['paymentMethod']}'),
-      hasAccess: json['hasAccess'],
+      average: (json['average'] as num?)?.toDouble(),
+      discountType: json['discountType'] != null
+          ? StudentdiscountType.values.firstWhere(
+              (e) => e.toString().split('.').last == json['discountType'],
+              orElse: () => StudentdiscountType.none, // Default value
+            )
+          : StudentdiscountType.none, // Default value
+      discount: (json['discount'] as num).toDouble(),
+      paymentMethod: json['paymentMethod'] != null
+          ? StudentpaymentMethod.values.firstWhere(
+              (e) => e.toString().split('.').last == json['paymentMethod'],
+              orElse: () => StudentpaymentMethod.perMonth, // Default value
+            )
+          : StudentpaymentMethod.perMonth, // Default value
+      hasAccess: json['hasAccess'] ?? false,
       group: json['group'] != null ? Group.fromJson(json['group']) : null,
-      attendances: (json['attendances'] as List)
-          .map((data) => Attendance.fromJson(data))
-          .toList(),
-      payments: (json['payments'] as List)
-          .map((data) => PaymenttypeExtension.fromString(data as String))
-          .toList(),
+      attendances: (json['attendances'] as List<dynamic>?)
+              ?.map((data) => Attendance.fromJson(data))
+              .toList() ??
+          [],
+      payments: (json['payments'] as List<dynamic>?)
+              ?.map((data) => PaymenttypeExtension.fromString(data as String))
+              .toList() ??
+          [],
     );
   }
 }

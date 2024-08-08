@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
+import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
+import 'package:footballproject/Provider/TrainingSchedule/trainingSchedule.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
@@ -9,6 +11,7 @@ import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/bottomNavBar.dart';
+import 'Provider/VideosProvider/videoProvider.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,6 +26,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (context) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => VideoProvider()),
+        ChangeNotifierProvider(create: (_) => TrainingScheduleProvider()),
+        ChangeNotifierProvider(create: (_) => TicketProvider()),
       ],
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {

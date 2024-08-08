@@ -6,6 +6,7 @@ import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
+import 'package:footballproject/screens/report/report_sheet.dart';
 import 'package:footballproject/models/user_model.dart';
 
 class Bottomnavbar extends StatefulWidget {
@@ -73,13 +74,40 @@ class _BottomnavbarState extends State<Bottomnavbar> {
     );
   }
 
+  void _showReportSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: ReportSheet(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(titles[_bottomNavIndex]),
       ),
-      body: _widgetOptions.elementAt(_bottomNavIndex),
+      body: Stack(
+        children: [
+          _widgetOptions.elementAt(_bottomNavIndex),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                _showReportSheet(context);
+              },
+              child: const Icon(Icons.report_problem),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _navigateToTutorialScreen(context);

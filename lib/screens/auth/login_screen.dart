@@ -4,10 +4,9 @@ import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart'
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:footballproject/bottomNavBar.dart';
 import 'package:provider/provider.dart';
-import 'reset_password/forgotpassword.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key, required this.onLoginPressed}) : super(key: key);
+  const LoginScreen({super.key, required this.onLoginPressed});
 
   static String id = 'login_screen';
   final VoidCallback onLoginPressed;
@@ -189,8 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         },
                                         decoration: InputDecoration(
                                           hintText: "Password",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
+                                          hintStyle: const TextStyle(
+                                              color: Colors.grey),
                                           border: InputBorder.none,
                                           suffixIcon: IconButton(
                                             icon: Icon(
