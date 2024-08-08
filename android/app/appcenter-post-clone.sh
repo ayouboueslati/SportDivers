@@ -13,12 +13,18 @@ set -x
 # Print the current Java version
 java -version
 
+# Set JAVA_HOME to Java 17
+export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+export PATH=$JAVA_HOME/bin:$PATH
+
+# Verify Java version
+java -version
+
 # Clone the Flutter repository and set up Flutter
 cd ..
-git clone -b beta https://github.com/flutter/flutter.git
+git clone -b stable https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
 
-flutter channel stable
 flutter doctor
 
 echo "Installed flutter to `pwd`/flutter"
