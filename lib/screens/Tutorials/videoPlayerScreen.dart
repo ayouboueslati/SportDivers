@@ -1,38 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:chewie/chewie.dart';
+import 'package:video_player/video_player.dart';
 
-class VideoPlayerScreen extends StatelessWidget {
-  final ChewieController chewieController;
+class VideoPlayerControls extends StatefulWidget {
+  final VideoPlayerController controller;
 
-  const VideoPlayerScreen({Key? key, required this.chewieController})
+  const VideoPlayerControls({Key? key, required this.controller})
       : super(key: key);
 
   @override
+  _VideoPlayerControlsState createState() => _VideoPlayerControlsState();
+}
+
+class _VideoPlayerControlsState extends State<VideoPlayerControls> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Player'),
-      ),
-      body: Center(
-        child: AspectRatio(
-          aspectRatio: chewieController.videoPlayerController.value.aspectRatio,
-          child: Chewie(controller: chewieController),
+    return Stack(
+      children: [
+        VideoPlayer(widget.controller),
+        Positioned(
+          bottom: 10,
+          left: 10,
+          child: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                if (widget.controller.value.isPlaying) {
+                  widget.controller.pause();
+                } else {
+                  widget.controller.play();
+                }
+              });
+            },
+            child: Icon(
+              widget.controller.value.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
+            ),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (chewieController.videoPlayerController.value.isPlaying) {
-            chewieController.videoPlayerController.pause();
-          } else {
-            chewieController.videoPlayerController.play();
-          }
-        },
-        child: Icon(
-          chewieController.videoPlayerController.value.isPlaying
-              ? Icons.pause
-              : Icons.play_arrow,
-        ),
-      ),
+      ],
     );
   }
 }
