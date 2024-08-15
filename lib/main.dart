@@ -39,6 +39,11 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             initialRoute: LoginScreen.id,
+            //home: DashboardScreen(),
+            // home: ChatScreen(user: currentUser,),
+            // home: CustomLoaderPage(),
+            //home: HomePage(),
+
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
                     Navigator.pushReplacementNamed(context, Bottomnavbar.id);
