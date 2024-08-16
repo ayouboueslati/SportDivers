@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/Menu/MenuPage.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -256,7 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => Bottomnavbar(
+                                         // builder: (context) => Bottomnavbar(
+                                          builder: (context) => HomePage(
                                             role: authProvider.accountType,
                                             userData: authProvider.userData,
                                           ),

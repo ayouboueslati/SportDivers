@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
+import 'package:footballproject/screens/dashboard/dashboard.dart';
+import 'package:footballproject/screens/messages/friend_list.dart';
+import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/training/timetable.dart';
 
-class AppDrawer extends StatelessWidget {
+import '../models/user_model.dart';
+
+class AppDrawer extends StatefulWidget {
+
+  @override
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -62,7 +77,7 @@ class AppDrawer extends StatelessWidget {
           ),
           _buildDrawerItem(context, 'Home', Icons.home, '/'),
           _buildDrawerItem(
-              context, 'Profile', Icons.account_box_rounded, '/Profile'),
+              context, 'Profile', Icons.account_box_rounded, ProfileScreen.id),
           _buildDrawerItem(
               context, 'Calendar', Icons.calendar_month_outlined, '/Calendar'),
           _buildDrawerItem(

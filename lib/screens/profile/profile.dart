@@ -17,14 +17,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  File? _profileImage; // Track the selected profile image file
+  File? _profileImage;
   String? _selectedPaymentMethod;
   String? _selectedDiscountType;
 
   @override
   void initState() {
     super.initState();
-    // Load profile image if URL is provided
     _selectedPaymentMethod = widget.userData?['paymentMethod'] ?? 'N/A';
     _selectedDiscountType = widget.userData?['discountType'] ?? 'N/A';
   }
@@ -32,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -45,59 +44,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userData = widget.userData;
 
     return Scaffold(
-      body: userData == null
-          ? Center(
-              child: Text('No data available', style: TextStyle(fontSize: 18)))
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Center(
-                      child: GestureDetector(
-                        onTap: _selectProfileImage,
-                        child: CircleAvatar(
-                          radius: 70,
-                          backgroundImage: _profileImage != null
-                              ? FileImage(_profileImage!)
-                              : NetworkImage(userData['profilePicture'])
-                                  as ImageProvider,
-                          child: _profileImage == null
-                              ? Icon(Icons.camera_alt,
-                                  size: 40, color: Colors.white)
-                              : null,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildInfoCard(userData),
-                    const SizedBox(height: 20),
-                    _buildSettingsCard(userData),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _logout(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade900,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 100, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+      appBar: AppBar(
+        title: Text('Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue[900],
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Container(
+
+        child: userData == null
+            ? Center(
+          child: Text('No data available',
+              style: TextStyle(fontSize: 18, color: Colors.white)),
+        )
+            : SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _buildProfileImage(userData),
+                const SizedBox(height: 20),
+                _buildInfoCard(userData),
+                const SizedBox(height: 20),
+                _buildSettingsCard(userData),
+                const SizedBox(height: 30),
+                _buildLogoutButton(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileImage(Map<String, dynamic> userData) {
+    return Center(
+      child: GestureDetector(
+        onTap: _selectProfileImage,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                radius: 70,
+                backgroundImage: _profileImage != null
+                    ? FileImage(_profileImage!)
+                    : NetworkImage(userData['profilePicture']) as ImageProvider,
+                child: _profileImage == null
+                    ? Icon(Icons.camera_alt, size: 40, color: Colors.white)
+                    : null,
               ),
             ),
+            Positioned(
+              bottom: 5,
+              right: 5,
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.blue[900],
+                child: Icon(Icons.edit, size: 20, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -106,12 +132,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      elevation: 5,
+      elevation: 8,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Text('Personal Information',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Divider(thickness: 2),
             _buildInfoRow('First Name', userData['firstName']),
             _buildInfoRow('Last Name', userData['lastName']),
             _buildInfoRow('Phone', userData['phone']?.toString()),
@@ -129,12 +158,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      elevation: 5,
+      elevation: 8,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Text('Account Settings',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Divider(thickness: 2),
             _buildInfoRow('Group', userData['group']?['designation']),
             const SizedBox(height: 10),
             _buildDropdown(
@@ -221,14 +253,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }).toList(),
           onChanged: onChanged,
+          style: _valueStyle(),
+          icon: Icon(Icons.arrow_drop_down, color: Colors.blue[900]),
+          underline: Container(
+            height: 2,
+            color: Colors.blue[900],
+          ),
         ),
       ],
     );
   }
 
+  Widget _buildLogoutButton(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          _logout(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.blue[900],
+          padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          elevation: 8,
+        ),
+        child: const Text(
+          'Logout',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
   void _logout(BuildContext context) async {
     final authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+    Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/Menu/MenuPage.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
@@ -8,7 +9,9 @@ import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart'
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
+import 'package:footballproject/screens/profile/CardPicture.dart';
 import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/training/timetable.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/bottomNavBar.dart';
 import 'Provider/VideosProvider/videoProvider.dart';
@@ -39,35 +42,51 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             initialRoute: LoginScreen.id,
-            //home: DashboardScreen(),
             // home: ChatScreen(user: currentUser,),
-            // home: CustomLoaderPage(),
+             //home: CalendarPage(),
             //home: HomePage(),
 
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
-                    Navigator.pushReplacementNamed(context, Bottomnavbar.id);
+                    Navigator.pushReplacementNamed(context, HomePage.id);
                   }),
+          // LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
+                  //   Navigator.pushReplacementNamed(context, Bottomnavbar.id);
+                  // }),
               ForgotPasswordScreen.id: (context) => ForgotPasswordScreen(),
               FriendScreen.id: (context) => const FriendScreen(),
               CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
-              ProfileScreen.id: (context) => ProfileScreen(),
+              TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),
+              ProfileScreen.id: (context) =>  ProfileScreen(),
               // Add other routes if needed
             },
             onGenerateRoute: (settings) {
               // Handle dynamic routing based on user role
-              if (settings.name == Bottomnavbar.id) {
+              if (settings.name == HomePage.id) {
                 final role = authProvider
                     .accountType; // Assuming accountType is the role
                 return MaterialPageRoute(
                   builder: (context) {
-                    return Bottomnavbar(role: role);
+                    return HomePage(role: role);
                   },
                 );
               }
               return null; // Return null if no matching route
             },
+            // onGenerateRoute: (settings) {
+            //   // Handle dynamic routing based on user role
+            //   if (settings.name == Bottomnavbar.id) {
+            //     final role = authProvider
+            //         .accountType; // Assuming accountType is the role
+            //     return MaterialPageRoute(
+            //       builder: (context) {
+            //         return Bottomnavbar(role: role);
+            //       },
+            //     );
+            //   }
+            //   return null; // Return null if no matching route
+            // },
           );
         },
       ),

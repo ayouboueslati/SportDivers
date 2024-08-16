@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/components/AppDrawer.dart';
+import 'package:footballproject/screens/Tutorials/tutorials.dart';
+import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
+import 'package:footballproject/screens/dashboard/dashboard.dart';
+import 'package:footballproject/screens/messages/friend_list.dart';
+import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/report/report_sheet.dart';
+import 'package:footballproject/screens/training/timetable.dart';
+
+import '../models/user_model.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key, required this.role, this.userData})
+      : super(key: key);
+
+  static const String id = 'home_page';
+
+  final String role;
+  final Map<String, dynamic>? userData;
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -23,6 +40,44 @@ List<Event> events = [
 ];
 
 class _HomePageState extends State<HomePage> {
+
+  late final User chatUser;
+
+  late final List<Widget> _widgetOptions;
+  @override
+  void initState() {
+    super.initState();
+    chatUser = User(
+      id: int.tryParse(widget.userData?['id']?.toString() ?? '0') ?? 0,
+      name: widget.userData?['name'] ?? 'John Doe',
+      imageUrl: widget.userData?['imageUrl'] ?? 'assets/images/user1.png',
+      isOnline: widget.userData?['isOnline'] ?? true,
+    );
+
+    _widgetOptions = <Widget>[
+      ProfileScreen(userData: widget.userData),
+      TrainingScheduleScreen(),
+      const FriendScreen(),
+      widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
+    ];
+  }
+
+  void _showReportSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: ReportSheet(),
+        );
+      },
+    );
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -60,26 +115,15 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              //   child: Text(
-              //     'Quick Access',
-              //     style: TextStyle(
-              //       fontSize: 20,
-              //       fontWeight: FontWeight.bold,
-              //       color: Colors.blue[900],
-              //     ),
-              //   ),
-              // ),
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _buildSportCard(context, 'Calendar', Icons.calendar_month_outlined, '/Calendar'),
-                  _buildSportCard(context, 'Chat', Icons.mark_unread_chat_alt_outlined, '/Chat'),
-                  _buildSportCard(context, 'Video', Icons.video_camera_back_outlined, '/Video'),
+                  _buildSportCard(context, 'Calendar', Icons.calendar_month_outlined, TrainingScheduleScreen.id),
+                  _buildSportCard(context, 'Chat', Icons.mark_unread_chat_alt_outlined, FriendScreen.id),
+                  _buildSportCard(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
                   _buildSportCard(context, 'Assistance', Icons.report_problem_outlined, '/Assistance'),
                 ],
               ),
@@ -136,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildFeatureButton(context, 'Player Stats', Icons.poll, '/player-stats'),
+                      _buildFeatureButton(context, 'Player Stats', Icons.poll, CoachDashboardScreen.id),
                       _buildFeatureButton(context, 'Standings', Icons.leaderboard, '/standings'),
                       _buildFeatureButton(context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
                     ],

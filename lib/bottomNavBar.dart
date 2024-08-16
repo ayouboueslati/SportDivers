@@ -55,7 +55,7 @@ class _BottomnavbarState extends State<Bottomnavbar> {
 
     _widgetOptions = <Widget>[
       ProfileScreen(userData: widget.userData),
-      const TrainingScheduleScreen(),
+      TrainingScheduleScreen(),
       const FriendScreen(),
       widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
     ];
@@ -90,9 +90,9 @@ class _BottomnavbarState extends State<Bottomnavbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(titles[_bottomNavIndex]),
-      ),
+      // appBar: AppBar(
+      //   title: Text(titles[_bottomNavIndex]),
+      // ),
       body: Stack(
         children: [
           _widgetOptions.elementAt(_bottomNavIndex),
