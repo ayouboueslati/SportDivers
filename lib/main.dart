@@ -5,7 +5,6 @@ import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
 import 'package:footballproject/Provider/TrainingSchedule/trainingSchedule.dart';
 import 'package:footballproject/screens/Survey/PollsPage.dart';
-import 'package:footballproject/screens/Survey/SurveyPage.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
