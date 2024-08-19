@@ -4,6 +4,8 @@ import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
 import 'package:footballproject/Provider/TrainingSchedule/trainingSchedule.dart';
+import 'package:footballproject/screens/Survey/PollsPage.dart';
+import 'package:footballproject/screens/Survey/SurveyPage.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
@@ -11,6 +13,9 @@ import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/profile/CardPicture.dart';
 import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/rating/RatingCoachPage.dart';
+import 'package:footballproject/screens/rating/ratingPage.dart';
+import 'package:footballproject/screens/report/ReportSheet1.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/bottomNavBar.dart';
@@ -41,24 +46,25 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            initialRoute: LoginScreen.id,
-            // home: ChatScreen(user: currentUser,),
-             //home: CalendarPage(),
-            //home: HomePage(),
+           initialRoute: LoginScreen.id,
+            //home: ReportPage(),
+             //home: PollSurveyPage(),
+            //home: RatingPage(),
 
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
                     Navigator.pushReplacementNamed(context, HomePage.id);
                   }),
-          // LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
-                  //   Navigator.pushReplacementNamed(context, Bottomnavbar.id);
-                  // }),
               ForgotPasswordScreen.id: (context) => ForgotPasswordScreen(),
               FriendScreen.id: (context) => const FriendScreen(),
               CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
               TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),
               ProfileScreen.id: (context) =>  ProfileScreen(),
+              ReportPage.id: (context) =>  ReportPage(),
+              PollSurveyPage.id: (context) =>  PollSurveyPage(),
+              RatingPage.id: (context) =>  RatingPage(),
+              RatingCoachPage.id: (context) =>  RatingCoachPage(),
               // Add other routes if needed
             },
             onGenerateRoute: (settings) {

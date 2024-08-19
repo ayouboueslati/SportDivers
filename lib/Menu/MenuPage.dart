@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/components/AppDrawer.dart';
+import 'package:footballproject/screens/Survey/PollsPage.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/report/ReportSheet1.dart';
 import 'package:footballproject/screens/report/report_sheet.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 
@@ -62,28 +64,16 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  void _showReportSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: ReportSheet(),
-        );
-      },
-    );
-  }
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 65,
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colors.blue[900],
+          elevation: 12,
+          shadowColor: Colors.blue.withOpacity(0.4),
           title: const Text(
             'SportDivers',
             style: TextStyle(
@@ -93,10 +83,6 @@ class _HomePageState extends State<HomePage> {
               letterSpacing: 1.2,
             ),
           ),
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: Colors.blue[900],
-          elevation: 12,
-          shadowColor: Colors.blue.withOpacity(0.4),
           actions: [
             IconButton(
               icon: const Icon(Icons.search, color: Colors.white),
@@ -124,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                   _buildSportCard(context, 'Calendar', Icons.calendar_month_outlined, TrainingScheduleScreen.id),
                   _buildSportCard(context, 'Chat', Icons.mark_unread_chat_alt_outlined, FriendScreen.id),
                   _buildSportCard(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
-                  _buildSportCard(context, 'Assistance', Icons.report_problem_outlined, '/Assistance'),
+                  _buildSportCard(context, 'Assistance', Icons.report_problem_outlined, ReportPage.id),
                 ],
               ),
               SizedBox(
@@ -180,8 +166,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildFeatureButton(context, 'Player Stats', Icons.poll, CoachDashboardScreen.id),
-                      _buildFeatureButton(context, 'Standings', Icons.leaderboard, '/standings'),
+                      _buildFeatureButton(context, 'Player Stats', Icons.area_chart, CoachDashboardScreen.id),
+                      _buildFeatureButton(context, 'Standings', Icons.poll_outlined, PollSurveyPage.id),
                       _buildFeatureButton(context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
                     ],
                   ),

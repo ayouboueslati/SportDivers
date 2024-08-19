@@ -78,7 +78,25 @@ class _VideoAppState extends State<VideoApp> {
       title: 'Video Demo',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Video Player'),
+          toolbarHeight: 60,
+          shadowColor: Colors.grey.withOpacity(0.3),
+          elevation: 5,
+          iconTheme: const IconThemeData(color: Colors.white),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          backgroundColor: Colors.blue[900],
+          title: const Text(
+            'Video Player',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
         ),
         body: _error != null
             ? Center(child: Text(_error!))

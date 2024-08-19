@@ -25,8 +25,7 @@ class _ReportSheetState extends State<ReportSheet> {
       final reason = _reasonController.text;
       final comment = _commentController.text;
 
-      print(
-          'Submitting report with reason: $reason, comment: $comment, target: $_selectedTarget');
+      print('Submitting report with reason: $reason, comment: $comment, target: $_selectedTarget');
 
       Provider.of<TicketProvider>(context, listen: false)
           .createTicket(context, reason, comment, _selectedTarget)

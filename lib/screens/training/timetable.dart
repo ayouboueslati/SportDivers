@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/components/AppDrawer.dart';
+import 'package:footballproject/screens/rating/RatingCoachPage.dart';
+import 'package:footballproject/screens/rating/ratingPage.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TrainingScheduleScreen extends StatefulWidget {
@@ -12,7 +14,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  Map<DateTime, List<RendezVous>> _appointments = {};
+  Map<DateTime, List<Session>> _appointments = {};
 
   String _formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
@@ -23,42 +25,42 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     super.initState();
 
     // Create DateTime objects for specific dates
-    final date1 = DateTime(2024, 8, 1);
-    final date2 = DateTime(2024, 8, 2);
-    final date3 = DateTime(2024, 8, 5);
+    final date1 = DateTime(2024, 8, 18);
+    final date2 = DateTime(2024, 8, 21);
+    final date3 = DateTime(2024, 8, 29);
     final date4 = DateTime(2024, 8, 15);
     final date5 = DateTime(2024, 8, 27);
     final date6 = DateTime(2024, 8, 11);
 
     _appointments = {
       date1: [
-        RendezVous("Lionel Messi", "Training Session", "09:00", "90 min"),
-        RendezVous("Cristiano Ronaldo", "Media Interview", "11:00", "30 min"),
-        RendezVous("LeBron James", "Fitness Training", "13:00", "60 min"),
+        Session("Lionel Messi", "Training Session", "09:00", "90 min"),
+        Session("Cristiano Ronaldo", "Media Interview", "11:00", "30 min"),
+        Session("LeBron James", "Fitness Training", "13:00", "60 min"),
       ],
       date2: [
-        RendezVous("Roger Federer", "Tennis Practice", "10:00", "120 min"),
-        RendezVous("Serena Williams", "Press Conference", "12:00", "45 min"),
+        Session("Roger Federer", "Tennis Practice", "10:00", "120 min"),
+        Session("Serena Williams", "Press Conference", "12:00", "45 min"),
       ],
       date3: [
-        RendezVous("Tom Brady", "Team Meeting", "09:00", "60 min"),
-        RendezVous("Usain Bolt", "Speed Training", "11:00", "45 min"),
-        RendezVous("Michael Phelps", "Swimming Practice", "14:00", "120 min"),
+        Session("Tom Brady", "Team Meeting", "09:00", "60 min"),
+        Session("Usain Bolt", "Speed Training", "11:00", "45 min"),
+        Session("Michael Phelps", "Swimming Practice", "14:00", "120 min"),
       ],
       date4: [
-        RendezVous("Rafael Nadal", "Match Preparation", "08:30", "90 min"),
-        RendezVous("Simone Biles", "Gymnastics Routine", "11:00", "60 min"),
-        RendezVous("Novak Djokovic", "Recovery Session", "13:00", "45 min"),
+        Session("Rafael Nadal", "Match Preparation", "08:30", "90 min"),
+        Session("Simone Biles", "Gymnastics Routine", "11:00", "60 min"),
+        Session("Novak Djokovic", "Recovery Session", "13:00", "45 min"),
       ],
       date5: [
-        RendezVous("Tiger Woods", "Golf Training", "09:00", "90 min"),
-        RendezVous("Michael Jordan", "Charity Event", "11:30", "120 min"),
-        RendezVous("Lewis Hamilton", "Track Practice", "15:00", "60 min"),
+        Session("Tiger Woods", "Golf Training", "09:00", "90 min"),
+        Session("Michael Jordan", "Charity Event", "11:30", "120 min"),
+        Session("Lewis Hamilton", "Track Practice", "15:00", "60 min"),
       ],
       date6: [
-        RendezVous("Kobe Bryant", "Film Session", "10:00", "45 min"),
-        RendezVous("Naomi Osaka", "Mental Coaching", "12:00", "30 min"),
-        RendezVous("Shaquille O'Neal", "Endorsement Shoot", "14:00", "90 min"),
+        Session("Kobe Bryant", "Film Session", "10:00", "45 min"),
+        Session("Naomi Osaka", "Mental Coaching", "12:00", "30 min"),
+        Session("Shaquille O'Neal", "Endorsement Shoot", "14:00", "90 min"),
       ],
     };
 
@@ -181,7 +183,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     }
     final selectedDate =
     DateTime(_selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
-    List<RendezVous> dayAppointments = _appointments[selectedDate] ?? [];
+    List<Session> dayAppointments = _appointments[selectedDate] ?? [];
     return Column(
       children: [
         Padding(
@@ -200,7 +202,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
               : ListView.builder(
             itemCount: dayAppointments.length,
             itemBuilder: (context, index) {
-              RendezVous appointment = dayAppointments[index];
+              Session appointment = dayAppointments[index];
               return Card(
                 margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
@@ -222,8 +224,11 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
                     ),
                   ),
                   trailing:
-                  const Icon(Icons.arrow_forward_ios, color: Colors.black),
-                  onTap: () => _showAppointmentDetails(appointment),
+                   Icon(Icons.arrow_forward_ios, color: Colors.blue[900]),
+                  // if Coach
+                  onTap: () => Navigator.pushNamed(context, RatingCoachPage.id),
+                  //if Player
+                  //onTap: () => Navigator.pushNamed(context, RatingPage.id),
                 ),
               );
             },
@@ -233,7 +238,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     );
   }
 
-  void _showAppointmentDetails(RendezVous appointment) {
+  void _showAppointmentDetails(Session appointment) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -297,13 +302,13 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   }
 }
 
-class RendezVous {
+class Session {
   final String nomClient;
   final String service;
   final String heure;
   final String duree;
 
-  RendezVous(this.nomClient, this.service, this.heure, this.duree);
+  Session(this.nomClient, this.service, this.heure, this.duree);
 }
 
 bool isSameDay(DateTime? a, DateTime? b) {
