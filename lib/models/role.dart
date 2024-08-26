@@ -23,4 +23,13 @@ class Role {
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'designation': designation,
+      'description': description,
+      'staff': staff.map((staffMember) => staffMember.toJson()).toList(),
+    };
+  }
 }

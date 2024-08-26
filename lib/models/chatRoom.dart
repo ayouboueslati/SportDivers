@@ -26,4 +26,13 @@ class Chatroom {
           .toList(),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'createdAt': createdAt.toIso8601String(),
+      'messages': messages.map((message) => message.toJson()).toList(),
+      'participants':
+          participants.map((participant) => participant.toJson()).toList(),
+    };
+  }
 }

@@ -61,4 +61,24 @@ class StaffProfile {
           (json['roles'] as List).map((data) => Role.fromJson(data)).toList(),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user': user.toJson(),
+      'firstName': firstName,
+      'lastName': lastName,
+      'phone': phone,
+      'birthdate': birthdate.toIso8601String(),
+      'address': address,
+      'gender': gender.toString().split('.').last,
+      'profilePicture': profilePicture,
+      'diploma': diploma,
+      'diplomaPhoto': diplomaPhoto,
+      'cin': cin,
+      'cinPhoto': cinPhoto,
+      'jobContract': jobContract,
+      'salary': salary,
+      'roles': roles.map((role) => role.toJson()).toList(),
+    };
+  }
 }

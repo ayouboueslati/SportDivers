@@ -56,20 +56,20 @@ class StudentProfile {
   factory StudentProfile.fromJson(Map<String, dynamic> json) {
     return StudentProfile(
       id: json['id'] ?? '',
-      user: User.fromJson(json['user'] ?? {}),
+      user: json['user'] != null ? User.fromJson(json['user']) : User.empty(),
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       phone: json['phone'],
-      birthdate: DateTime.parse(json['birthdate'] ?? DateTime.now().toString()),
+      birthdate: DateTime.tryParse(json['birthdate'] ?? '') ?? DateTime.now(),
       address: json['address'],
       gender: json['gender'] != null
           ? Gender.values.firstWhere(
               (e) => e.toString().split('.').last == json['gender'],
-              orElse: () => Gender.male, // Default value
+              orElse: () => Gender.male,
             )
-          : Gender.male, // Default value
+          : Gender.male,
       inscriptionDate:
-          DateTime.parse(json['inscriptionDate'] ?? DateTime.now().toString()),
+          DateTime.tryParse(json['inscriptionDate'] ?? '') ?? DateTime.now(),
       profilePicture: json['profilePicture'],
       gradebook: json['gradebook'],
       birthCertificate: json['birthCertificate'],
@@ -78,20 +78,20 @@ class StudentProfile {
       discountType: json['discountType'] != null
           ? StudentdiscountType.values.firstWhere(
               (e) => e.toString().split('.').last == json['discountType'],
-              orElse: () => StudentdiscountType.none, // Default value
+              orElse: () => StudentdiscountType.none,
             )
-          : StudentdiscountType.none, // Default value
+          : StudentdiscountType.none,
       discount: (json['discount'] as num).toDouble(),
       paymentMethod: json['paymentMethod'] != null
           ? StudentpaymentMethod.values.firstWhere(
               (e) => e.toString().split('.').last == json['paymentMethod'],
-              orElse: () => StudentpaymentMethod.perMonth, // Default value
+              orElse: () => StudentpaymentMethod.perMonth,
             )
-          : StudentpaymentMethod.perMonth, // Default value
+          : StudentpaymentMethod.perMonth,
       hasAccess: json['hasAccess'] ?? false,
       group: json['group'] != null ? Group.fromJson(json['group']) : null,
       attendances: (json['attendances'] as List<dynamic>?)
-              ?.map((data) => Attendance.fromJson(data))
+              ?.map((data) => Attendance.fromJson(data as Map<String, dynamic>))
               .toList() ??
           [],
       payments: (json['payments'] as List<dynamic>?)
@@ -99,5 +99,31 @@ class StudentProfile {
               .toList() ??
           [],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user': user.toJson(),
+      'firstName': firstName,
+      'lastName': lastName,
+      'phone': phone,
+      'birthdate': birthdate.toIso8601String(),
+      'address': address,
+      'gender': gender.toString().split('.').last,
+      'inscriptionDate': inscriptionDate.toIso8601String(),
+      'profilePicture': profilePicture,
+      'gradebook': gradebook,
+      'birthCertificate': birthCertificate,
+      'observation': observation,
+      'average': average,
+      'discountType': discountType.toString().split('.').last,
+      'discount': discount,
+      'paymentMethod': paymentMethod.toString().split('.').last,
+      'hasAccess': hasAccess,
+      'group': group?.toJson(),
+      'attendances':
+          attendances.map((attendance) => attendance.toJson()).toList(),
+      'payments': payments.map((payment) => payment.toJson()).toList(),
+    };
   }
 }

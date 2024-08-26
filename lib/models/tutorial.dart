@@ -36,4 +36,17 @@ class Tutorial {
       fileUrl: json['fileUrl'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'fileName': fileName,
+      'createdAt': createdAt,
+      'categories': categories,
+      'groups': groups,
+      'createdBy': createdBy,
+      'fileUrl': fileUrl,
+    };
+  }
 }

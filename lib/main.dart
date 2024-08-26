@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
+import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:footballproject/Provider/EventProvider/eventProvider.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
-import 'package:footballproject/Provider/TrainingSchedule/trainingSchedule.dart';
+import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
 import 'package:footballproject/screens/Survey/PollsPage.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
+import 'package:footballproject/screens/auth/reset_password/resetPasswordWebView.dart';
+import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
@@ -15,10 +20,10 @@ import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/rating/RatingCoachPage.dart';
 import 'package:footballproject/screens/rating/ratingPage.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
+import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:footballproject/screens/training/timetable.dart';
-import 'package:provider/provider.dart';
 import 'package:footballproject/bottomNavBar.dart';
-import 'Provider/VideosProvider/videoProvider.dart';
+import 'package:footballproject/Provider/VideosProvider/videoProvider.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,8 +39,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (context) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => VideoProvider()),
-        ChangeNotifierProvider(create: (_) => TrainingScheduleProvider()),
-        ChangeNotifierProvider(create: (_) => TicketProvider()),
+        ChangeNotifierProvider(create: (_) => SessionProvider()),
+        ChangeNotifierProvider(create: (_) => EventProvider()),
+        ChangeNotifierProxyProvider<AuthenticationProvider, TicketsProvider>(
+          create: (_) => TicketsProvider(null), // Initially null
+          update: (context, authProvider, previousTicketsProvider) =>
+              TicketsProvider(authProvider)..fetchTickets(),
+        ),
+        // Add other providers if needed
       ],
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
@@ -45,11 +56,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-           initialRoute: LoginScreen.id,
-            //home: ReportPage(),
-             //home: PollSurveyPage(),
-            //home: RatingPage(),
-
+            initialRoute: LoginScreen.id,
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
                     Navigator.pushReplacementNamed(context, HomePage.id);
@@ -59,39 +66,32 @@ class MyApp extends StatelessWidget {
               CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
               TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),
-              ProfileScreen.id: (context) =>  ProfileScreen(),
-              ReportPage.id: (context) =>  ReportPage(),
-              PollSurveyPage.id: (context) =>  PollSurveyPage(),
-              RatingPage.id: (context) =>  RatingPage(),
-              RatingCoachPage.id: (context) =>  RatingCoachPage(),
-              // Add other routes if needed
+              ProfileScreen.id: (context) => ProfileScreen(),
+              ReportPage.id: (context) => ReportPage(),
+              PollSurveyPage.id: (context) => PollSurveyPage(),
+              RatingPage.id: (context) => RatingPage(),
+              TicketsScreen.id: (context) => TicketsScreen(),
+              RatingCoachPage.id: (context) => RatingCoachPage(),
+              DashboardScreen.id: (context) => DashboardScreen(),
+              PasswordResetSuccessScreen.id: (context) =>
+                  PasswordResetSuccessScreen(),
+              ResetPasswordScreen.id: (context) =>
+                  ResetPasswordScreen(token: authProvider.token ?? ''),
+              HomePage.id: (context) =>
+                  HomePage(role: authProvider.accountType),
             },
             onGenerateRoute: (settings) {
-              // Handle dynamic routing based on user role
               if (settings.name == HomePage.id) {
-                final role = authProvider
-                    .accountType; // Assuming accountType is the role
+                final role = authProvider.accountType;
                 return MaterialPageRoute(
                   builder: (context) {
                     return HomePage(role: role);
                   },
                 );
               }
-              return null; // Return null if no matching route
+              // Return a default route or error screen
+              return null;
             },
-            // onGenerateRoute: (settings) {
-            //   // Handle dynamic routing based on user role
-            //   if (settings.name == Bottomnavbar.id) {
-            //     final role = authProvider
-            //         .accountType; // Assuming accountType is the role
-            //     return MaterialPageRoute(
-            //       builder: (context) {
-            //         return Bottomnavbar(role: role);
-            //       },
-            //     );
-            //   }
-            //   return null; // Return null if no matching route
-            // },
           );
         },
       ),

@@ -1,5 +1,3 @@
-// lib/models/ticket_model.dart
-
 import 'package:footballproject/models/user.dart';
 
 class Ticket {
@@ -22,22 +20,23 @@ class Ticket {
   factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
       id: json['id'] ?? '',
-      createdAt: json['createdAt'], // Adjust based on your actual response
-      reason: json['reason'],
-      comment: json['comment'],
-      isAdminTarget: json['isAdminTarget'],
-      target: json['target'],
+      createdAt: DateTime.parse(json['createdAt']), // Parse the date correctly
+      reason: json['reason'] ?? '',
+      comment: json['comment'] ?? '',
+      isAdminTarget: json['isAdminTarget'] ?? false,
+      target: User.fromJson(json['target']), // Deserialize the user object
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'createdAt': createdAt,
+      'createdAt':
+          createdAt.toIso8601String(), // Ensure date is in ISO 8601 format
       'reason': reason,
       'comment': comment,
       'isAdminTarget': isAdminTarget,
-      'target': target,
+      'target': target.toJson(), // Serialize the user object
     };
   }
 }

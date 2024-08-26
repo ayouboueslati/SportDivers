@@ -1,36 +1,45 @@
 import 'package:footballproject/models/group.dart';
 import 'package:footballproject/models/session.dart';
 
+import 'package:footballproject/models/group.dart';
+
 class Schedule {
   String id;
   String designation;
-  String? description;
   DateTime startDate;
   DateTime endDate;
   Group group;
-  List<Session> sessions;
 
   Schedule({
     required this.id,
     required this.designation,
-    this.description,
     required this.startDate,
     required this.endDate,
     required this.group,
-    required this.sessions,
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
     return Schedule(
-      id: json['id'],
-      designation: json['designation'],
-      description: json['description'],
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
-      group: Group.fromJson(json['group']),
-      sessions: (json['sessions'] as List)
-          .map((data) => Session.fromJson(data))
-          .toList(),
+      id: json['id'] ?? '',
+      designation: json['designation'] ?? '',
+      startDate: json['startDate'] != null
+          ? DateTime.parse(json['startDate'])
+          : DateTime.now(),
+      endDate: json['endDate'] != null
+          ? DateTime.parse(json['endDate'])
+          : DateTime.now(),
+      group:
+          json['group'] != null ? Group.fromJson(json['group']) : Group.empty(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'designation': designation,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'group': group.toJson(),
+    };
   }
 }

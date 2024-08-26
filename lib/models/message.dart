@@ -31,4 +31,15 @@ class Message {
       recipient: User.fromJson(json['recipient']),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'content': content,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'isRemoved': isRemoved,
+      'sender': sender.toJson(),
+      'recipient': recipient.toJson(),
+    };
+  }
 }

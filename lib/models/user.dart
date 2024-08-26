@@ -48,15 +48,39 @@ class User {
     required this.seenMessages,
   });
 
+  // Empty constructor
+  User.empty()
+      : id = '',
+        email = null,
+        password = '',
+        accountType = AccountType.admin, // Default value
+        isActive = false,
+        deactivationDate = null,
+        deactivationReason = null,
+        deactivationComment = null,
+        createdAt = DateTime.now(),
+        adminProfile = null,
+        studentProfile = null,
+        teacherProfile = null,
+        staffProfile = null,
+        chatRoomsFirst = [],
+        chatRoomsSecond = [],
+        tutorials = [],
+        sentMessages = [],
+        seenMessages = [];
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
+      id: json['id'] ?? '',
       email: json['email'],
-      password: '', // Do not fetch password
-      accountType: AccountType.values.firstWhere(
-          (e) => e.toString() == 'AccountType.${json['accountType']}'),
-      isActive: json['isActive'],
-      createdAt: DateTime.parse(json['createdAt']),
+      password: '',
+      accountType: json['accountType'] != null
+          ? AccountTypeExtension.fromString(json['accountType'])
+          : AccountType.admin,
+      isActive: json['isActive'] ?? false,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
       deactivationDate: json['deactivationDate'] != null
           ? DateTime.parse(json['deactivationDate'])
           : null,
@@ -74,21 +98,50 @@ class User {
       staffProfile: json['staffProfile'] != null
           ? StaffProfile.fromJson(json['staffProfile'])
           : null,
-      chatRoomsFirst: (json['chatRoomsFirst'] as List)
-          .map((data) => Chatroom.fromJson(data))
-          .toList(),
-      chatRoomsSecond: (json['chatRoomsSecond'] as List)
-          .map((data) => Chatroom.fromJson(data))
-          .toList(),
-      tutorials: (json['tutorials'] as List)
-          .map((data) => Tutorial.fromJson(data))
-          .toList(),
-      sentMessages: (json['sentMessages'] as List)
-          .map((data) => Message.fromJson(data))
-          .toList(),
-      seenMessages: (json['seenMessages'] as List)
-          .map((data) => Message.fromJson(data))
-          .toList(),
+      chatRoomsFirst: (json['chatRoomsFirst'] as List<dynamic>?)
+              ?.map((data) => Chatroom.fromJson(data))
+              .toList() ??
+          [],
+      chatRoomsSecond: (json['chatRoomsSecond'] as List<dynamic>?)
+              ?.map((data) => Chatroom.fromJson(data))
+              .toList() ??
+          [],
+      tutorials: (json['tutorials'] as List<dynamic>?)
+              ?.map((data) => Tutorial.fromJson(data))
+              .toList() ??
+          [],
+      sentMessages: (json['sentMessages'] as List<dynamic>?)
+              ?.map((data) => Message.fromJson(data))
+              .toList() ??
+          [],
+      seenMessages: (json['seenMessages'] as List<dynamic>?)
+              ?.map((data) => Message.fromJson(data))
+              .toList() ??
+          [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'accountType': accountType.toString().split('.').last,
+      'isActive': isActive,
+      'createdAt': createdAt.toIso8601String(),
+      'deactivationDate': deactivationDate?.toIso8601String(),
+      'deactivationReason': deactivationReason,
+      'deactivationComment': deactivationComment,
+      'adminProfile': adminProfile?.toJson(),
+      'studentProfile': studentProfile?.toJson(),
+      'teacherProfile': teacherProfile?.toJson(),
+      'staffProfile': staffProfile?.toJson(),
+      'chatRoomsFirst':
+          chatRoomsFirst.map((chatRoom) => chatRoom.toJson()).toList(),
+      'chatRoomsSecond':
+          chatRoomsSecond.map((chatRoom) => chatRoom.toJson()).toList(),
+      'tutorials': tutorials.map((tutorial) => tutorial.toJson()).toList(),
+      'sentMessages': sentMessages.map((message) => message.toJson()).toList(),
+      'seenMessages': seenMessages.map((message) => message.toJson()).toList(),
+    };
   }
 }

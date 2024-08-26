@@ -27,4 +27,14 @@ class AdminProfile {
       profilePicture: json['profilePicture'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user': user.toJson(),
+      'userPk': userPk,
+      'firstName': firstName,
+      'lastName': lastName,
+      'profilePicture': profilePicture,
+    };
+  }
 }

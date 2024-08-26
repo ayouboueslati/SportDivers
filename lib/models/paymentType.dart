@@ -11,4 +11,8 @@ extension PaymenttypeExtension on Paymenttype {
     return Paymenttype.values
         .firstWhere((e) => e.toString() == 'Paymenttype.$value');
   }
+
+  String toJson() {
+    return toString().split('.').last;
+  }
 }

@@ -20,44 +20,45 @@ class _ReportPageState extends State<ReportPage> {
     super.dispose();
   }
 
-  void _submitReport() {
-    if (_reasonController.text.isNotEmpty &&
-        _commentController.text.isNotEmpty) {
-      final reason = _reasonController.text;
-      final comment = _commentController.text;
+  // void _submitReport() {
+  //   if (_reasonController.text.isNotEmpty &&
+  //       _commentController.text.isNotEmpty) {
+  //     final reason = _reasonController.text;
+  //     final comment = _commentController.text;
 
-      print('Submitting report with reason: $reason, comment: $comment, target: $_selectedTarget');
+  //     print(
+  //         'Submitting report with reason: $reason, comment: $comment, target: $_selectedTarget');
 
-      Provider.of<TicketProvider>(context, listen: false)
-          .createTicket(context, reason, comment, _selectedTarget)
-          .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Report submitted successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        _reasonController.clear();
-        _commentController.clear();
-      }).catchError((error) {
-        print('Failed to submit report: $error');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to submit report: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      });
-    } else {
-      print('Please fill in all fields before submitting.');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please fill in all fields before submitting.'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-    }
-  }
+  //     Provider.of<TicketProvider>(context, listen: false)
+  //         .createTicket(context, reason, comment, _selectedTarget)
+  //         .then((_) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Report submitted successfully'),
+  //           backgroundColor: Colors.green,
+  //         ),
+  //       );
+  //       _reasonController.clear();
+  //       _commentController.clear();
+  //     }).catchError((error) {
+  //       print('Failed to submit report: $error');
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Failed to submit report: $error'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     });
+  //   } else {
+  //     print('Please fill in all fields before submitting.');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Please fill in all fields before submitting.'),
+  //         backgroundColor: Colors.orange,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +97,9 @@ class _ReportPageState extends State<ReportPage> {
                 Text(
                   'Report Details',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
-                  ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[900],
+                      ),
                 ),
                 SizedBox(height: 24.0),
                 _buildTextField(
@@ -116,7 +117,7 @@ class _ReportPageState extends State<ReportPage> {
                 SizedBox(height: 16.0),
                 _buildDropdown(),
                 SizedBox(height: 32.0),
-                _buildSubmitButton(),
+                // _buildSubmitButton(),
               ],
             ),
           ),
@@ -172,34 +173,13 @@ class _ReportPageState extends State<ReportPage> {
           _selectedTarget = newValue!;
         });
       },
-      items: <String>[
-        'ADMIN',
-        'clyv28fbj0001u3d4jwdok2zk'
-      ].map<DropdownMenuItem<String>>((String value) {
+      items: <String>['ADMIN', 'clyv28fbj0001u3d4jwdok2zk']
+          .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
         );
       }).toList(),
-    );
-  }
-
-  Widget _buildSubmitButton() {
-    return ElevatedButton(
-      onPressed: _submitReport,
-      child: Text(
-        'Submit Report',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[900],
-        foregroundColor: Colors.white,
-        minimumSize: Size(double.infinity, 56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 3,
-      ),
     );
   }
 }

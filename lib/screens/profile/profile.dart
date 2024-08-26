@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.gallery);
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -56,29 +56,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       body: Container(
-
         child: userData == null
             ? Center(
-          child: Text('No data available',
-              style: TextStyle(fontSize: 18, color: Colors.white)),
-        )
+                child: Text('No data available',
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
+              )
             : SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _buildProfileImage(userData),
-                const SizedBox(height: 20),
-                _buildInfoCard(userData),
-                const SizedBox(height: 20),
-                _buildSettingsCard(userData),
-                const SizedBox(height: 30),
-                _buildLogoutButton(context),
-              ],
-            ),
-          ),
-        ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _buildProfileImage(userData),
+                      const SizedBox(height: 20),
+                      _buildInfoCard(userData),
+                      const SizedBox(height: 20),
+                      _buildSettingsCard(userData),
+                      const SizedBox(height: 30),
+                      _buildLogoutButton(context),
+                    ],
+                  ),
+                ),
+              ),
       ),
     );
   }
@@ -280,8 +279,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           elevation: 8,
         ),
         child: const Text(
-          'Logout',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          'Déconnexion ',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -289,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _logout(BuildContext context) async {
     final authProvider =
-    Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }

@@ -21,4 +21,13 @@ class TeacherHourCost {
       teacherPk: json['teacherPk'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'cost': cost,
+      'teacher': teacher.toJson(),
+      'teacherPk': teacherPk,
+    };
+  }
 }

@@ -1,0 +1,5 @@
+enum Sessiontypes {
+  FRIENDLY_GAME,
+  TRAINING_SESSION,
+  TOURNAMENT,
+}

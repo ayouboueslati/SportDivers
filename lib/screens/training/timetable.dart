@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/components/AppDrawer.dart';
-import 'package:footballproject/screens/rating/RatingCoachPage.dart';
-import 'package:footballproject/screens/rating/ratingPage.dart';
+import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
+import 'package:footballproject/screens/training/sessionCard.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TrainingScheduleScreen extends StatefulWidget {
   static const String id = 'Training_Schedule_Screen';
+
   @override
   _TrainingScheduleScreenState createState() => _TrainingScheduleScreenState();
 }
@@ -14,60 +17,49 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  Map<DateTime, List<Session>> _appointments = {};
-
-  String _formatDate(DateTime date) {
-    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-  }
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
-    // Create DateTime objects for specific dates
-    final date1 = DateTime(2024, 8, 18);
-    final date2 = DateTime(2024, 8, 21);
-    final date3 = DateTime(2024, 8, 29);
-    final date4 = DateTime(2024, 8, 15);
-    final date5 = DateTime(2024, 8, 27);
-    final date6 = DateTime(2024, 8, 11);
-
-    _appointments = {
-      date1: [
-        Session("Lionel Messi", "Training Session", "09:00", "90 min"),
-        Session("Cristiano Ronaldo", "Media Interview", "11:00", "30 min"),
-        Session("LeBron James", "Fitness Training", "13:00", "60 min"),
-      ],
-      date2: [
-        Session("Roger Federer", "Tennis Practice", "10:00", "120 min"),
-        Session("Serena Williams", "Press Conference", "12:00", "45 min"),
-      ],
-      date3: [
-        Session("Tom Brady", "Team Meeting", "09:00", "60 min"),
-        Session("Usain Bolt", "Speed Training", "11:00", "45 min"),
-        Session("Michael Phelps", "Swimming Practice", "14:00", "120 min"),
-      ],
-      date4: [
-        Session("Rafael Nadal", "Match Preparation", "08:30", "90 min"),
-        Session("Simone Biles", "Gymnastics Routine", "11:00", "60 min"),
-        Session("Novak Djokovic", "Recovery Session", "13:00", "45 min"),
-      ],
-      date5: [
-        Session("Tiger Woods", "Golf Training", "09:00", "90 min"),
-        Session("Michael Jordan", "Charity Event", "11:30", "120 min"),
-        Session("Lewis Hamilton", "Track Practice", "15:00", "60 min"),
-      ],
-      date6: [
-        Session("Kobe Bryant", "Film Session", "10:00", "45 min"),
-        Session("Naomi Osaka", "Mental Coaching", "12:00", "30 min"),
-        Session("Shaquille O'Neal", "Endorsement Shoot", "14:00", "90 min"),
-      ],
-    };
-
-
-    // Set initial selected and focused day
     _selectedDay = DateTime.now();
     _focusedDay = DateTime.now();
+    _fetchSessions();
+  }
+
+  @override
+  void dispose() {
+    // Clean up any resources or listeners here
+    super.dispose();
+  }
+
+  Future<void> _fetchSessions() async {
+    // Set loading state before starting the fetch operation
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final authProvider =
+          Provider.of<AuthenticationProvider>(context, listen: false);
+      final token = authProvider.token;
+      if (token != null) {
+        await Provider.of<SessionProvider>(context, listen: false)
+            .fetchSessions(token);
+        print('Sessions fetched successfully');
+      } else {
+        print('Token is null');
+      }
+    } catch (e) {
+      print('Error fetching sessions: $e');
+    } finally {
+      // Only set loading state to false if the widget is still mounted
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -80,22 +72,18 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         elevation: 5,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.blue[900],
-        title:const Text(
+        title: const Text(
           'Training Schedule',
-          style: TextStyle(color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 26
-
-          ),
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 26),
         ),
       ),
-      //drawer: AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
@@ -105,34 +93,29 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
               focusedDay: _focusedDay,
               calendarFormat: _calendarFormat,
               selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
+                return _selectedDay != null && isSameDay(_selectedDay!, day);
               },
               onDaySelected: (selectedDay, focusedDay) {
-                if (!isSameDay(_selectedDay, selectedDay)) {
+                if (_selectedDay == null ||
+                    !isSameDay(_selectedDay!, selectedDay)) {
                   setState(() {
                     _selectedDay = selectedDay;
                     _focusedDay = focusedDay;
                   });
                 }
               },
-              eventLoader: (day) {
-                return _appointments[DateTime(day.year, day.month, day.day)] ??
-                    [];
-              },
               calendarStyle: CalendarStyle(
                 todayDecoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Colors.blue[100],
                   shape: BoxShape.circle,
                 ),
-                selectedDecoration:const BoxDecoration(
-                  color: Colors.black,
+                selectedDecoration: BoxDecoration(
+                  color: Colors.blue[700],
                   shape: BoxShape.circle,
                 ),
-                markerSize: 0, // Set marker size to 0 to hide default markers
-                markerDecoration:const BoxDecoration(
-                    color: Colors.transparent), // Make markers transparent
+                markerSize: 0,
               ),
-              headerStyle:const HeaderStyle(
+              headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
                 titleTextStyle: TextStyle(
@@ -141,35 +124,10 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              calendarBuilders: CalendarBuilders(
-                defaultBuilder: (context, day, focusedDay) {
-                  final events =
-                      _appointments[DateTime(day.year, day.month, day.day)] ??
-                          [];
-                  if (events.isNotEmpty) {
-                    return Container(
-                      margin: const EdgeInsets.all(4.0),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.blue[900],
-                        // Light blue color for days with appointments
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        day.day.toString(),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    );
-                  }
-                  return null; // Return null to use default appearance for days without appointments
-                },
-                markerBuilder: (context, date, events) =>
-                    Container(), // Return an empty container for markers
-              ),
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: _buildAppointmentList(),
+              child: _buildAppointmentList(context),
             ),
           ],
         ),
@@ -177,19 +135,44 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     );
   }
 
-  Widget _buildAppointmentList() {
-    if (_selectedDay == null) {
-      return Center(child: Text('Sélectionnez un jour pour voir les rendez-vous'));
+  Widget _buildAppointmentList(BuildContext context) {
+    final sessionProvider = Provider.of<SessionProvider>(context);
+    final sessions = sessionProvider.sessions;
+
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
-    final selectedDate =
-    DateTime(_selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
-    List<Session> dayAppointments = _appointments[selectedDate] ?? [];
+
+    if (_selectedDay == null) {
+      return const Center(child: Text('Select a day to view appointments'));
+    }
+
+    final selectedDate = DateTime(
+      _selectedDay!.year,
+      _selectedDay!.month,
+      _selectedDay!.day,
+    );
+
+    // Filter sessions based on selected date
+    final dayAppointments = sessions.where((session) {
+      final sessionStartTime = DateTime.parse(session.startTime).toLocal();
+      final sessionDate = DateTime(
+        sessionStartTime.year,
+        sessionStartTime.month,
+        sessionStartTime.day,
+      );
+
+      return isSameDay(selectedDate, sessionDate);
+    }).toList();
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Appointment for ${_formatDate(_selectedDay!)}',
+            'Appointments for ${_formatDate(_selectedDay!)}',
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -198,122 +181,31 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         ),
         Expanded(
           child: dayAppointments.isEmpty
-              ? Center(child: Text('Aucun rendez-vous pour ce jour'))
+              ? const Center(child: Text('No appointments for this day'))
               : ListView.builder(
-            itemCount: dayAppointments.length,
-            itemBuilder: (context, index) {
-              Session appointment = dayAppointments[index];
-              return Card(
-                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  itemCount: dayAppointments.length,
+                  itemBuilder: (context, index) {
+                    final appointment = dayAppointments[index];
+                    return SessionCard(
+                      teacher: appointment.teacher,
+                      session: appointment,
+                      isLoading: _isLoading,
+                    );
+                  },
                 ),
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
-                  title: Text(
-                    appointment.nomClient,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  subtitle: Text(
-                    '${appointment.service}\n${appointment.heure} (${appointment.duree})',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  trailing:
-                   Icon(Icons.arrow_forward_ios, color: Colors.blue[900]),
-                  // if Coach
-                  onTap: () => Navigator.pushNamed(context, RatingCoachPage.id),
-                  //if Player
-                  //onTap: () => Navigator.pushNamed(context, RatingPage.id),
-                ),
-              );
-            },
-          ),
         ),
       ],
     );
   }
 
-  void _showAppointmentDetails(Session appointment) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: Text(
-            'Détails du rendez-vous',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDetailRow('Client', appointment.nomClient),
-              _buildDetailRow('Service', appointment.service),
-              _buildDetailRow('Heure', appointment.heure),
-              _buildDetailRow('Durée', appointment.duree),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text(
-                'Fermer',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  String _formatDate(DateTime date) {
+    final formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(date);
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Expanded(
-            child: Text(value),
-          ),
-        ],
-      ),
-    );
+  bool isSameDay(DateTime date1, DateTime date2) {
+    date1 = DateTime(date1.year, date1.month, date1.day);
+    date2 = DateTime(date2.year, date2.month, date2.day);
+    return date1 == date2;
   }
-}
-
-class Session {
-  final String nomClient;
-  final String service;
-  final String heure;
-  final String duree;
-
-  Session(this.nomClient, this.service, this.heure, this.duree);
-}
-
-bool isSameDay(DateTime? a, DateTime? b) {
-  if (a == null || b == null) {
-    return false;
-  }
-  return a.year == b.year && a.month == b.month && a.day == b.day;
 }

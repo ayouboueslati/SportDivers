@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
-import 'package:footballproject/screens/dashboard/dashboard.dart';
+import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:footballproject/screens/Tutorials/tutorials.dart';
+import 'package:footballproject/screens/auth/reset_password/resetPasswordWebView.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
-import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/report/ReportSheet1.dart';
+import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:footballproject/screens/training/timetable.dart';
-
-import '../models/user_model.dart';
+import 'package:provider/provider.dart';
+import 'package:footballproject/screens/profile/profile.dart';
+import 'package:footballproject/screens/auth/login_screen.dart';
 
 class AppDrawer extends StatefulWidget {
-
   @override
   _AppDrawerState createState() => _AppDrawerState();
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-
-
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthenticationProvider>(context);
+    final user = authProvider.userData;
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final avatarRadius = screenHeight * 0.05;
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -37,38 +44,49 @@ class _AppDrawerState extends State<AppDrawer> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: screenHeight * 0.02),
                 Row(
                   children: [
                     CircleAvatar(
-                      radius: 30,
+                      radius: avatarRadius,
+                      backgroundImage:
+                          user != null && user['profilePicture'] != null
+                              ? NetworkImage(user['profilePicture'])
+                              : null,
                       backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Colors.blue[900],
-                      ),
+                      child: user != null && user['profilePicture'] != null
+                          ? null
+                          : Icon(
+                              Icons.person,
+                              size: avatarRadius * 1.4,
+                              color: Colors.blue[900],
+                            ),
                     ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'User Name',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    SizedBox(width: screenWidth * 0.04),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            authProvider.userData?['firstName'] ?? 'User Name',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenHeight * 0.025,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        Text(
-                          'user@example.com',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
+                          Text(
+                            authProvider.userData?['email'] ??
+                                'user@example.com',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: screenHeight * 0.014,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -78,46 +96,76 @@ class _AppDrawerState extends State<AppDrawer> {
           _buildDrawerItem(context, 'Home', Icons.home, '/'),
           _buildDrawerItem(
               context, 'Profile', Icons.account_box_rounded, ProfileScreen.id),
+          _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined,
+              TrainingScheduleScreen.id),
           _buildDrawerItem(
-              context, 'Calendar', Icons.calendar_month_outlined, '/Calendar'),
+              context, 'Mes tickets', Icons.support_agent, TicketsScreen.id),
+          _buildDrawerItem(context, 'Messages',
+              Icons.mark_unread_chat_alt_outlined, FriendScreen.id),
           _buildDrawerItem(
-              context, 'Chat', Icons.mark_unread_chat_alt_outlined, '/Chat'),
-          _buildDrawerItem(
-              context, 'Video', Icons.video_camera_back_outlined, '/Video'),
+              context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
           _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined,
-              '/Assistance'),
-          Divider(),
+              ReportPage.id),
+          _buildDrawerItem(context, 'Changer mot de passe', Icons.password,
+              ResetPasswordScreen.id),
+          const Divider(),
           _buildDrawerItem(
-              context, 'Player Stats', Icons.poll, '/player-stats'),
+              context, 'Statistiques', Icons.poll, '/player-stats'),
           _buildDrawerItem(
-              context, 'Standings', Icons.leaderboard, '/standings'),
+              context, 'Classement', Icons.leaderboard, '/standings'),
           _buildDrawerItem(
               context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
-          Divider(),
-          _buildDrawerItem(context, 'Settings', Icons.settings, '/settings'),
-          _buildDrawerItem(context, 'Logout', Icons.exit_to_app, '/logout'),
+          const Divider(),
+          _buildDrawerItem(context, 'Paramètres', Icons.settings, '/settings'),
+          _buildDrawerItem(context, 'Déconnexion', Icons.exit_to_app, '/logout',
+              isLogout: true),
         ],
       ),
     );
   }
 
   Widget _buildDrawerItem(
-      BuildContext context, String title, IconData icon, String route) {
+      BuildContext context, String title, IconData icon, String route,
+      {bool isLogout = false}) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return ListTile(
-      leading: Icon(icon, color: Colors.blue[900]),
+      leading: Icon(icon, color: Colors.blue[900], size: screenHeight * 0.03),
       title: Text(
         title,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: screenHeight * 0.022,
         ),
       ),
       onTap: () {
-        Navigator.pop(context); // Close the drawer
-        if (route != '/') {
+        Navigator.pop(context);
+
+        if (isLogout) {
+          _logout(context);
+        } else if (route == ProfileScreen.id) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                userData:
+                    Provider.of<AuthenticationProvider>(context, listen: false)
+                        .userData,
+              ),
+            ),
+          );
+          print("Navigating to ProfileScreen");
+        } else {
           Navigator.pushNamed(context, route);
         }
       },
     );
+  }
+
+  void _logout(BuildContext context) async {
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    await authProvider.logoutUser();
+    Navigator.pushReplacementNamed(context, LoginScreen.id);
   }
 }

@@ -32,7 +32,7 @@ extension AccountTypeExtension on AccountType {
       case 'staff':
         return AccountType.staff;
       default:
-        throw ArgumentError('Invalid account type');
+        return AccountType.admin; // Default value to handle unexpected strings
     }
   }
 }

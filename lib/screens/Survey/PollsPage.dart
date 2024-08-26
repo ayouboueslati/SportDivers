@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 class PollSurveyPage extends StatefulWidget {
   static const String id = 'Poll_Survey_Page';
+
   @override
   _PollSurveyPageState createState() => _PollSurveyPageState();
 }
@@ -96,20 +97,23 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildQuestionCard(),
-              SizedBox(height: 20),
-              ...options.asMap().entries.map((entry) => _buildOptionCard(entry.key)),
-              SizedBox(height: 20),
-              _buildSubmitButton(),
-            ],
-          ),
-        ),
-      ),
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildQuestionCard(),
+                    SizedBox(height: 20),
+                    ...options
+                        .asMap()
+                        .entries
+                        .map((entry) => _buildOptionCard(entry.key)),
+                    SizedBox(height: 20),
+                    _buildSubmitButton(),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -181,7 +185,8 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
                       options[index],
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                         color: Colors.blue[900],
                       ),
                     ),

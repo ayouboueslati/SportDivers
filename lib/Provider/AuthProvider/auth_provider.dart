@@ -37,6 +37,55 @@ class AuthenticationProvider extends ChangeNotifier {
     await prefs.setString('token', token);
   }
 
+  Future<void> resetPassword({
+    required String oldPassword,
+    required String newPassword,
+    required BuildContext context,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      // print('Attempting to reset password...');
+      // print('Using token: $_token');
+
+      final response = await http.put(
+        Uri.parse('${Constants.baseUrl}/users/change-password'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_token',
+        },
+        body: jsonEncode({
+          'oldPassword': oldPassword,
+          'password': newPassword,
+        }),
+      );
+
+      // print('Response Status Code: ${response.statusCode}');
+      // print('Response Headers: ${response.headers}');
+      // print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        _resMessage = 'Password changed successfully';
+        await logoutUser();
+      } else {
+        final responseBody = jsonDecode(response.body);
+        _resMessage = responseBody['message'] ?? 'Failed to change password';
+      }
+    } catch (e) {
+      // print('Exception: $e');
+      _resMessage = 'Error occurred while changing password';
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void resetMessage() {
+    _resMessage = '';
+    notifyListeners();
+  }
+
   Future<void> loginUser({
     required String email,
     required String password,
@@ -60,12 +109,15 @@ class AuthenticationProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _token = data['accessToken'];
-        _userData = data['userData']; // Extract userData
-        _accountType = data['userData']['accountType'] ??
-            ''; // Ensure accountType is present
+        _userData = data['userData'];
+        _accountType = data['userData']['accountType'] ?? '';
         _isAuthenticated = true;
         _resMessage = 'Login successful';
 
+        // print('Login successful');
+        // print('Token: $_token');
+        // print('User Data: $_userData');
+        // print('Account Type: $_accountType');
         await _saveToken(_token!);
 
         if (rememberMe) {
@@ -114,10 +166,8 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   Future<String> requestPasswordReset({required String email}) async {
-    // Encode the email in base64
     final encodedEmail = base64Encode(utf8.encode(email));
 
-    // Construct the URL with the encoded email as a query parameter
     final Uri url = Uri.parse(
         '${Constants.baseUrl}/auth/request-password-reset?email=$encodedEmail');
 
