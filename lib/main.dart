@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/models/session.dart';
 import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
+import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
@@ -79,6 +81,11 @@ class MyApp extends StatelessWidget {
                   ResetPasswordScreen(token: authProvider.token ?? ''),
               HomePage.id: (context) =>
                   HomePage(role: authProvider.accountType),
+              // RateSessionDialog.id: (context) {
+              //   final session =
+              //       ModalRoute.of(context)!.settings.arguments as Session;
+              //   return RateSessionDialog(session: session, sessionDate:sel,);
+              // },
             },
             onGenerateRoute: (settings) {
               if (settings.name == HomePage.id) {

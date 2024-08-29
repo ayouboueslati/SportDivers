@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:footballproject/screens/training/rateSession.dart';
+import 'package:http/http.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:footballproject/models/session.dart';
 import 'package:footballproject/models/sessionTypes.dart';
@@ -9,11 +11,13 @@ class SessionCard extends StatelessWidget {
   final TeacherProfile teacher;
   final Session session;
   final bool isLoading;
+  final DateTime sessionDate;
 
   const SessionCard({
     Key? key,
     required this.teacher,
     required this.session,
+    required this.sessionDate,
     this.isLoading = false,
   }) : super(key: key);
 
@@ -30,102 +34,119 @@ class SessionCard extends StatelessWidget {
       return _buildShimmer();
     }
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: _getCardColor(session.type),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Teacher's Name and Profile Picture
-            Row(
-              children: [
-                // Profile Picture
-                CircleAvatar(
-                  radius: 24.0,
-                  backgroundImage: teacher.profilePicture != null &&
-                          teacher.profilePicture!.isNotEmpty
-                      ? NetworkImage(teacher.profilePicture!)
-                      : const AssetImage('assets/images/captain-america.jpg')
-                          as ImageProvider,
-                  backgroundColor: Colors.grey[300],
-                ),
-                const SizedBox(width: 8.0),
-                // First and Last Name
-                Expanded(
-                  child: Text(
-                    '${teacher.firstName} ${teacher.lastName}',
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RateSessionDialog(
+              session: session,
+              sessionDate: sessionDate,
+            );
+          },
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        color: _getCardColor(session.type),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Teacher's Name and Profile Picture
+              Row(
+                children: [
+                  // Profile Picture
+                  CircleAvatar(
+                    radius: 24.0,
+                    backgroundImage: teacher.profilePicture != null &&
+                            teacher.profilePicture!.isNotEmpty
+                        ? NetworkImage(teacher.profilePicture!)
+                        : const AssetImage('assets/images/captain-america.jpg')
+                            as ImageProvider,
+                    backgroundColor: Colors.grey[300],
+                    onBackgroundImageError: (_, __) {
+                      // Handle the error, e.g., logging or providing a fallback image
+                    },
+                  ),
+
+                  const SizedBox(width: 8.0),
+                  // First and Last Name
+                  Expanded(
+                    child: Text(
+                      '${teacher.firstName} ${teacher.lastName}',
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            // Field Name
-            if (session.field != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  session.field!.designation,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                  ),
-                ),
+                ],
               ),
-            const SizedBox(height: 8.0),
-            // Session Type and Date
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Session Type
-                Row(
-                  children: [
-                    Icon(
-                      getIconForSessionType(session.type),
-                      size: 18.0,
+              const SizedBox(height: 8.0),
+              // Field Name
+              if (session.field != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    session.field!.designation,
+                    style: const TextStyle(
+                      fontSize: 16.0,
                       color: Colors.white,
                     ),
-                    const SizedBox(width: 4.0),
-                    Text(
-                      sessionTypeToString(session.type),
-                      style: const TextStyle(
-                        fontSize: 16.0,
+                  ),
+                ),
+              const SizedBox(height: 8.0),
+              // Session Type and Date
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Session Type
+                  Row(
+                    children: [
+                      Icon(
+                        getIconForSessionType(session.type),
+                        size: 18.0,
                         color: Colors.white,
                       ),
-                    ),
-                  ],
-                ),
-                // Session Time (HH:mm)
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 18.0,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 4.0),
-                    Text(
-                      formatSessionTime(session.startTime),
-                      style: const TextStyle(
-                        fontSize: 16.0,
+                      const SizedBox(width: 4.0),
+                      Text(
+                        sessionTypeToString(session.type),
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Session Time (HH:mm)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 18.0,
                         color: Colors.white,
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                      const SizedBox(width: 4.0),
+                      Text(
+                        formatSessionTime(session.startTime),
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

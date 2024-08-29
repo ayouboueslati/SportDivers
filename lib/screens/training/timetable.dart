@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
+import 'package:footballproject/models/weekday.dart';
 import 'package:footballproject/screens/training/sessionCard.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -27,14 +28,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     _fetchSessions();
   }
 
-  @override
-  void dispose() {
-    // Clean up any resources or listeners here
-    super.dispose();
-  }
-
   Future<void> _fetchSessions() async {
-    // Set loading state before starting the fetch operation
     setState(() {
       _isLoading = true;
     });
@@ -51,9 +45,10 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         print('Token is null');
       }
     } catch (e) {
-      print('Error fetching sessions: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching sessions: $e')),
+      );
     } finally {
-      // Only set loading state to false if the widget is still mounted
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -156,15 +151,19 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     );
 
     // Filter sessions based on selected date
+    final List<String> weekday = [
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY'
+    ];
     final dayAppointments = sessions.where((session) {
-      final sessionStartTime = DateTime.parse(session.startTime).toLocal();
-      final sessionDate = DateTime(
-        sessionStartTime.year,
-        sessionStartTime.month,
-        sessionStartTime.day,
-      );
-
-      return isSameDay(selectedDate, sessionDate);
+      return session.weekday.index == selectedDate.weekday - 1 &&
+          session.isWithinRange(selectedDate, session.schedule.startDate,
+              session.schedule.endDate);
     }).toList();
 
     return Column(
@@ -190,6 +189,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
                       teacher: appointment.teacher,
                       session: appointment,
                       isLoading: _isLoading,
+                      sessionDate: selectedDate,
                     );
                   },
                 ),
@@ -207,5 +207,13 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     date1 = DateTime(date1.year, date1.month, date1.day);
     date2 = DateTime(date2.year, date2.month, date2.day);
     return date1 == date2;
+  }
+
+  bool isAfter(DateTime date1, DateTime date2) {
+    return date1.isAfter(date2);
+  }
+
+  bool isBefore(DateTime date1, DateTime date2) {
+    return date1.isBefore(date2);
   }
 }

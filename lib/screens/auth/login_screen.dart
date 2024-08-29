@@ -150,20 +150,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       child: TextFormField(
                                         controller: _emailController,
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter your email';
-                                          }
-                                          bool isValid = RegExp(
-                                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                              .hasMatch(value);
-                                          if (!isValid) {
-                                            return 'Enter a valid email address';
-                                          }
-                                          return null;
-                                        },
+                                        // validator: (value) {
+                                        //   if (value == null || value.isEmpty) {
+                                        //     return 'Please enter your email';
+                                        //   }
+                                        //   bool isValid = RegExp(
+                                        //           r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                        //       .hasMatch(value);
+                                        //   if (!isValid) {
+                                        //     return 'Enter a valid email address';
+                                        //   }
+                                        //   return null;
+                                        // },
                                         decoration: const InputDecoration(
-                                          hintText: "Email",
+                                          hintText: "CIN",
                                           hintStyle:
                                               TextStyle(color: Colors.grey),
                                           border: InputBorder.none,
@@ -257,7 +257,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                         // builder: (context) => Bottomnavbar(
+                                          // builder: (context) => Bottomnavbar(
                                           builder: (context) => HomePage(
                                             role: authProvider.accountType,
                                             userData: authProvider.userData,

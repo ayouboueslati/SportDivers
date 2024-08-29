@@ -1,0 +1,4 @@
+enum RatingTargetType {
+  ADMIN,
+  Coach,
+}

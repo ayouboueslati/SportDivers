@@ -74,14 +74,14 @@ class StudentProfile {
       gradebook: json['gradebook'],
       birthCertificate: json['birthCertificate'],
       observation: json['observation'],
-      average: (json['average'] as num?)?.toDouble(),
+      average: (json['average'] as num?)?.toDouble() ?? 0.0, // Handle null
       discountType: json['discountType'] != null
           ? StudentdiscountType.values.firstWhere(
               (e) => e.toString().split('.').last == json['discountType'],
               orElse: () => StudentdiscountType.none,
             )
           : StudentdiscountType.none,
-      discount: (json['discount'] as num).toDouble(),
+      discount: (json['discount'] as num?)?.toDouble() ?? 0.0, // Handle null
       paymentMethod: json['paymentMethod'] != null
           ? StudentpaymentMethod.values.firstWhere(
               (e) => e.toString().split('.').last == json['paymentMethod'],
@@ -100,6 +100,7 @@ class StudentProfile {
           [],
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
