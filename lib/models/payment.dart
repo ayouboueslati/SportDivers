@@ -1,41 +1,38 @@
-import 'package:footballproject/models/chargetype.dart';
-import 'package:footballproject/models/group.dart';
-import 'package:footballproject/models/paymentType.dart';
-import 'package:footballproject/models/user.dart';
+import 'package:intl/intl.dart';
 
 class Payment {
-  String id;
-  DateTime date;
-  double amount;
-  String description;
-  ChargeType chargeType;
-  Group? group;
-  User user;
-  Paymenttype paymentType;
+  final String id;
+  final double amount;
+  final DateTime date;
+  final String? type;
+  final DateTime? depositDate;
+  bool paid;
+  DateTime? paidAt;
 
   Payment({
     required this.id,
-    required this.date,
     required this.amount,
-    required this.description,
-    required this.chargeType,
-    this.group,
-    required this.user,
-    required this.paymentType,
+    required this.date,
+    this.type,
+    this.depositDate,
+    required this.paid,
+    this.paidAt,
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
       id: json['id'],
-      date: DateTime.parse(json['date']),
       amount: json['amount'].toDouble(),
-      description: json['description'],
-      chargeType: ChargeType.values.firstWhere(
-          (e) => e.toString() == 'ChargeType.' + json['chargeType']),
-      group: json['group'] != null ? Group.fromJson(json['group']) : null,
-      user: User.fromJson(json['user']),
-      paymentType: Paymenttype.values.firstWhere(
-          (e) => e.toString() == 'Paymenttype.' + json['paymentType']),
+      date: DateTime.parse(json['date']),
+      type: json['type'],
+      depositDate: json['depositDate'] != null ? DateTime.parse(json['depositDate']) : null,
+      paid: json['paid'],
+      paidAt: json['paidAt'] != null ? DateTime.parse(json['paidAt']) : null,
     );
   }
+
+  String get formattedDate => DateFormat('d MMM yyyy').format(date);
+  String get formattedTime => DateFormat('HH:mm').format(date);
+  String? get formattedDepositDate => depositDate != null ? DateFormat('d MMM yyyy').format(depositDate!) : null;
+  String? get formattedPaidAt => paidAt != null ? DateFormat('d MMM yyyy à HH:mm').format(paidAt!) : null;
 }

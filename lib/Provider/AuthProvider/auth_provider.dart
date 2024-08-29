@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/Provider/UserProvider/userProvider.dart';
+import 'package:footballproject/models/user_model.dart';
+import 'package:footballproject/screens/Service/SocketService.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../constantsProvider.dart';
@@ -94,6 +98,7 @@ class AuthenticationProvider extends ChangeNotifier {
   }) async {
     _isLoading = true;
     notifyListeners();
+    late SocketService _socketService;
     try {
       final response = await http.post(
         Uri.parse('${Constants.baseUrl}/auth/login'),
@@ -118,7 +123,33 @@ class AuthenticationProvider extends ChangeNotifier {
         // print('Token: $_token');
         // print('User Data: $_userData');
         // print('Account Type: $_accountType');
+
+        //socket
+        _socketService = Provider.of<SocketService>(context, listen: false);
+        _socketService.connect(_token!);
+
         await _saveToken(_token!);
+        // Create a User object
+        User user = User(
+          id: userData?['id'] ?? '',
+          firstName: userData?['firstName'] ?? '',
+          lastName: userData?['lastName'] ?? '',
+          picture: userData?['picture'],
+          type: userData?['type'] ?? '',
+          groupId: userData?['groupId'],
+        );
+
+        print('Created User object: $user');
+
+        // Set the current user
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.setCurrentUser(user);
+
+        print('Current user set in UserProvider');
+
+        // Verify that the user was set correctly
+        final currentUser = userProvider.currentUser;
+        print('Current user after setting: $currentUser');
 
         if (rememberMe) {
           await _saveUserCredentials(email, password);

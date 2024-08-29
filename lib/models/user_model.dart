@@ -1,71 +1,45 @@
+import 'package:footballproject/models/ChatModel.dart';
+
 class User {
-  final int id;
-  final String name;
-  final String imageUrl;
-  final bool isOnline;
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String? picture;
+  final String type;
+  final String? groupId;
+  final Message? lastMessage;
 
   User({
     required this.id,
-    required this.name,
-    required this.imageUrl,
-    required this.isOnline,
+    required this.firstName,
+    required this.lastName,
+    this.picture,
+    required this.type,
+    this.groupId,
+    this.lastMessage,
   });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'] as String? ?? '',
+      firstName: json['firstName'] as String? ?? '',
+      lastName: json['lastName'] as String? ?? '',
+      picture: json['picture'] as String?,
+      type: json['type'] as String? ?? '',
+      groupId: json['groupId'] as String?,
+      lastMessage: json['lastMessage'] != null ? Message.fromJson(json['lastMessage'] as Map<String, dynamic>) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'picture': picture,
+      'type': type,
+      'groupId': groupId,
+      'lastMessage': lastMessage?.toJson(),
+    };
+  }
 }
-
-// YOU - current user
-final User currentUser = User(
-  id: 0,
-  name: 'Nick Fury',
-  imageUrl: 'assets/images/nick-fury.jpg',
-  isOnline: true,
-);
-
-// USERS
-final User ironMan = User(
-  id: 1,
-  name: 'Iron Man',
-  imageUrl: 'assets/images/ironman.jpeg',
-  isOnline: true,
-);
-final User captainAmerica = User(
-  id: 2,
-  name: 'Captain America',
-  imageUrl: 'assets/images/captain-america.jpg',
-  isOnline: true,
-);
-final User hulk = User(
-  id: 3,
-  name: 'Hulk',
-  imageUrl: 'assets/images/hulk.jpg',
-  isOnline: false,
-);
-final User scarletWitch = User(
-  id: 4,
-  name: 'Scarlet Witch',
-  imageUrl: 'assets/images/scarlet-witch.jpg',
-  isOnline: false,
-);
-final User spiderMan = User(
-  id: 5,
-  name: 'Spider Man',
-  imageUrl: 'assets/images/spiderman.jpg',
-  isOnline: true,
-);
-final User blackWindow = User(
-  id: 6,
-  name: 'Black Widow',
-  imageUrl: 'assets/images/black-widow.jpg',
-  isOnline: false,
-);
-final User thor = User(
-  id: 7,
-  name: 'Thor',
-  imageUrl: 'assets/images/thor.png',
-  isOnline: false,
-);
-final User captainMarvel = User(
-  id: 8,
-  name: 'Captain Marvel',
-  imageUrl: 'assets/images/captain-marvel.jpg',
-  isOnline: false,
-);

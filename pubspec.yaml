@@ -65,7 +65,8 @@ dependencies:
   table_calendar: ^3.1.2
   flutter_rating_bar: ^4.0.1
   fluttertoast: ^8.2.8
-
+  socket_io_client: ^2.0.3+1
+  timeline_tile: ^2.0.0
 
 
 
@@ -113,6 +114,7 @@ flutter:
     - assets/video2.mp4
     - assets/loader/loader.gif
     - assets/images/password.png
+    - assets/images/icons/default_avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

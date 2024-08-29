@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/Provider/ChatProvider/ChatRoomsProvider.dart';
+import 'package:footballproject/Provider/ChatProvider/FindMessagesProvider.dart';
+import 'package:footballproject/Provider/ChatProvider/SendMsgProvider.dart';
+import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
+import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
+import 'package:footballproject/Provider/UserProvider/userProvider.dart';
 import 'package:footballproject/models/session.dart';
+import 'package:footballproject/screens/Payment/PaymentScreen.dart';
+import 'package:footballproject/screens/Service/SocketService.dart';
 import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
+import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
@@ -42,12 +51,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => VideoProvider()),
         ChangeNotifierProvider(create: (_) => SessionProvider()),
-        ChangeNotifierProvider(create: (_) => EventProvider()),
         ChangeNotifierProxyProvider<AuthenticationProvider, TicketsProvider>(
           create: (_) => TicketsProvider(null), // Initially null
           update: (context, authProvider, previousTicketsProvider) =>
               TicketsProvider(authProvider)..fetchTickets(),
         ),
+        ChangeNotifierProvider(create: (_) => SocketService()),
+        ChangeNotifierProvider(create: (_) => EventProvider()),
+        ChangeNotifierProvider(create: (_) => usersChatProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => MessagesProvider()),
+        ChangeNotifierProvider(create: (_) => ChatRoomsProvider()),
+        ChangeNotifierProvider(create: (_) => PollProvider()),
+
         // Add other providers if needed
       ],
       child: Consumer<AuthenticationProvider>(
@@ -75,6 +92,8 @@ class MyApp extends StatelessWidget {
               TicketsScreen.id: (context) => TicketsScreen(),
               RatingCoachPage.id: (context) => RatingCoachPage(),
               DashboardScreen.id: (context) => DashboardScreen(),
+              MessagesList.id: (context) =>  MessagesList(),
+              PaymentScreen.id: (context) =>  PaymentScreen(),
               PasswordResetSuccessScreen.id: (context) =>
                   PasswordResetSuccessScreen(),
               ResetPasswordScreen.id: (context) =>

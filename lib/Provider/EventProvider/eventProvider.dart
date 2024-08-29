@@ -1,43 +1,39 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:footballproject/models/Event.dart';
+// lib/providers/event_provider.dart
+import 'package:flutter/foundation.dart';
+import 'package:footballproject/models/event.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class EventProvider with ChangeNotifier {
   List<Event> _events = [];
   bool _isLoading = false;
+  String _error = '';
 
   List<Event> get events => _events;
   bool get isLoading => _isLoading;
+  String get error => _error;
 
   Future<void> fetchEvents() async {
     _isLoading = true;
-    notifyListeners(); // Notify listeners about the loading state change
+    _error = '';
+    notifyListeners();
 
-    final url = 'https://sports.becker-brand.store/api/events';
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse('https://sports.becker-brand.store/api/events'));
+
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-
-        print(response.statusCode);
-        print('Response data: ${response.body}');
-
-        if (responseData.containsKey('data') &&
-            responseData['data'].containsKey('data')) {
-          final List<dynamic> eventList = responseData['data']['data'];
-          _events = eventList.map((data) => Event.fromJson(data)).toList();
-          notifyListeners();
+        final jsonData = json.decode(response.body);
+        if (jsonData['success'] == true) {
+          final eventsList = jsonData['data']['data'] as List;
+          _events = eventsList.map((eventJson) => Event.fromJson(eventJson)).toList();
         } else {
-          throw Exception(
-              'Expected key "data" or nested "data" not found in the response');
+          _error = 'Failed to load events';
         }
       } else {
-        throw Exception('Failed to load events');
+        _error = 'Server error';
       }
-    } catch (error) {
-      print('Error: $error');
-      throw error;
+    } catch (e) {
+      _error = 'Network error';
     } finally {
       _isLoading = false;
       notifyListeners();

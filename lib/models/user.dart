@@ -1,11 +1,10 @@
 import 'package:footballproject/models/accountType.dart';
 import 'package:footballproject/models/adminProfile.dart';
-import 'package:footballproject/models/chatRoom.dart';
-import 'package:footballproject/models/message.dart';
 import 'package:footballproject/models/staffProfile.dart';
 import 'package:footballproject/models/studentProfile.dart';
 import 'package:footballproject/models/teacherProfile.dart';
 import 'package:footballproject/models/tutorial.dart';
+import 'package:footballproject/models/ChatModel.dart';
 
 class User {
   String id;
@@ -21,8 +20,8 @@ class User {
   StudentProfile? studentProfile;
   TeacherProfile? teacherProfile;
   StaffProfile? staffProfile;
-  List<Chatroom> chatRoomsFirst;
-  List<Chatroom> chatRoomsSecond;
+  List<ChatRoom> chatRoomsFirst;
+  List<ChatRoom> chatRoomsSecond;
   List<Tutorial> tutorials;
   List<Message> sentMessages;
   List<Message> seenMessages;
@@ -99,11 +98,11 @@ class User {
           ? StaffProfile.fromJson(json['staffProfile'])
           : null,
       chatRoomsFirst: (json['chatRoomsFirst'] as List<dynamic>?)
-              ?.map((data) => Chatroom.fromJson(data))
+              ?.map((data) => ChatRoom.fromJson(data))
               .toList() ??
           [],
       chatRoomsSecond: (json['chatRoomsSecond'] as List<dynamic>?)
-              ?.map((data) => Chatroom.fromJson(data))
+              ?.map((data) => ChatRoom.fromJson(data))
               .toList() ??
           [],
       tutorials: (json['tutorials'] as List<dynamic>?)

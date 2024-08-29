@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/EventProvider/eventProvider.dart';
 import 'package:footballproject/components/AppDrawer.dart';
+import 'package:footballproject/models/event.dart';
+import 'package:footballproject/screens/Payment/PaymentScreen.dart';
 import 'package:footballproject/screens/Survey/PollsPage.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
@@ -35,13 +37,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    chatUser = User(
-      id: int.tryParse(widget.userData?['id']?.toString() ?? '0') ?? 0,
-      name: widget.userData?['name'] ?? 'John Doe',
-      imageUrl: widget.userData?['imageUrl'] ?? 'assets/images/user1.png',
-      isOnline: widget.userData?['isOnline'] ?? true,
-    );
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<EventProvider>(context, listen: false).fetchEvents();
+    });
     _widgetOptions = <Widget>[
       ProfileScreen(userData: widget.userData),
       TrainingScheduleScreen(),
@@ -57,8 +55,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final eventProvider = Provider.of<EventProvider>(context);
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -124,47 +120,50 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 250,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: Text(
-                        'Événements à venir',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[900],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: eventProvider.isLoading
-                          ? _buildShimmer()
-                          : eventProvider.events.isEmpty
-                              ? const Center(
-                                  child: Text('Aucun événement trouvé'),
-                                )
-                              : ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: eventProvider.events.length,
-                                  itemBuilder: (context, index) {
-                                    final event = eventProvider.events[index];
-                                    return _buildEventCard(
-                                      title: event.title,
-                                      startDate: event.startDate,
-                                    );
-                                  },
+              Consumer<EventProvider>(
+                builder: (context, eventProvider, child) {
+                  if (eventProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (eventProvider.error.isNotEmpty) {
+                    return Center(child: Text(eventProvider.error));
+                  } else {
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Text(
+                                'Upcoming Events',
+                                style: TextStyle(
+                                  fontSize:
+                                  constraints.maxWidth < 600 ? 18 : 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[900],
                                 ),
-                    ),
-                  ],
-                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: constraints.maxWidth < 650 ? 260 : 300,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: eventProvider.events.length,
+                                itemBuilder: (context, index) {
+                                  return _buildEventCard(
+                                      context, eventProvider.events[index]);
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               Card(
                 margin: const EdgeInsets.all(16),
                 elevation: 15,
@@ -172,28 +171,27 @@ class _HomePageState extends State<HomePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildFeatureButton(
-                      context,
-                      'Statistiques des joueurs',
-                      Icons.pie_chart_outline,
-                      DashboardScreen.id,
-                    ),
-                    _buildFeatureButton(
-                      context,
-                      'Quiz',
-                      Icons.poll_outlined,
-                      PollSurveyPage.id,
-                    ),
-                    _buildFeatureButton(
-                      context,
-                      'Fantasy Leagues',
-                      Icons.star_outline,
-                      '/fantasy',
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'More Features',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[900],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildFeatureButton(context, 'Player Stats',
+                          Icons.area_chart, CoachDashboardScreen.id),
+                      _buildFeatureButton(context, 'Standings',
+                          Icons.poll_outlined, PollSurveyPage.id),
+                      _buildFeatureButton(context, 'paiement en ligne',
+                          Icons.payment_outlined, PaymentScreen.id),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -298,68 +296,91 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildEventCard({
-    required String title,
-    required DateTime startDate,
-  }) {
-    return Container(
-      width: 250,
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+  Widget _buildEventCard(BuildContext context, Event event) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double maxWidth = constraints.maxWidth;
+        double cardWidth = maxWidth < 700 ? maxWidth * 0.8 : 250.0;
+        double imageHeight = cardWidth * 0.6;
+
+        return Container(
+          width: cardWidth,
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(10)),
+                child: Image.network(
+                  'https://sports.becker-brand.store/storage/${event.image}',
+                  height: imageHeight,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: imageHeight,
+                      color: Colors.grey[300],
+                      child: const Center(child: Text('Image not available')),
+                    );
+                  },
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${startDate.day}/${startDate.month}/${startDate.year}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      event.titre,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: maxWidth < 600 ? 14 : 16,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${_formatDate(event.start)} - ${_formatDate(event.end)}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: maxWidth < 600 ? 12 : 14,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  String _formatDate(String dateString) {
+    final date = DateTime.parse(dateString);
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   Widget _buildFeatureButton(
       BuildContext context, String title, IconData icon, String route) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
       leading: Icon(icon, color: Colors.blue[900]),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 18),
       onTap: () => Navigator.pushNamed(context, route),
     );
   }
