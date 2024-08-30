@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:footballproject/Provider/constantsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
-import 'package:footballproject/models/studentProfile.dart';
-import 'package:footballproject/models/teacherProfile.dart';
+import 'package:http/http.dart' as http;
 
 class ReportPage extends StatefulWidget {
   static const String id = 'Report_Page';
@@ -14,10 +17,10 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> {
   final _reasonController = TextEditingController();
   final _commentController = TextEditingController();
-  String _selectedTarget = 'ADMIN';
+  String? _selectedTarget;
   String? _selectedPerson;
-  List<StudentProfile> _students = [];
-  List<TeacherProfile> _teachers = [];
+  List<Map<String, dynamic>> _userList = []; // Updated type
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -28,7 +31,8 @@ class _ReportPageState extends State<ReportPage> {
 
   void _submitReport() {
     if (_reasonController.text.isNotEmpty &&
-        _commentController.text.isNotEmpty) {
+        _commentController.text.isNotEmpty &&
+        _selectedTarget != null) {
       final reason = _reasonController.text;
       final comment = _commentController.text;
 
@@ -36,13 +40,13 @@ class _ReportPageState extends State<ReportPage> {
           .submitReport(
         reason: reason,
         comment: comment,
-        target: _selectedTarget,
-        person: _selectedPerson ?? '',
+        target: _selectedTarget!,
+        person: _selectedTarget == 'ADMIN' ? '' : (_selectedPerson ?? ''),
       )
           .then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Report submitted successfully'),
+            content: Text('Rapport soumis avec succès'),
             backgroundColor: Colors.green,
           ),
         );
@@ -51,11 +55,12 @@ class _ReportPageState extends State<ReportPage> {
         setState(() {
           _selectedTarget = 'ADMIN';
           _selectedPerson = null;
+          _userList.clear();
         });
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to submit report: $error'),
+            content: Text('Échec de la soumission du rapport : $error'),
             backgroundColor: Colors.red,
           ),
         );
@@ -63,7 +68,7 @@ class _ReportPageState extends State<ReportPage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please fill in all fields before submitting.'),
+          content: Text('Veuillez remplir tous les champs avant de soumettre.'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -72,26 +77,35 @@ class _ReportPageState extends State<ReportPage> {
 
   void _onTargetChanged(String? newValue) {
     setState(() {
-      _selectedTarget = newValue!;
+      _selectedTarget = newValue;
       _selectedPerson = null; // Clear selected person when target changes
+      _userList.clear(); // Clear user list when target changes
     });
-    _fetchPersons();
+    _fetchUsers();
   }
 
-  Future<void> _fetchPersons() async {
+  Future<void> _fetchUsers() async {
     final ticketsProvider =
         Provider.of<TicketsProvider>(context, listen: false);
-    try {
-      if (_selectedTarget == 'STUDENT') {
-        _students = await ticketsProvider.fetchStudents();
-        print('Fetched Students Data: $_students');
-      } else if (_selectedTarget == 'TEACHER') {
-        _teachers = await ticketsProvider.fetchTeachers();
-        print('Fetched Teachers Data: $_teachers');
+    if (_selectedTarget == 'STUDENT' || _selectedTarget == 'TEACHER') {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        final userType = _selectedTarget == 'STUDENT' ? 'Student' : 'Coach';
+        await ticketsProvider.fetchUserList(userType);
+        setState(() {
+          _userList = ticketsProvider.userList;
+          isLoading = false;
+        });
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Erreur lors de la récupération des utilisateurs : $e'),
+        ));
       }
-      setState(() {}); // Update the UI
-    } catch (e) {
-      debugPrint('Error fetching persons: $e');
     }
   }
 
@@ -115,7 +129,7 @@ class _ReportPageState extends State<ReportPage> {
           ),
           backgroundColor: Colors.blue[900],
           title: const Text(
-            'Submit a Report',
+            'Soumettre un Rapport',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -130,7 +144,7 @@ class _ReportPageState extends State<ReportPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Report Details',
+                  'Détails du Rapport',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.blue[900],
@@ -139,14 +153,14 @@ class _ReportPageState extends State<ReportPage> {
                 SizedBox(height: 24.0),
                 _buildTextField(
                   controller: _reasonController,
-                  label: 'Reason',
-                  hint: 'Enter the reason for your report',
+                  label: 'Raison',
+                  hint: 'Entrez la raison de votre rapport',
                 ),
                 SizedBox(height: 16.0),
                 _buildTextField(
                   controller: _commentController,
-                  label: 'Comment',
-                  hint: 'Provide additional details',
+                  label: 'Commentaire',
+                  hint: 'Fournissez des détails supplémentaires',
                   maxLines: 5,
                 ),
                 SizedBox(height: 16.0),
@@ -195,7 +209,7 @@ class _ReportPageState extends State<ReportPage> {
     return DropdownButtonFormField<String>(
       value: _selectedTarget,
       decoration: InputDecoration(
-        labelText: 'Target',
+        labelText: 'Cible',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.blue[900]!),
@@ -219,25 +233,18 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Widget _buildPersonDropdown() {
-    final List<String> persons = _selectedTarget == 'STUDENT'
-        ? _students.map((e) => e.firstName).toList()
-        : _teachers.map((e) => e.firstName).toList();
-
-    // Ensure that _selectedPerson is one of the values in the list
-    if (_selectedPerson != null && !persons.contains(_selectedPerson)) {
-      _selectedPerson = null; // Reset if it's not in the list
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
     }
 
-    if (persons.isEmpty) {
-      return Text('No persons available for the selected target.');
+    if (_userList.isEmpty) {
+      return Text('Aucune personne disponible pour la cible sélectionnée.');
     }
-    print('Persons List: $persons');
-    print('Selected Person: $_selectedPerson');
 
     return DropdownButtonFormField<String>(
       value: _selectedPerson,
       decoration: InputDecoration(
-        labelText: 'Person',
+        labelText: 'Personne',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.blue[900]!),
@@ -249,35 +256,46 @@ class _ReportPageState extends State<ReportPage> {
         filled: true,
         fillColor: Colors.grey[100],
       ),
-      onChanged: (newValue) {
+      onChanged: (String? newValue) {
         setState(() {
           _selectedPerson = newValue;
         });
       },
-      items: persons.isNotEmpty
-          ? persons.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList()
-          : [], // Return an empty list if no persons
+      items: _userList.map<DropdownMenuItem<String>>((user) {
+        return DropdownMenuItem<String>(
+          value: user['name'],
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(user['profilePic'] ?? ''),
+                radius: 16,
+              ),
+              SizedBox(width: 8),
+              Text(user['name'] ?? 'Inconnu'),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildSubmitButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _submitReport,
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
-          backgroundColor: Colors.blue[900],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    return ElevatedButton(
+      onPressed: _submitReport,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue[900],
+        padding: EdgeInsets.symmetric(vertical: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Text('Submit Report'),
+      ),
+      child: Text(
+        'Soumettre le Rapport',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
     );
   }

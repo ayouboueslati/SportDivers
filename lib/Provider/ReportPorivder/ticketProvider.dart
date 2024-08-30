@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/models/studentProfile.dart';
-import 'package:footballproject/models/teacherProfile.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import '../constantsProvider.dart';
 
 class TicketsProvider extends ChangeNotifier {
   List<dynamic> _tickets = [];
+  List<Map<String, dynamic>> _userList = [];
+
   bool _isLoading = false;
   String _errorMessage = '';
+  String? _selectedTarget;
+  String? _selectedPerson;
 
   List<dynamic> get tickets => _tickets;
+  List<Map<String, dynamic>> get userList => _userList;
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
+  String? get selectedTarget => _selectedTarget;
+  String? get selectedPerson => _selectedPerson;
 
   AuthenticationProvider? _authProvider;
 
@@ -25,91 +29,131 @@ class TicketsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitReport({
+  Future<Map<String, dynamic>?> submitReport({
     required String reason,
     required String comment,
     required String target,
-    required String person,
+    String? person, // 'person' is optional
   }) async {
     final url = Uri.parse('${Constants.baseUrl}/tickets');
     final token = _authProvider?.token;
 
+    if (token == null) {
+      _errorMessage = 'User not authenticated';
+      notifyListeners();
+      return null;
+    }
+
+    _isLoading = true;
+    _errorMessage = ''; // Clear any previous error message
+    notifyListeners();
+
     try {
+      // Construct request body
+      final Map<String, dynamic> requestBody = {
+        'reason': reason,
+        'comment': comment,
+        'target': target,
+        // Include 'person' only if the target is not 'ADMIN'
+        if (target != 'ADMIN' && person != null) 'person': person,
+      };
+
       final response = await http.post(
         url,
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({
-          'reason': reason,
-          'comment': comment,
-          'target': target,
-          'person': person,
-        }),
+        body: json.encode(requestBody),
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to submit report: ${response.statusCode}');
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseBody = json.decode(response.body);
+        print(responseBody);
+        print('***********');
+        _errorMessage = 'Report submitted successfully'; // Success message
+        return responseBody; // Return response data
+      } else {
+        final responseBody = json.decode(response.body);
+        print(responseBody);
+        _errorMessage = responseBody['message'] ??
+            'Failed to submit report'; // Error message
+        return null;
       }
     } catch (error) {
-      throw error;
+      _errorMessage =
+          'Error occurred while submitting report: $error'; // Exception message
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
-  Future<List<StudentProfile>> fetchStudents() async {
-    final url = Uri.parse('${Constants.baseUrl}/users/students');
+  Future<void> fetchUserList(String userType) async {
+    _isLoading = true;
+    _errorMessage = '';
+    notifyListeners();
+
+    String apiUrl;
+
+    if (userType == 'Student') {
+      apiUrl = '${Constants.baseUrl}/users/students';
+    } else if (userType == 'Coach') {
+      apiUrl = '${Constants.baseUrl}/users/teachers';
+    } else {
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
     final token = _authProvider?.token;
+
+    if (token == null) {
+      _errorMessage = 'User not authenticated';
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
 
     try {
       final response = await http.get(
-        url,
+        Uri.parse(apiUrl),
         headers: {
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
         },
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        print('Fetched Students Data: $data'); // Updated log message
-
-        return data.map((json) => StudentProfile.fromJson(json)).toList();
+        List<dynamic> data = json.decode(response.body);
+        _userList = data.map((user) {
+          return {
+            'name':
+                '${user['profile']['firstName']} ${user['profile']['lastName']}',
+            'profilePic': user['profile']['profilePic'] ?? '',
+          };
+        }).toList();
       } else {
-        throw Exception('Failed to fetch students: ${response.statusCode}');
+        final responseBody = json.decode(response.body);
+        _errorMessage = responseBody['message'] ?? 'Failed to load users';
       }
-    } catch (error) {
-      debugPrint('Error fetching students: $error');
-      throw error;
-    }
-  }
-
-  Future<List<TeacherProfile>> fetchTeachers() async {
-    final url = Uri.parse('${Constants.baseUrl}/users/teachers');
-    final token = _authProvider?.token;
-
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        print('Fetched Teachers Data: $data'); // Updated log message
-        return data.map((json) => TeacherProfile.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to fetch teachers: ${response.statusCode}');
-      }
-    } catch (error) {
-      debugPrint('Error fetching teachers: $error');
-      throw error;
+    } catch (e) {
+      _errorMessage = 'Error occurred while fetching users: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   Future<void> fetchTickets() async {
-    if (_authProvider == null || _authProvider!.token == null) {
+    final url = Uri.parse('${Constants.baseUrl}/tickets');
+    final token = _authProvider?.token;
+
+    if (token == null) {
       _errorMessage = 'User not authenticated';
       notifyListeners();
       return;
@@ -121,24 +165,24 @@ class TicketsProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('${Constants.baseUrl}/tickets'),
+        url,
         headers: {
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${_authProvider!.token}',
         },
       );
 
       if (response.statusCode == 200) {
-        _tickets = jsonDecode(response.body);
+        _tickets = json.decode(response.body);
       } else {
-        final responseBody = jsonDecode(response.body);
+        final responseBody = json.decode(response.body);
         _errorMessage = responseBody['message'] ?? 'Failed to fetch tickets';
       }
     } catch (e) {
       _errorMessage = 'Error occurred while fetching tickets: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 }

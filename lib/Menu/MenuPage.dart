@@ -10,7 +10,6 @@ import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
-import 'package:footballproject/screens/report/report_sheet.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -136,10 +135,10 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
                               child: Text(
-                                'Upcoming Events',
+                                'Événements à venir',
                                 style: TextStyle(
                                   fontSize:
-                                  constraints.maxWidth < 600 ? 18 : 20,
+                                      constraints.maxWidth < 600 ? 18 : 20,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blue[900],
                                 ),
@@ -176,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       Text(
-                        'More Features',
+                        'Autres Fonctionnalités',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -184,9 +183,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildFeatureButton(context, 'Player Stats',
+                      _buildFeatureButton(context, 'Statistiques des Joueurs',
                           Icons.area_chart, CoachDashboardScreen.id),
-                      _buildFeatureButton(context, 'Standings',
+                      _buildFeatureButton(context, 'Classements',
                           Icons.poll_outlined, PollSurveyPage.id),
                       _buildFeatureButton(context, 'paiement en ligne',
                           Icons.payment_outlined, PaymentScreen.id),
@@ -323,7 +322,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               ClipRRect(
                 borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(10)),
+                    const BorderRadius.vertical(top: Radius.circular(10)),
                 child: Image.network(
                   'https://sports.becker-brand.store/storage/${event.image}',
                   height: imageHeight,

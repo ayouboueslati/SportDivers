@@ -7,12 +7,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class RateSessionDialog extends StatefulWidget {
   static String id = 'rate_screen';
-  final Session session; // Changed from sessionId to Session
+  final Session session;
   final DateTime sessionDate;
 
-  RateSessionDialog(
-      {required this.session,
-      required this.sessionDate}); // Updated constructor
+  RateSessionDialog({required this.session, required this.sessionDate});
 
   @override
   _RateSessionDialogState createState() => _RateSessionDialogState();
@@ -41,7 +39,7 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Rate Session',
+                'Évaluer la Séance',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -50,7 +48,7 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
               ),
               SizedBox(height: 16),
               Text(
-                'Rate this session:',
+                'Évaluez cette séance :',
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black54,
@@ -82,9 +80,9 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
                     borderRadius: BorderRadius.circular(12.0),
                     borderSide: BorderSide(color: Colors.orange, width: 2.0),
                   ),
-                  labelText: 'Comment',
+                  labelText: 'Commentaire',
                   labelStyle: TextStyle(color: Colors.orange),
-                  hintText: 'Share your thoughts...',
+                  hintText: 'Partagez vos impressions...',
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
                 maxLines: 3,
@@ -106,7 +104,7 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
                           ),
                           onPressed: () => _submitRating(context),
                           child: Text(
-                            'Submit',
+                            'Soumettre',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -119,7 +117,7 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Cancel',
+                      'Annuler',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
@@ -155,7 +153,7 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
       );
 
       Fluttertoast.showToast(
-        msg: "Rating submitted successfully!",
+        msg: "Évaluation soumise avec succès !",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.orange,
@@ -168,10 +166,10 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
       //   'comment': _commentController.text,
       // });
     } catch (e) {
-      print('Failed to submit rating. Error: $e');
+      print('Échec de la soumission de l\'évaluation. Erreur : $e');
 
       Fluttertoast.showToast(
-        msg: "Failed to submit rating. Please try again.",
+        msg: "Échec de la soumission de l'évaluation. Veuillez réessayer.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,

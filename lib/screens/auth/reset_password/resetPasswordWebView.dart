@@ -28,7 +28,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AuthenticationProvider>(context, listen: false).resetMessage();
+      Provider.of<AuthenticationProvider>(context, listen: false)
+          .resetMessage();
     });
   }
 
@@ -48,7 +49,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         ),
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'changer le mot de passe',
+          'Changer le mot de passe',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -79,7 +80,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
                 const SizedBox(height: 30),
                 Text(
-                  'Reset Password',
+                  'Réinitialiser le mot de passe',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -90,16 +91,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const SizedBox(height: 30),
                 _buildPasswordTextField(
                   _oldPasswordController,
-                  'Old Password',
+                  'Ancien mot de passe',
                   _isOldPasswordVisible,
-                      (value) => setState(() => _isOldPasswordVisible = value),
+                  (value) => setState(() => _isOldPasswordVisible = value),
                 ),
                 const SizedBox(height: 20),
                 _buildPasswordTextField(
                   _newPasswordController,
-                  'New Password',
+                  'Nouveau mot de passe',
                   _isNewPasswordVisible,
-                      (value) => setState(() => _isNewPasswordVisible = value),
+                  (value) => setState(() => _isNewPasswordVisible = value),
                 ),
                 if (_passwordErrorMessage.isNotEmpty)
                   Padding(
@@ -112,9 +113,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const SizedBox(height: 20),
                 _buildPasswordTextField(
                   _confirmPasswordController,
-                  'Confirm Password',
+                  'Confirmer le mot de passe',
                   _isConfirmPasswordVisible,
-                      (value) => setState(() => _isConfirmPasswordVisible = value),
+                  (value) => setState(() => _isConfirmPasswordVisible = value),
                 ),
                 if (authProvider.resMessage.isNotEmpty)
                   Padding(
@@ -126,7 +127,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                 const SizedBox(height: 40),
                 ElevatedButton(
-                  onPressed: authProvider.isLoading ? null : _handlePasswordReset,
+                  onPressed:
+                      authProvider.isLoading ? null : _handlePasswordReset,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                     backgroundColor: Colors.blue[900],
@@ -138,13 +140,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: authProvider.isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'UPDATE PASSWORD',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                          'METTRE À JOUR LE MOT DE PASSE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -155,11 +157,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Widget _buildPasswordTextField(
-      TextEditingController controller,
-      String label,
-      bool isPasswordVisible,
-      Function(bool) onVisibilityChanged,
-      ) {
+    TextEditingController controller,
+    String label,
+    bool isPasswordVisible,
+    Function(bool) onVisibilityChanged,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -189,7 +191,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           ),
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           suffixIcon: IconButton(
             icon: Icon(
               isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -206,19 +209,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void _handlePasswordReset() async {
     if (_validatePassword(_newPasswordController.text)) {
       if (_newPasswordController.text == _confirmPasswordController.text) {
-        final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+        final authProvider =
+            Provider.of<AuthenticationProvider>(context, listen: false);
         await authProvider.resetPassword(
           oldPassword: _oldPasswordController.text,
           newPassword: _newPasswordController.text,
           context: context,
         );
         if (!authProvider.isAuthenticated) {
-          Navigator.of(context).pushReplacementNamed(PasswordResetSuccessScreen.id);
+          Navigator.of(context)
+              .pushReplacementNamed(PasswordResetSuccessScreen.id);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Passwords do not match'),
+            content: Text('Les mots de passe ne correspondent pas'),
             backgroundColor: Colors.red[700],
           ),
         );
@@ -226,7 +231,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     } else {
       setState(() {
         _passwordErrorMessage =
-        'Password must be at least 6 characters long, include one uppercase letter and one number.';
+            'Le mot de passe doit comporter au moins 6 caractères, inclure une lettre majuscule et un chiffre.';
       });
     }
   }

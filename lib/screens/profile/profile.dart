@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.gallery);
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'Profil',
+          'Profile',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -68,26 +68,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: userData == null
           ? Center(
-        child: Text('No data available',
-            style: TextStyle(fontSize: 18, color: Colors.black87)),
-      )
+              child: Text('Aucune donnée disponible',
+                  style: TextStyle(fontSize: 18, color: Colors.black87)),
+            )
           : SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _buildProfileImage(userData),
-              const SizedBox(height: 24),
-              _buildInfoCard(userData),
-              const SizedBox(height: 24),
-              _buildSettingsCard(userData),
-              const SizedBox(height: 36),
-              _buildLogoutButton(context),
-            ],
-          ),
-        ),
-      ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildProfileImage(userData),
+                    const SizedBox(height: 24),
+                    _buildInfoCard(userData),
+                    const SizedBox(height: 24),
+                    _buildSettingsCard(userData),
+                    const SizedBox(height: 36),
+                    _buildLogoutButton(context),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -146,15 +146,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Personal Information',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue[900])),
+            Text('informations personnelles',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[900])),
             Divider(thickness: 2, color: Colors.blue[200]),
-            _buildInfoRow('First Name', userData['firstName']),
-            _buildInfoRow('Last Name', userData['lastName']),
-            _buildInfoRow('Phone', userData['phone']?.toString()),
-            _buildInfoRow('Address', userData['address']),
-            _buildInfoRow('Gender', userData['gender']),
-            _buildInfoRow('Birthdate', userData['birthdate']?.substring(0, 10)),
+            _buildInfoRow('Prenom', userData['firstName']),
+            _buildInfoRow('Nom', userData['lastName']),
+            _buildInfoRow('Numéro de téléphone', userData['phone']?.toString()),
+            _buildInfoRow('Addresse', userData['address']),
+            _buildInfoRow('Genre', userData['gender']),
+            _buildInfoRow(
+                'date de naissance', userData['birthdate']?.substring(0, 10)),
           ],
         ),
       ),
@@ -172,13 +176,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Account Settings',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue[900])),
+            Text('Paramètres du compte',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[900])),
             Divider(thickness: 2, color: Colors.blue[200]),
-            _buildInfoRow('Group', userData['group']?['designation']),
+            _buildInfoRow('Groupe', userData['group']?['designation']),
             const SizedBox(height: 16),
             _buildDropdown(
-              label: 'Payment Method',
+              label: 'Mode de paiement',
               value: _selectedPaymentMethod,
               items: ['PER_MONTH', 'PER_YEAR'],
               onChanged: (newValue) {
@@ -189,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 16),
             _buildDropdown(
-              label: 'Discount Type',
+              label: 'Type de remise',
               value: _selectedDiscountType,
               items: ['NONE', 'PERCENTAGE', 'AMOUNT'],
               onChanged: (newValue) {
@@ -199,11 +206,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             const SizedBox(height: 16),
-            _buildInfoRow('Discount', userData['discount']?.toString()),
-            _buildInfoRow('Has Access', userData['hasAccess'] ? 'Yes' : 'No'),
-            _buildInfoRow('Is Active', userData['isActive'] ? 'Yes' : 'No'),
-            _buildInfoRow('Inscription Date', userData['inscriptionDate']?.substring(0, 10)),
-            _buildInfoRow('Created At', userData['createdAt']?.substring(0, 10)),
+            _buildInfoRow('Réduction', userData['discount']?.toString()),
+            _buildInfoRow('A Accès', userData['hasAccess'] ? 'Oui' : 'Non'),
+            _buildInfoRow('Is Active', userData['isActive'] ? 'Oui' : 'Non'),
+            _buildInfoRow('Date d inscription',
+                userData['inscriptionDate']?.substring(0, 10)),
+            _buildInfoRow('Créé le', userData['createdAt']?.substring(0, 10)),
           ],
         ),
       ),
@@ -300,7 +308,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _logout(BuildContext context) async {
     final authProvider =
-    Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }

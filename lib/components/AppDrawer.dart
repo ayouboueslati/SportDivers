@@ -60,18 +60,20 @@ class AppDrawer extends StatelessWidget {
                   letterSpacing: 1.2,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
               Row(
                 children: [
                   CircleAvatar(
                     radius: screenHeight * 0.045,
-                    backgroundImage: user != null && user['profilePicture'] != null
-                        ? NetworkImage(user['profilePicture'])
-                        : null,
+                    backgroundImage:
+                        user != null && user['profilePicture'] != null
+                            ? NetworkImage(user['profilePicture'])
+                            : null,
                     backgroundColor: Colors.white,
                     child: user != null && user['profilePicture'] != null
                         ? null
-                        : Icon(Icons.person, size: screenHeight * 0.05, color: Colors.blue[900]),
+                        : Icon(Icons.person,
+                            size: screenHeight * 0.05, color: Colors.blue[900]),
                   ),
                   SizedBox(width: screenWidth * 0.04),
                   Expanded(
@@ -113,25 +115,37 @@ class AppDrawer extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         _buildDrawerItem(context, 'Home', Icons.home, HomePage.id),
-        _buildDrawerItem(context, 'Profile', Icons.account_box_rounded, ProfileScreen.id),
-        _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined, TrainingScheduleScreen.id),
-        _buildDrawerItem(context, 'Mes tickets', Icons.support_agent, TicketsScreen.id),
-        _buildDrawerItem(context, 'Messages', Icons.mark_unread_chat_alt_outlined, FriendScreen.id),
-        _buildDrawerItem(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
-        _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined, ReportPage.id),
-        _buildDrawerItem(context, 'Changer mot de passe', Icons.password, ResetPasswordScreen.id),
+        _buildDrawerItem(
+            context, 'Profile', Icons.account_box_rounded, ProfileScreen.id),
+        _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined,
+            TrainingScheduleScreen.id),
+        _buildDrawerItem(
+            context, 'Mes tickets', Icons.support_agent, TicketsScreen.id),
+        _buildDrawerItem(context, 'Messages',
+            Icons.mark_unread_chat_alt_outlined, FriendScreen.id),
+        _buildDrawerItem(
+            context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
+        _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined,
+            ReportPage.id),
+        _buildDrawerItem(context, 'Changer mot de passe', Icons.password,
+            ResetPasswordScreen.id),
         Divider(),
         _buildDrawerItem(context, 'Statistiques', Icons.poll, '/player-stats'),
-        _buildDrawerItem(context, 'Classement', Icons.leaderboard, '/standings'),
-        _buildDrawerItem(context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
+        _buildDrawerItem(
+            context, 'Classement', Icons.leaderboard, '/standings'),
+        _buildDrawerItem(
+            context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
         Divider(),
         _buildDrawerItem(context, 'Paramètres', Icons.settings, '/settings'),
-        _buildDrawerItem(context, 'Déconnexion', Icons.exit_to_app, '/logout', isLogout: true),
+        _buildDrawerItem(context, 'Déconnexion', Icons.exit_to_app, '/logout',
+            isLogout: true),
       ],
     );
   }
 
-  Widget _buildDrawerItem(BuildContext context, String title, IconData icon, String route, {bool isLogout = false}) {
+  Widget _buildDrawerItem(
+      BuildContext context, String title, IconData icon, String route,
+      {bool isLogout = false}) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ListTile(
@@ -153,7 +167,9 @@ class AppDrawer extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => ProfileScreen(
-                userData: Provider.of<AuthenticationProvider>(context, listen: false).userData,
+                userData:
+                    Provider.of<AuthenticationProvider>(context, listen: false)
+                        .userData,
               ),
             ),
           );
@@ -165,7 +181,8 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _logout(BuildContext context) async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }

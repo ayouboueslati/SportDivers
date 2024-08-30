@@ -1,8 +1,6 @@
-import 'dart:math';
 import 'package:footballproject/models/attendances.dart';
 import 'package:footballproject/models/rating.dart';
 import 'package:footballproject/models/sessionTypes.dart';
-import 'package:footballproject/models/teacherHourCost.dart';
 import 'package:footballproject/models/teacherPayment.dart';
 import 'package:footballproject/models/teacherProfile.dart';
 import 'package:footballproject/models/field.dart';

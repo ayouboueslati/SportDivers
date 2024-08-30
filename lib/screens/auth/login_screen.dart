@@ -30,7 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loadSavedCredentials() async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     final credentials = await authProvider.loadUserCredentials();
     if (credentials['email'] != null && credentials['password'] != null) {
       _emailController.text = credentials['email']!;
@@ -66,7 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+                      minHeight: MediaQuery.of(context).size.height -
+                          MediaQuery.of(context).padding.top,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -81,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 30),
                           const Text(
-                            'Welcome back!',
+                            'Bienvenue !',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 24,
@@ -91,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Login to your account',
+                            'Connectez-vous à votre compte',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
@@ -107,7 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   controller: _emailController,
                                   decoration: InputDecoration(
                                     hintText: 'CIN',
-                                    prefixIcon: Icon(Icons.person_outline, color: Colors.blue[900]),
+                                    prefixIcon: Icon(Icons.person_outline,
+                                        color: Colors.blue[900]),
                                     filled: true,
                                     fillColor: Colors.grey[100],
                                     border: OutlineInputBorder(
@@ -121,14 +124,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                   controller: _passwordController,
                                   obscureText: _obscureText,
                                   decoration: InputDecoration(
-                                    hintText: 'Password',
-                                    prefixIcon: Icon(Icons.lock_outline, color: Colors.blue[900]),
+                                    hintText: 'Mot de passe',
+                                    prefixIcon: Icon(Icons.lock_outline,
+                                        color: Colors.blue[900]),
                                     suffixIcon: IconButton(
                                       icon: Icon(
-                                        _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                        _obscureText
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
                                         color: Colors.blue[900],
                                       ),
-                                      onPressed: () => setState(() => _obscureText = !_obscureText),
+                                      onPressed: () => setState(
+                                          () => _obscureText = !_obscureText),
                                     ),
                                     filled: true,
                                     fillColor: Colors.grey[100],
@@ -146,14 +153,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Checkbox(
                                 value: _rememberMe,
-                                onChanged: (value) => setState(() => _rememberMe = value!),
+                                onChanged: (value) =>
+                                    setState(() => _rememberMe = value!),
                                 activeColor: Colors.blue[900],
                               ),
-                              const Text("Remember Me"),
+                              const Text("Se souvenir de moi"),
                               const Spacer(),
                               TextButton(
-                                onPressed: () => Navigator.pushNamed(context, ForgotPasswordScreen.id),
-                                child: Text("Forgot Password?", style: TextStyle(color: Colors.blue[900])),
+                                onPressed: () => Navigator.pushNamed(
+                                    context, ForgotPasswordScreen.id),
+                                child: Text("Mot de passe oublié ?",
+                                    style: TextStyle(color: Colors.blue[900])),
                               ),
                             ],
                           ),
@@ -179,19 +189,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(authProvider.resMessage)),
+                                    SnackBar(
+                                        content: Text(authProvider.resMessage)),
                                   );
                                 }
                               }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue[900],
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
-                            child: const Text("LOGIN", style: TextStyle(fontSize: 18, color: Colors.white)),
+                            child: const Text("CONNEXION",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
                           ),
-                          const SizedBox(height: 24), // Added extra padding at the bottom
+                          const SizedBox(
+                              height: 24), // Added extra padding at the bottom
                         ],
                       ),
                     ),

@@ -46,7 +46,8 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching sessions: $e')),
+        SnackBar(
+            content: Text('Erreur lors de la récupération des sessions : $e')),
       );
     } finally {
       if (mounted) {
@@ -74,7 +75,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         ),
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'Training Schedule',
+          'Horaire d\'Entraînement',
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 26),
         ),
@@ -141,7 +142,8 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     }
 
     if (_selectedDay == null) {
-      return const Center(child: Text('Select a day to view appointments'));
+      return const Center(
+          child: Text('Sélectionnez un jour pour voir les rendez-vous'));
     }
 
     final selectedDate = DateTime(
@@ -152,13 +154,13 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
 
     // Filter sessions based on selected date
     final List<String> weekday = [
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY',
-      'SUNDAY'
+      'LUNDI',
+      'MARDI',
+      'MERCREDI',
+      'JEUDI',
+      'VENDREDI',
+      'SAMEDI',
+      'DIMANCHE'
     ];
     final dayAppointments = sessions.where((session) {
       return session.weekday.index == selectedDate.weekday - 1 &&
@@ -171,7 +173,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Appointments for ${_formatDate(_selectedDay!)}',
+            'Rendez-vous pour ${_formatDate(_selectedDay!)}',
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -180,7 +182,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         ),
         Expanded(
           child: dayAppointments.isEmpty
-              ? const Center(child: Text('No appointments for this day'))
+              ? const Center(child: Text('Aucun rendez-vous pour ce jour'))
               : ListView.builder(
                   itemCount: dayAppointments.length,
                   itemBuilder: (context, index) {

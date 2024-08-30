@@ -36,7 +36,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to send password reset link: $e'),
+            content: Text('Échec de l\'envoi du lien de réinitialisation : $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -48,7 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Forgot Password'),
+        title: Text('Mot de passe oublié'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -68,7 +68,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    'Reset Password',
+                    'Réinitialiser le mot de passe',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -76,7 +76,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'Enter your email address below and we will send you instructions on how to reset your password.',
+                    'Entrez votre adresse e-mail ci-dessous et nous vous enverrons des instructions sur la façon de réinitialiser votre mot de passe.',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -86,19 +86,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'E-mail',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return 'Veuillez entrer votre e-mail';
                       }
                       bool isValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                           .hasMatch(value);
                       if (!isValid) {
-                        return 'Enter a valid email address';
+                        return 'Entrez une adresse e-mail valide';
                       }
                       return null;
                     },
@@ -115,7 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                       child: Text(
-                        'Send Reset Link',
+                        'Envoyer le lien de réinitialisation',
                         style: TextStyle(
                           fontSize: 16,
                         ),

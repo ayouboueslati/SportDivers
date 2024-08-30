@@ -22,8 +22,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
 
   String formatDate(String dateTimeString) {
     final DateTime dateTime = DateTime.parse(dateTimeString);
-    final DateFormat formatter =
-        DateFormat('dd MMMM'); // Formats to "24 August"
+    final DateFormat formatter = DateFormat('dd MMMM'); // Formats to "24 août"
     return formatter.format(dateTime);
   }
 
@@ -50,7 +49,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
         ),
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'My Tickets',
+          'Mes tickets',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -63,7 +62,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
           : ticketsProvider.errorMessage.isNotEmpty
               ? Center(child: Text(ticketsProvider.errorMessage))
               : ticketsProvider.tickets.isEmpty
-                  ? Center(child: Text('No tickets found'))
+                  ? Center(child: Text('Aucun billet trouvé'))
                   : ListView.builder(
                       itemCount: ticketsProvider.tickets.length,
                       itemBuilder: (context, index) {
@@ -127,7 +126,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            ticket['reason'] ?? 'No Reason',
+                                            ticket['reason'] ?? 'Aucune raison',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16,
@@ -135,12 +134,12 @@ class _TicketsScreenState extends State<TicketsScreen> {
                                           ),
                                           SizedBox(height: 8),
                                           Text(
-                                            'Comment: ${ticket['comment'] ?? 'No Comment'}',
+                                            'Commentaire : ${ticket['comment'] ?? 'Aucun commentaire'}',
                                             style: TextStyle(fontSize: 14),
                                           ),
                                           SizedBox(height: 8),
                                           Text(
-                                            'Created By: ${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}',
+                                            'Créé par : ${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}',
                                             style: TextStyle(fontSize: 14),
                                           ),
                                         ],
@@ -149,7 +148,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
                                     IconButton(
                                       icon: Icon(Icons.calendar_today_outlined),
                                       onPressed: () {
-                                        // Add your functionality here for adding to calendar
+                                        // Ajoutez votre fonctionnalité ici pour ajouter au calendrier
                                       },
                                     ),
                                   ],
