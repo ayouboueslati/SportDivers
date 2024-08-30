@@ -142,18 +142,36 @@ class PaymentItem extends StatelessWidget {
                 ),
               )
             else
-              ElevatedButton(
-                onPressed: onPay,
-                child: Text('Payer'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[900],
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              // ElevatedButton(
+              //   onPressed: onPay,
+              //   child: Text('À payer'),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.blue[900],
+              //     foregroundColor: Colors.white,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              //   ),
+              // ),
+              Container(
+                width: 90,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.blue[900],
+                  borderRadius: BorderRadius.circular(14),
                 ),
-              ),
+                padding:const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: const Center(
+                  child: Text(
+                    'À payer',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              )
           ],
         ),
       ),

@@ -75,6 +75,7 @@ class _VideoAppState extends State<VideoApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Video Demo',
       home: Scaffold(
         appBar: AppBar(

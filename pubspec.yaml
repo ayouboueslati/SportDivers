@@ -115,6 +115,7 @@ flutter:
     - assets/loader/loader.gif
     - assets/images/password.png
     - assets/images/icons/default_avatar.png
+    - assets/images/ResetPassword.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -44,40 +44,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userData = widget.userData;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Profile', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue[900],
-        elevation: 0,
+        toolbarHeight: 60,
+        shadowColor: Colors.grey.withOpacity(0.3),
+        elevation: 5,
+        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        backgroundColor: Colors.blue[900],
+        title: const Text(
+          'Profil',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+        ),
       ),
-      body: Container(
-        child: userData == null
-            ? Center(
-                child: Text('No data available',
-                    style: TextStyle(fontSize: 18, color: Colors.white)),
-              )
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _buildProfileImage(userData),
-                      const SizedBox(height: 20),
-                      _buildInfoCard(userData),
-                      const SizedBox(height: 20),
-                      _buildSettingsCard(userData),
-                      const SizedBox(height: 30),
-                      _buildLogoutButton(context),
-                    ],
-                  ),
-                ),
-              ),
+      body: userData == null
+          ? Center(
+        child: Text('No data available',
+            style: TextStyle(fontSize: 18, color: Colors.black87)),
+      )
+          : SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildProfileImage(userData),
+              const SizedBox(height: 24),
+              _buildInfoCard(userData),
+              const SizedBox(height: 24),
+              _buildSettingsCard(userData),
+              const SizedBox(height: 36),
+              _buildLogoutButton(context),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -91,12 +100,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 4),
+                border: Border.all(color: Colors.blue[900]!, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
                     offset: Offset(0, 3),
                   ),
                 ],
@@ -107,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? FileImage(_profileImage!)
                     : NetworkImage(userData['profilePicture']) as ImageProvider,
                 child: _profileImage == null
-                    ? Icon(Icons.camera_alt, size: 40, color: Colors.white)
+                    ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
                     : null,
               ),
             ),
@@ -131,15 +140,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      elevation: 8,
+      elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Personal Information',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Divider(thickness: 2),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue[900])),
+            Divider(thickness: 2, color: Colors.blue[200]),
             _buildInfoRow('First Name', userData['firstName']),
             _buildInfoRow('Last Name', userData['lastName']),
             _buildInfoRow('Phone', userData['phone']?.toString()),
@@ -157,17 +166,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      elevation: 8,
+      elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Account Settings',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Divider(thickness: 2),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue[900])),
+            Divider(thickness: 2, color: Colors.blue[200]),
             _buildInfoRow('Group', userData['group']?['designation']),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             _buildDropdown(
               label: 'Payment Method',
               value: _selectedPaymentMethod,
@@ -178,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
               },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             _buildDropdown(
               label: 'Discount Type',
               value: _selectedDiscountType,
@@ -189,14 +198,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
               },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             _buildInfoRow('Discount', userData['discount']?.toString()),
             _buildInfoRow('Has Access', userData['hasAccess'] ? 'Yes' : 'No'),
             _buildInfoRow('Is Active', userData['isActive'] ? 'Yes' : 'No'),
-            _buildInfoRow('Inscription Date',
-                userData['inscriptionDate']?.substring(0, 10)),
-            _buildInfoRow(
-                'Created At', userData['createdAt']?.substring(0, 10)),
+            _buildInfoRow('Inscription Date', userData['inscriptionDate']?.substring(0, 10)),
+            _buildInfoRow('Created At', userData['createdAt']?.substring(0, 10)),
           ],
         ),
       ),
@@ -217,15 +224,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   TextStyle _labelStyle() {
-    return const TextStyle(
+    return TextStyle(
       fontSize: 16,
-      color: Colors.black54,
+      color: Colors.blue[700],
       fontWeight: FontWeight.w600,
     );
   }
 
   TextStyle _valueStyle() {
-    return const TextStyle(
+    return TextStyle(
       fontSize: 16,
       color: Colors.black87,
     );
@@ -241,22 +248,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: _labelStyle()),
-        DropdownButton<String>(
-          isExpanded: true,
-          value: value,
-          hint: Text(label),
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          style: _valueStyle(),
-          icon: Icon(Icons.arrow_drop_down, color: Colors.blue[900]),
-          underline: Container(
-            height: 2,
-            color: Colors.blue[900],
+        const SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.blue[300]!),
+          ),
+          child: DropdownButton<String>(
+            isExpanded: true,
+            value: value,
+            hint: Text(label),
+            items: items.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: onChanged,
+            style: _valueStyle(),
+            icon: Icon(Icons.arrow_drop_down, color: Colors.blue[700]),
+            underline: SizedBox(),
           ),
         ),
       ],
@@ -270,17 +282,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _logout(context);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.blue[900],
+          backgroundColor: Colors.blue[900],
+          foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(20),
           ),
-          elevation: 8,
+          elevation: 4,
         ),
         child: const Text(
-          'Déconnexion ',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          'Déconnexion',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -288,7 +300,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _logout(BuildContext context) async {
     final authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+    Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }
