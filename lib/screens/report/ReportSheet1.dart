@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/Provider/constantsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
-import 'package:http/http.dart' as http;
+
 
 class ReportPage extends StatefulWidget {
   static const String id = 'Report_Page';
@@ -129,7 +125,7 @@ class _ReportPageState extends State<ReportPage> {
           ),
           backgroundColor: Colors.blue[900],
           title: const Text(
-            'Soumettre un Rapport',
+            'Réclamation',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -139,7 +135,7 @@ class _ReportPageState extends State<ReportPage> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(24.0),
+            padding:const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -150,27 +146,29 @@ class _ReportPageState extends State<ReportPage> {
                         color: Colors.blue[900],
                       ),
                 ),
-                SizedBox(height: 24.0),
+                const SizedBox(height: 24.0),
                 _buildTextField(
                   controller: _reasonController,
                   label: 'Raison',
                   hint: 'Entrez la raison de votre rapport',
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 _buildTextField(
                   controller: _commentController,
                   label: 'Commentaire',
                   hint: 'Fournissez des détails supplémentaires',
                   maxLines: 5,
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 _buildDropdown(),
                 if (_selectedTarget != 'ADMIN') ...[
                   SizedBox(height: 16.0),
                   _buildPersonDropdown(),
                 ],
-                SizedBox(height: 32.0),
-                _buildSubmitButton(),
+                const SizedBox(height: 60),
+                Center(
+                 child:  _buildSubmitButton(),
+                ),
               ],
             ),
           ),
@@ -284,15 +282,15 @@ class _ReportPageState extends State<ReportPage> {
       onPressed: _submitReport,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue[900],
-        padding: EdgeInsets.symmetric(vertical: 16.0),
+        padding:const EdgeInsets.symmetric(vertical: 13.0,horizontal: 30.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      child: Text(
-        'Soumettre le Rapport',
+      child: const Text(
+        'Envoyer',
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
