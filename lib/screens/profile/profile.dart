@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'Profile',
+          'Profil',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -80,9 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildProfileImage(userData),
                     const SizedBox(height: 24),
                     _buildInfoCard(userData),
-                    const SizedBox(height: 24),
-                    _buildSettingsCard(userData),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 40),
                     _buildLogoutButton(context),
                   ],
                 ),
@@ -136,96 +134,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildInfoCard(Map<String, dynamic> userData) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('informations personnelles',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900])),
-            Divider(thickness: 2, color: Colors.blue[200]),
-            _buildInfoRow('Prenom', userData['firstName']),
-            _buildInfoRow('Nom', userData['lastName']),
-            _buildInfoRow('Numéro de téléphone', userData['phone']?.toString()),
-            _buildInfoRow('Addresse', userData['address']),
-            _buildInfoRow('Genre', userData['gender']),
-            _buildInfoRow(
-                'date de naissance', userData['birthdate']?.substring(0, 10)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingsCard(Map<String, dynamic> userData) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Paramètres du compte',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900])),
-            Divider(thickness: 2, color: Colors.blue[200]),
-            _buildInfoRow('Groupe', userData['group']?['designation']),
-            const SizedBox(height: 16),
-            _buildDropdown(
-              label: 'Mode de paiement',
-              value: _selectedPaymentMethod,
-              items: ['PER_MONTH', 'PER_YEAR'],
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedPaymentMethod = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildDropdown(
-              label: 'Type de remise',
-              value: _selectedDiscountType,
-              items: ['NONE', 'PERCENTAGE', 'AMOUNT'],
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedDiscountType = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildInfoRow('Réduction', userData['discount']?.toString()),
-            _buildInfoRow('A Accès', userData['hasAccess'] ? 'Oui' : 'Non'),
-            _buildInfoRow('Is Active', userData['isActive'] ? 'Oui' : 'Non'),
-            _buildInfoRow('Date d inscription',
-                userData['inscriptionDate']?.substring(0, 10)),
-            _buildInfoRow('Créé le', userData['createdAt']?.substring(0, 10)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String? value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('Informations personnelles',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[900])),
+              Divider(thickness: 2, color: Colors.blue[200]),
+              _buildInfoRow(Icons.person, 'Nom et Prénom', userData['lastName']+' '+userData['firstName']),
+              _buildInfoRow(Icons.alternate_email, 'E-mail', userData['email']),
+              _buildInfoRow(Icons.phone, 'Téléphone', userData['phone']?.toString()),
+              _buildInfoRow(Icons.location_on, 'Adresse', userData['address']),
+              _buildInfoRow(Icons.cake, 'Date de naissance', userData['birthdate']?.substring(0, 10)),
+              _buildInfoRow(Icons.calendar_today, 'Date d\'inscription', userData['inscriptionDate']?.substring(0, 10)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: _labelStyle()),
-          Text(value ?? 'N/A', style: _valueStyle()),
+          Icon(icon, color: Colors.blue[700], size: 24),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: _labelStyle()),
+                SizedBox(height: 4),
+                Text(value ?? 'N/A', style: _valueStyle()),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -246,45 +202,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDropdown({
-    required String label,
-    required String? value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: _labelStyle()),
-        const SizedBox(height: 8),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.blue[300]!),
-          ),
-          child: DropdownButton<String>(
-            isExpanded: true,
-            value: value,
-            hint: Text(label),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item),
-              );
-            }).toList(),
-            onChanged: onChanged,
-            style: _valueStyle(),
-            icon: Icon(Icons.arrow_drop_down, color: Colors.blue[700]),
-            underline: SizedBox(),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildLogoutButton(BuildContext context) {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: ElevatedButton(
         onPressed: () {
           _logout(context);
@@ -292,15 +212,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue[900],
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
           ),
           elevation: 4,
         ),
-        child: const Text(
-          'Déconnexion',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        child:const Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.logout, size: 24),
+              SizedBox(width: 8),
+              Text(
+                'Déconnexion',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );

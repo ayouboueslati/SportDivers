@@ -12,7 +12,7 @@ import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:intl/intl.dart';
 
 import '../models/user_model.dart';
 
@@ -117,6 +117,18 @@ class _HomePageState extends State<HomePage> {
                     Icons.help_outline,
                     ReportPage.id,
                   ),
+                  _buildSportCard(
+                    context,
+                    'Sondages',
+                    Icons.poll_outlined,
+                    PollSurveyPage.id,
+                  ),
+                  _buildSportCard(
+                    context,
+                    'paiements',
+                    Icons.payment_outlined,
+                    PaymentScreen.id,
+                  ),
                 ],
               ),
               Consumer<EventProvider>(
@@ -163,93 +175,40 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(height: 10),
-              Card(
-                margin: const EdgeInsets.all(16),
-                elevation: 15,
-                shadowColor: Colors.blue.withOpacity(0.4),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Autres Fonctionnalités',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[900],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildFeatureButton(context, 'Statistiques des Joueurs',
-                          Icons.area_chart, CoachDashboardScreen.id),
-                      _buildFeatureButton(context, 'Classements',
-                          Icons.poll_outlined, PollSurveyPage.id),
-                      _buildFeatureButton(context, 'paiement en ligne',
-                          Icons.payment_outlined, PaymentScreen.id),
-                    ],
-                  ),
-                ),
-              ),
+              // Card(
+              //   margin: const EdgeInsets.all(16),
+              //   elevation: 15,
+              //   shadowColor: Colors.blue.withOpacity(0.4),
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(15),
+              //   ),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16),
+              //     child: Column(
+              //       children: [
+              //         Text(
+              //           'Autres Fonctionnalités',
+              //           style: TextStyle(
+              //             fontSize: 20,
+              //             fontWeight: FontWeight.bold,
+              //             color: Colors.blue[900],
+              //           ),
+              //         ),
+              //         const SizedBox(height: 16),
+              //         // _buildFeatureButton(context, 'Statistiques des Joueurs',
+              //         //     Icons.area_chart, CoachDashboardScreen.id),
+              //         // _buildFeatureButton(context, 'Classements',
+              //         //     Icons.poll_outlined, PollSurveyPage.id),
+              //         // _buildFeatureButton(context, 'paiement en ligne',
+              //         //     Icons.payment_outlined, PaymentScreen.id),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildShimmer() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: 5, // Number of shimmer items
-      itemBuilder: (context, index) {
-        return Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
-          child: Container(
-            width: 250,
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
-                  spreadRadius: 1,
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 16,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 70,
-                        height: 14,
-                        color: Colors.grey,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -302,70 +261,183 @@ class _HomePageState extends State<HomePage> {
         double cardWidth = maxWidth < 700 ? maxWidth * 0.8 : 250.0;
         double imageHeight = cardWidth * 0.6;
 
-        return Container(
-          width: cardWidth,
-          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.blue.withOpacity(0.3),
-                spreadRadius: 1,
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
-                child: Image.network(
-                  'https://sports.becker-brand.store/storage/${event.image}',
-                  height: imageHeight,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: imageHeight,
-                      color: Colors.grey[300],
-                      child: const Center(child: Text('Image not available')),
-                    );
-                  },
+        return GestureDetector(
+          onTap: () => _showEventDialog(context, event),
+          child: Container(
+            width: cardWidth,
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.3),
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event.titre,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: maxWidth < 600 ? 14 : 16,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${_formatDate(event.start)} - ${_formatDate(event.end)}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: maxWidth < 600 ? 12 : 14,
-                      ),
-                    ),
-                  ],
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(10)),
+                  child: Image.network(
+                    'https://sports.becker-brand.store/storage/${event.image}',
+                    height: imageHeight,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: imageHeight,
+                        color: Colors.grey[300],
+                        child: const Center(child: Text('Image non disponible')),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        event.titre,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: maxWidth < 600 ? 14 : 16,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${_formatDate(event.start)} - ${_formatDate(event.end)}',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: maxWidth < 600 ? 12 : 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  void _showEventDialog(BuildContext context, Event event) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: const Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      'https://sports.becker-brand.store/storage/${event.image}',
+                      height:  230,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 200,
+                          color: Colors.grey[300],
+                          child: const Center(child: Text('Image non disponible')),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    event.titre,
+                    style:  TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildInfoRow(Icons.calendar_today, 'Début: ${_formatDateTime(event.start)}'),
+                  const SizedBox(height: 5),
+                  _buildInfoRow(Icons.calendar_today, 'Fin: ${_formatDateTime(event.end)}'),
+                  const SizedBox(height: 15),
+                   Text(
+                    'Description:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    event.description,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      child: const Text('Fermer',style: TextStyle(color: Colors.white),),
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[900],
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        textStyle: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.blue[900], size: 20),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+          ),
+        ),
+      ],
     );
   }
 
@@ -374,13 +446,18 @@ class _HomePageState extends State<HomePage> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  Widget _buildFeatureButton(
-      BuildContext context, String title, IconData icon, String route) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue[900]),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-      onTap: () => Navigator.pushNamed(context, route),
-    );
+  String _formatDateTime(String dateTimeString) {
+    final dateTime = DateTime.parse(dateTimeString);
+    return DateFormat(' d/M/y  HH:mm').format(dateTime);
   }
+
+  // Widget _buildFeatureButton(
+  //     BuildContext context, String title, IconData icon, String route) {
+  //   return ListTile(
+  //     leading: Icon(icon, color: Colors.blue[900]),
+  //     title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+  //     trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+  //     onTap: () => Navigator.pushNamed(context, route),
+  //   );
+  // }
 }
