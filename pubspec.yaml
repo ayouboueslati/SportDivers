@@ -67,6 +67,7 @@ dependencies:
   fluttertoast: ^8.2.8
   socket_io_client: ^2.0.3+1
   timeline_tile: ^2.0.0
+  photo_view: ^0.15.0
 
 
 

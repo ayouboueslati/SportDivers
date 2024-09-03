@@ -70,8 +70,8 @@ class _MessagesListState extends State<MessagesList> {
             } else if (userProvider.users.isNotEmpty || userProvider.groups.isNotEmpty) {
               return Column(
                 children: [
-                  _buildSearchBar(),
-                  _buildStoriesRow(userProvider.users),
+                  //_buildSearchBar(),
+                  //_buildStoriesRow(userProvider.users),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Align(

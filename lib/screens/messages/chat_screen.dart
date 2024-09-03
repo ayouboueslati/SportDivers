@@ -6,9 +6,12 @@ import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
 import 'package:footballproject/Provider/UserProvider/userProvider.dart';
 import 'package:footballproject/models/ChatModel.dart';
 import 'package:footballproject/screens/Service/SocketService.dart';
+import 'package:footballproject/screens/messages/FullScreenImageViewer.dart';
 import 'package:provider/provider.dart';
 import '../../models/user_model.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ChatScreen extends StatefulWidget {
   final User? user;
@@ -31,6 +34,8 @@ class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController _messageController;
   late User? currentUser;
   String? chatRoomId;
+
+  final ImagePicker _picker = ImagePicker();
 
   final ScrollController _scrollController = ScrollController();
 
@@ -62,8 +67,16 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      File imageFile = File(image.path);
+      _sendImageMessage(imageFile);
+    }
+  }
+
   void _onNewMessage(Message message) {
-   if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       Provider.of<MessagesProvider>(context, listen: false).addMessage(message);
     });
@@ -127,15 +140,34 @@ class _ChatScreenState extends State<ChatScreen> {
         chatRoom: chatRoomId,
       );
       print(message);
-
       _messageController.clear();
-
       // Add the sent message to the UI immediately
       _onNewMessage(Message.fromJson(message));
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send message: $e')),
+      );
+    }
+  }
+
+  void _sendImageMessage(File imageFile) async {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
+    try {
+      final message = await chatProvider.sendMessage(
+        text: 'une pièce jointe',
+        type: 'IMAGE',
+        targetType: widget.isGroupChat ? 'GROUP' : 'USER',
+        target: widget.isGroupChat ? widget.group!.id : widget.user!.id,
+        chatRoom: chatRoomId,
+        file: imageFile,
+      );
+      print(message);
+      // Add the sent message to the UI immediately
+      _onNewMessage(Message.fromJson(message));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send image: $e')),
       );
     }
   }
@@ -162,6 +194,58 @@ class _ChatScreenState extends State<ChatScreen> {
             ? Text(sender?.firstName[0].toUpperCase() ?? '')
             : null,
       );
+    }
+
+    Widget _messageContent() {
+        if (message.type == 'IMAGE' && message.fileName != null) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => FullScreenImageViewer(imageUrl: message.fileName!),
+              ));
+            },
+            child: Hero(
+              tag: message.fileName!,
+              child: Image.network(
+                message.fileName!,
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: 200,
+                    height: 200,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  print('Error loading image: $error');
+                  return Container(
+                    width: 200,
+                    height: 200,
+                    color: Colors.grey[300],
+                    child: Icon(Icons.error, color: Colors.red),
+                  );
+                },
+              ),
+            ),
+          );;
+      } else {
+        return Text(
+          message.text,
+          style: TextStyle(
+            color: isMe ? Colors.white : Colors.black54,
+            fontSize: 15,
+          ),
+        );
+      }
     }
 
     if (isMe) {
@@ -191,13 +275,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ],
               ),
-              child: Text(
-                message.text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                ),
-              ),
+              child:  _messageContent(),
             ),
           ),
           !isSameUser
@@ -245,13 +323,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ],
               ),
-              child: Text(
-                message.text,
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 15,
-                ),
-              ),
+              child: _messageContent(),
             ),
           ),
           !isSameUser
@@ -303,7 +375,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: const Icon(Icons.photo),
             iconSize: 25,
             color: Colors.blue[900],
-            onPressed: () {},
+            onPressed: _pickImage,
           ),
           Transform.translate(
             offset: const Offset(-12, 0),
@@ -318,7 +390,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: InputDecoration.collapsed(
+              decoration: const InputDecoration.collapsed(
                 hintText: 'Send a message..',
               ),
               textCapitalization: TextCapitalization.sentences,
@@ -404,29 +476,15 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             onSelected: (value) {
               switch (value) {
-                case 'search':
+                case 'Réclamation':
                   // Implement search functionality
-                  break;
-                case 'clear':
-                  // Implement clear chat functionality
-                  break;
-                case 'block':
-                  // Implement block user functionality
                   break;
               }
             },
             itemBuilder: (BuildContext context) => [
               const PopupMenuItem(
-                value: 'search',
-                child: Text('Search'),
-              ),
-              const PopupMenuItem(
-                value: 'clear',
-                child: Text('Clear chat'),
-              ),
-              const PopupMenuItem(
-                value: 'block',
-                child: Text('Block user'),
+                value: 'Réclamation',
+                child: Text('Réclamation'),
               ),
             ],
           ),

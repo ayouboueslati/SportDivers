@@ -5,8 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import '../../models/message_model.dart';
-
 class MessagesProvider with ChangeNotifier {
   List<Message> _messages = [];
   List<Message> get messages => _messages;
