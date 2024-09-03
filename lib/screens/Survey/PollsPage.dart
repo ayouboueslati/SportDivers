@@ -23,7 +23,7 @@ class PollSurveyPage extends StatelessWidget {
         ),
         backgroundColor: Colors.blue[900],
         title: const Text(
-          'Poll Survey',
+          'Sondages',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -78,7 +78,7 @@ class PollSurveyPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                'No Polls Available',
+                'Aucun sondage disponible',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class PollSurveyPage extends StatelessWidget {
               ),
               SizedBox(height: 12),
               Text(
-                'There are currently no polls to participate in.',
+                'Il n’y a actuellement aucun sondage auquel participer.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -106,7 +106,7 @@ class PollSurveyPage extends StatelessWidget {
                 ),
                 onPressed: () => Navigator.pop(context),
                 child: Text(
-                  'Go Back',
+                  'Retourner',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -226,8 +226,8 @@ class PollSurveyPage extends StatelessWidget {
         onPressed: isSelected ? () => pollProvider.submitVote() : null,
         child: Text(
           pollProvider.getUserAnswer(pollInstance.id) != null
-              ? 'Change Vote'
-              : 'Submit Vote',
+              ? 'Changer de vote'
+              : 'Soumettre le vote',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),

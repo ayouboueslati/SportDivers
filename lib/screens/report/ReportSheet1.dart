@@ -220,7 +220,7 @@ class _ReportPageState extends State<ReportPage> {
         fillColor: Colors.grey[100],
       ),
       onChanged: _onTargetChanged,
-      items: <String>['ADMIN', 'TEACHER', 'STUDENT']
+      items: <String>['Admin', 'Coach', 'Adhérent']
           .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,

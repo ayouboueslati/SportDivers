@@ -5,6 +5,7 @@ import 'package:footballproject/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
 import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
 import 'package:footballproject/Provider/UserProvider/userProvider.dart';
+import 'package:footballproject/components/Loader.dart';
 import 'package:footballproject/models/session.dart';
 import 'package:footballproject/screens/Payment/PaymentScreen.dart';
 import 'package:footballproject/screens/Service/SocketService.dart';
@@ -65,17 +66,17 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatRoomsProvider()),
         ChangeNotifierProvider(create: (_) => PollProvider()),
 
-        // Add other providers if needed
       ],
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Football Project',
+            title: 'SprotDivers',
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            initialRoute: LoginScreen.id,
+            home: CustomLoaderPage(),
+            //initialRoute: LoginScreen.id,
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
                     Navigator.pushReplacementNamed(context, HomePage.id);

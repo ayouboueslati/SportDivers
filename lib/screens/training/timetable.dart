@@ -15,7 +15,7 @@ class TrainingScheduleScreen extends StatefulWidget {
 }
 
 class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
-  CalendarFormat _calendarFormat = CalendarFormat.week;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   bool _isLoading = true;
@@ -23,7 +23,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDay = DateTime.now();
+    _selectedDay = null;
     _focusedDay = DateTime.now();
     _fetchSessions();
   }
@@ -35,7 +35,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
 
     try {
       final authProvider =
-          Provider.of<AuthenticationProvider>(context, listen: false);
+      Provider.of<AuthenticationProvider>(context, listen: false);
       final token = authProvider.token;
       if (token != null) {
         await Provider.of<SessionProvider>(context, listen: false)
@@ -56,6 +56,16 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         });
       }
     }
+  }
+
+  List<DateTime> _getSessionDays(DateTime day) {
+    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+    final sessions = sessionProvider.sessions;
+
+    return sessions.where((session) {
+      return session.weekday.index == day.weekday - 1 &&
+          session.isWithinRange(day, session.schedule.startDate, session.schedule.endDate);
+    }).map((_) => day).toList();
   }
 
   @override
@@ -83,51 +93,115 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              calendarFormat: _calendarFormat,
-              selectedDayPredicate: (day) {
-                return _selectedDay != null && isSameDay(_selectedDay!, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                if (_selectedDay == null ||
-                    !isSameDay(_selectedDay!, selectedDay)) {
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                  });
-                }
-              },
-              calendarStyle: CalendarStyle(
-                todayDecoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  shape: BoxShape.circle,
-                ),
-                selectedDecoration: BoxDecoration(
-                  color: Colors.blue[700],
-                  shape: BoxShape.circle,
-                ),
-                markerSize: 0,
-              ),
-              headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
             Expanded(
-              child: _buildAppointmentList(context),
+              child: _calendarFormat == CalendarFormat.month
+                  ? _buildFullScreenCalendar()
+                  : _buildWeekViewWithSessions(),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFullScreenCalendar() {
+    return TableCalendar(
+      eventLoader: _getSessionDays,
+      firstDay: DateTime.utc(2020, 1, 1),
+      lastDay: DateTime.utc(2050, 12, 31),
+      focusedDay: _focusedDay,
+      calendarFormat: _calendarFormat,
+      selectedDayPredicate: (day) {
+        return _selectedDay != null && isSameDay(_selectedDay!, day);
+      },
+      onDaySelected: (selectedDay, focusedDay) {
+        setState(() {
+          _selectedDay = selectedDay;
+          _focusedDay = focusedDay;
+          _calendarFormat = CalendarFormat.week;
+        });
+      },
+      calendarStyle: CalendarStyle(
+        todayDecoration: BoxDecoration(
+          color: Colors.blue[100],
+          shape: BoxShape.circle,
+        ),
+        selectedDecoration: BoxDecoration(
+          color: Colors.blue[700],
+          shape: BoxShape.circle,
+        ),
+        markerSize: 8,
+        markersMaxCount: 3,
+        markerDecoration: BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.rectangle,
+        ),
+      ),
+      headerStyle: const HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+        titleTextStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeekViewWithSessions() {
+    return Column(
+      children: [
+        TableCalendar(
+          eventLoader: _getSessionDays,
+          firstDay: DateTime.utc(2020, 1, 1),
+          lastDay: DateTime.utc(2050, 12, 31),
+          focusedDay: _focusedDay,
+          calendarFormat: _calendarFormat,
+          selectedDayPredicate: (day) {
+            return _selectedDay != null && isSameDay(_selectedDay!, day);
+          },
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              _selectedDay = selectedDay;
+              _focusedDay = focusedDay;
+            });
+          },
+          onFormatChanged: (format) {
+            setState(() {
+              _calendarFormat = format;
+            });
+          },
+          calendarStyle: CalendarStyle(
+            todayDecoration: BoxDecoration(
+              color: Colors.blue[100],
+              shape: BoxShape.circle,
+            ),
+            selectedDecoration: BoxDecoration(
+              color: Colors.blue[700],
+              shape: BoxShape.circle,
+            ),
+            markerSize: 8,
+            markersMaxCount: 3,
+            markerDecoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.rectangle,
+            ),
+          ),
+          headerStyle: const HeaderStyle(
+            formatButtonVisible: true,
+            titleCentered: true,
+            titleTextStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          child: _buildAppointmentList(context),
+        ),
+      ],
     );
   }
 
@@ -152,16 +226,6 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
       _selectedDay!.day,
     );
 
-    // Filter sessions based on selected date
-    final List<String> weekday = [
-      'LUNDI',
-      'MARDI',
-      'MERCREDI',
-      'JEUDI',
-      'VENDREDI',
-      'SAMEDI',
-      'DIMANCHE'
-    ];
     final dayAppointments = sessions.where((session) {
       return session.weekday.index == selectedDate.weekday - 1 &&
           session.isWithinRange(selectedDate, session.schedule.startDate,
@@ -184,17 +248,17 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
           child: dayAppointments.isEmpty
               ? const Center(child: Text('Aucun rendez-vous pour ce jour'))
               : ListView.builder(
-                  itemCount: dayAppointments.length,
-                  itemBuilder: (context, index) {
-                    final appointment = dayAppointments[index];
-                    return SessionCard(
-                      teacher: appointment.teacher,
-                      session: appointment,
-                      isLoading: _isLoading,
-                      sessionDate: selectedDate,
-                    );
-                  },
-                ),
+            itemCount: dayAppointments.length,
+            itemBuilder: (context, index) {
+              final appointment = dayAppointments[index];
+              return SessionCard(
+                teacher: appointment.teacher,
+                session: appointment,
+                isLoading: _isLoading,
+                sessionDate: selectedDate,
+              );
+            },
+          ),
         ),
       ],
     );
@@ -209,13 +273,5 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     date1 = DateTime(date1.year, date1.month, date1.day);
     date2 = DateTime(date2.year, date2.month, date2.day);
     return date1 == date2;
-  }
-
-  bool isAfter(DateTime date1, DateTime date2) {
-    return date1.isAfter(date2);
-  }
-
-  bool isBefore(DateTime date1, DateTime date2) {
-    return date1.isBefore(date2);
   }
 }
