@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
                     Navigator.pushReplacementNamed(context, HomePage.id);
                   }),
               ForgotPasswordScreen.id: (context) => ForgotPasswordScreen(),
-              FriendScreen.id: (context) => const FriendScreen(),
+              //FriendScreen.id: (context) => const FriendScreen(),
               CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
               TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
+import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
@@ -122,7 +123,7 @@ class AppDrawer extends StatelessWidget {
         _buildDrawerItem(
             context, 'Mes tickets', Icons.support_agent, TicketsScreen.id),
         _buildDrawerItem(context, 'Messages',
-            Icons.mark_unread_chat_alt_outlined, FriendScreen.id),
+            Icons.mark_unread_chat_alt_outlined, MessagesList.id),
         _buildDrawerItem(
             context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
         _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined,

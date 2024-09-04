@@ -7,6 +7,7 @@ import 'package:footballproject/screens/Survey/PollsPage.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/dashboard/dashboard.dart';
+import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     _widgetOptions = <Widget>[
       ProfileScreen(userData: widget.userData),
       TrainingScheduleScreen(),
-      const FriendScreen(),
+      const MessagesList(),
       widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
     ];
 
@@ -103,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                     context,
                     'Messages',
                     Icons.message_outlined,
-                    FriendScreen.id,
+                    MessagesList.id,
                   ),
                   _buildSportCard(
                     context,
