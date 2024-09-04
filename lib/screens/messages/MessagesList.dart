@@ -26,7 +26,6 @@ class _MessagesListState extends State<MessagesList> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ChatRoomsProvider>(context, listen: false).fetchChatRooms();
     });
-
   }
 
   @override
@@ -46,7 +45,7 @@ class _MessagesListState extends State<MessagesList> {
           elevation: 5,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -88,24 +87,24 @@ class _MessagesListState extends State<MessagesList> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                     // itemCount: userProvider.users.length + userProvider.groups.length,
-                      itemCount:userProvider.groups.length,
+                      itemCount: userProvider.users.length + userProvider.groups.length,
+                     // itemCount:userProvider.groups.length,
                       itemBuilder: (BuildContext context, int index) {
-                        // if (index < userProvider.users.length) {
-                        //   final User user = userProvider.users[index];
-                        //   return _buildChatItem(context, user);
-                        // } else {
-                         // final Group group = userProvider.groups[index - userProvider.users.length];
-                          final Group group = userProvider.groups[index];
+                         if (index < userProvider.users.length) {
+                           final User user = userProvider.users[index];
+                           return _buildChatItem(context, user);
+                         } else {
+                          final Group group = userProvider.groups[index - userProvider.users.length];
+                         // final Group group = userProvider.groups[index];
                           return _buildGroupItem(context, group);
                         }
-                      // },
+                       },
                     ),
                   ),
                 ],
               );
             } else {
-              return Center(child: Text('No users or groups found'));
+              return Center(child: Text('Aucun utilisateur ou groupe trouvé'));
             }
           },
         ),
@@ -183,11 +182,11 @@ class _MessagesListState extends State<MessagesList> {
           title: Text('${user.firstName} ${user.lastName}'),
           subtitle: chatRoom != null
               ? Text(
-            chatRoom.lastMessage?.text ?? 'No messages yet',
+            chatRoom.lastMessage?.text ?? 'Pas encore de messages',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           )
-              : Text('Start a conversation'),
+              : Text('Démarrer une conversation'),
           trailing: chatRoom != null && chatRoom.lastMessage != null
               ? Text(_formatTimestamp(chatRoom.lastMessage!.timestamp))
               : null,
@@ -196,7 +195,6 @@ class _MessagesListState extends State<MessagesList> {
             MaterialPageRoute(builder: (_) => ChatScreen.forUser(user: user)),
           ),
         );
-
       },
     );
   }
@@ -212,7 +210,6 @@ class _MessagesListState extends State<MessagesList> {
         } catch (e) {
           // If no matching room is found, groupChatRoom remains null
         }
-
         return ListTile(
           leading: CircleAvatar(
             child: Text(group.designation[0].toUpperCase()),
@@ -225,7 +222,7 @@ class _MessagesListState extends State<MessagesList> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           )
-              : Text('No messages yet'),
+              : Text('Pas encore de messages'),
           trailing: groupChatRoom != null && groupChatRoom.lastMessage != null
               ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -259,22 +256,18 @@ class _MessagesListState extends State<MessagesList> {
     );
   }
 
-
-
   String _formatTimestamp(DateTime timestamp) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
+      return '${difference.inDays}j';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
+      return '${difference.inHours}h';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
+      return '${difference.inMinutes}m';
     } else {
-      return 'Just now';
+      return 'Maintenant';
     }
   }
-
-
 }

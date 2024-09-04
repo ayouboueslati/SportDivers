@@ -25,7 +25,7 @@ class PaymentScreen extends StatelessWidget {
           ),
           backgroundColor: Colors.blue[900],
           title: const Text(
-            'Historique du paiement',
+            'Historique des paiements',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

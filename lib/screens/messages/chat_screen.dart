@@ -437,15 +437,24 @@ class _ChatScreenState extends State<ChatScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.isGroupChat
-                        ? widget.group!.designation
-                        : "${widget.user!.firstName} ${widget.user!.lastName}",
-                    style: const TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Calculate responsive font size
+                      double screenWidth = MediaQuery.of(context).size.width;
+                      double fontSize = 18 * (screenWidth / 375.0);
+                      fontSize = fontSize.clamp(16.0, 28.0);
+
+                      return Text(
+                        widget.isGroupChat
+                            ? widget.group!.designation
+                            : "${widget.user!.firstName} ${widget.user!.lastName}",
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
+                      );
+                    },
                   ),
                   Text(
                     widget.isGroupChat

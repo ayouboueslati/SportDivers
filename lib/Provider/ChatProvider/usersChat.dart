@@ -55,14 +55,14 @@ class usersChatProvider with ChangeNotifier {
         List<ChatRoom> allChatRooms = [];
         List<GroupChatRoom> allGroupChatRooms = [];
 
-        // Parse students
-        data['students'].forEach((id, studentData) {
-          allUsers.add(User.fromJson({
-            ...studentData,
-            'type': 'student',
-            'id': id,
-          }));
-        });
+        // // Parse students
+        // data['students'].forEach((id, studentData) {
+        //   allUsers.add(User.fromJson({
+        //     ...studentData,
+        //     'type': 'student',
+        //     'id': id,
+        //   }));
+        // });
 
         // Parse teachers
         data['teachers'].forEach((id, teacherData) {
