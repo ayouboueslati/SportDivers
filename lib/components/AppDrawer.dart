@@ -115,9 +115,9 @@ class AppDrawer extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
-        _buildDrawerItem(context, 'Home', Icons.home, HomePage.id),
+        _buildDrawerItem(context, 'Menu principal', Icons.home, HomePage.id),
         _buildDrawerItem(
-            context, 'Profile', Icons.account_box_rounded, ProfileScreen.id),
+            context, 'Profil', Icons.account_box_rounded, ProfileScreen.id),
         _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined,
             TrainingScheduleScreen.id),
         _buildDrawerItem(

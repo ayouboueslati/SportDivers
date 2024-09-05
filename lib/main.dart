@@ -4,6 +4,7 @@ import 'package:footballproject/Provider/ChatProvider/FindMessagesProvider.dart'
 import 'package:footballproject/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
 import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
+import 'package:footballproject/Provider/ProfileProvider/EditProfileProvider.dart';
 import 'package:footballproject/Provider/UserProvider/userProvider.dart';
 import 'package:footballproject/components/Loader.dart';
 import 'package:footballproject/models/session.dart';
@@ -11,6 +12,7 @@ import 'package:footballproject/screens/Payment/PaymentScreen.dart';
 import 'package:footballproject/screens/Service/SocketService.dart';
 import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
 import 'package:footballproject/screens/messages/MessagesList.dart';
+import 'package:footballproject/screens/profile/ModifyProfile.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
@@ -65,6 +67,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MessagesProvider()),
         ChangeNotifierProvider(create: (_) => ChatRoomsProvider()),
         ChangeNotifierProvider(create: (_) => PollProvider()),
+        ChangeNotifierProvider(create: (_) => EditProfileProvider()),
 
       ],
       child: Consumer<AuthenticationProvider>(
@@ -95,6 +98,7 @@ class MyApp extends StatelessWidget {
               DashboardScreen.id: (context) => DashboardScreen(),
               MessagesList.id: (context) =>  MessagesList(),
               PaymentScreen.id: (context) =>  PaymentScreen(),
+              EditProfileScreen.id: (context) =>  EditProfileScreen(),
               PasswordResetSuccessScreen.id: (context) =>
                   PasswordResetSuccessScreen(),
               ResetPasswordScreen.id: (context) =>

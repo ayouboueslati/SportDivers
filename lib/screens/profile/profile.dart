@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
+import 'package:footballproject/screens/profile/ModifyProfile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -18,15 +20,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   File? _profileImage;
-  String? _selectedPaymentMethod;
-  String? _selectedDiscountType;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedPaymentMethod = widget.userData?['paymentMethod'] ?? 'N/A';
-    _selectedDiscountType = widget.userData?['discountType'] ?? 'N/A';
-  }
 
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -80,7 +73,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildProfileImage(userData),
                     const SizedBox(height: 24),
                     _buildInfoCard(userData),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
+                    _buildModifyProfileButton(context),
+                    const SizedBox(height: 15),
                     _buildLogoutButton(context),
                   ],
                 ),
@@ -199,6 +194,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return TextStyle(
       fontSize: 16,
       color: Colors.black87,
+    );
+  }
+  Widget _buildModifyProfileButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditProfileScreen(userData: widget.userData),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[900],
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+        ),
+        child:const Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.mode_edit_outline_outlined, size: 24),
+              SizedBox(width: 8),
+              Text(
+                'Modifier Votre Profil',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
