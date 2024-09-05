@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/profile/ModifyProfile.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,18 +19,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   File? _profileImage;
-
-  void _selectProfileImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     final userData = widget.userData;
@@ -86,44 +74,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildProfileImage(Map<String, dynamic> userData) {
     return Center(
-      child: GestureDetector(
-        onTap: _selectProfileImage,
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.blue[900]!, width: 4),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: _profileImage != null
-                    ? FileImage(_profileImage!)
-                    : NetworkImage(userData['profilePicture']) as ImageProvider,
-                child: _profileImage == null
-                    ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
-                    : null,
-              ),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.blue[900]!, width: 4),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
             ),
-            Positioned(
-              bottom: 5,
-              right: 5,
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.blue[900],
-                child: Icon(Icons.edit, size: 20, color: Colors.white),
-              ),
+            child: CircleAvatar(
+              radius: 70,
+              backgroundImage: _profileImage != null
+                  ? FileImage(_profileImage!)
+                  : NetworkImage(userData['profilePicture']) as ImageProvider,
+              child: _profileImage == null
+                  ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
+                  : null,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -147,12 +123,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.blue[900])),
               Divider(thickness: 2, color: Colors.blue[200]),
-              _buildInfoRow(Icons.person, 'Nom et Prénom', userData['lastName']+' '+userData['firstName']),
+              _buildInfoRow(Icons.person, 'Nom et Prénom',
+                  userData['lastName'] + ' ' + userData['firstName']),
               _buildInfoRow(Icons.alternate_email, 'E-mail', userData['email']),
-              _buildInfoRow(Icons.phone, 'Téléphone', userData['phone']?.toString()),
+              _buildInfoRow(
+                  Icons.phone, 'Téléphone', userData['phone']?.toString()),
               _buildInfoRow(Icons.location_on, 'Adresse', userData['address']),
-              _buildInfoRow(Icons.cake, 'Date de naissance', userData['birthdate']?.substring(0, 10)),
-              _buildInfoRow(Icons.calendar_today, 'Date d\'inscription', userData['inscriptionDate']?.substring(0, 10)),
+              _buildInfoRow(Icons.cake, 'Date de naissance',
+                  userData['birthdate']?.substring(0, 10)),
+              _buildInfoRow(Icons.calendar_today, 'Date d\'inscription',
+                  userData['inscriptionDate']?.substring(0, 10)),
             ],
           ),
         ),
@@ -196,6 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       color: Colors.black87,
     );
   }
+
   Widget _buildModifyProfileButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -204,7 +185,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EditProfileScreen(userData: widget.userData),
+              builder: (context) =>
+                  EditProfileScreen(userData: widget.userData),
             ),
           );
         },
@@ -217,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           elevation: 4,
         ),
-        child:const Center(
+        child: const Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -250,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           elevation: 4,
         ),
-        child:const Center(
+        child: const Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

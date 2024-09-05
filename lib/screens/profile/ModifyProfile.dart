@@ -1,10 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/ProfileProvider/EditProfileProvider.dart';
 import 'package:footballproject/screens/profile/profile.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
-
-
 
 class EditProfileScreen extends StatefulWidget {
   static String id = 'Edit_Profile_Screen';
@@ -16,6 +16,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  File? _profileImage;
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
@@ -71,11 +72,68 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           return SingleChildScrollView(
             child: Column(
               children: [
+                const SizedBox(height: 15),
+                _buildProfileImage(),
+                const SizedBox(height: 20),
                 _buildForm(),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _selectProfileImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Widget _buildProfileImage() {
+    return Center(
+      child: GestureDetector(
+        onTap: _selectProfileImage,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.blue[900]!, width: 4),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                radius: 70,
+                backgroundImage: _profileImage != null
+                    ? FileImage(_profileImage!)
+                    : NetworkImage(widget.userData!['profilePicture']) as ImageProvider,
+                child: _profileImage == null
+                    ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
+                    : null,
+              ),
+            ),
+            Positioned(
+              bottom: 5,
+              right: 5,
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.blue[900],
+                child: Icon(Icons.edit, size: 20, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -95,13 +153,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             onPressed: _saveChanges,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue[900],
-              padding:const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              textStyle:const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(15),
               ),
             ),
-            child: const Text('Enregistrer les modifications',
+            child: const Text('Enregistrer Les Modifications',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -142,12 +200,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       'address': _addressController.text,
     };
 
-    final updatedUser = await editProfileProvider.updateUserProfile(updatedData);
+    final updatedUser = await editProfileProvider.updateUserProfile(updatedData, profileImage: _profileImage);
 
     if (updatedUser != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Profile updated successfully')),
       );
+      //Navigator.pop(context); // Go back to the previous screen
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update profile: ${editProfileProvider.error}')),

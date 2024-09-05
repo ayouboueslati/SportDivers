@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/constantsProvider.dart';
 import 'package:footballproject/models/user_model.dart';
@@ -12,7 +13,7 @@ class EditProfileProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String get error => _error;
 
-  Future<User?> updateUserProfile(Map<String, dynamic> updatedData) async {
+  Future<User?> updateUserProfile(Map<String, dynamic> updatedData, {File? profileImage}) async {
     _isLoading = true;
     _error = '';
     notifyListeners();
@@ -31,14 +32,24 @@ class EditProfileProvider extends ChangeNotifier {
 
       print('Token: $token');
 
-      final response = await http.put(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        },
-        body: json.encode(updatedData),
-      );
+      var request = http.MultipartRequest('PUT', Uri.parse(url));
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields
+      updatedData.forEach((key, value) {
+        if (key != 'profilePicture') {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add profile image if provided
+      if (profileImage != null) {
+        var multipartFile = await http.MultipartFile.fromPath('profilePicture', profileImage.path);
+        request.files.add(multipartFile);
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
 
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
