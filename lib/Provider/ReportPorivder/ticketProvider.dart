@@ -134,7 +134,7 @@ class TicketsProvider extends ChangeNotifier {
           return {
             'name':
                 '${user['profile']['firstName']} ${user['profile']['lastName']}',
-            'profilePic': user['profile']['profilePic'] ?? '',
+            'profilePicture': user['profile']['profilePicture'] ?? '',
           };
         }).toList();
       } else {

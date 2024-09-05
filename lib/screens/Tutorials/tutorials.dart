@@ -31,7 +31,7 @@ class _VideoAppState extends State<VideoApp> {
 
       if (videoProvider.videos.isEmpty) {
         setState(() {
-          _error = 'No videos found';
+          _error = 'Aucune vidéo trouvée';
         });
         return;
       }
@@ -91,7 +91,7 @@ class _VideoAppState extends State<VideoApp> {
           ),
           backgroundColor: Colors.blue[900],
           title: const Text(
-            'Video Player',
+            'Lecteur Vidéo',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

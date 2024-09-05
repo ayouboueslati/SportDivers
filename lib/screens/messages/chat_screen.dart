@@ -178,6 +178,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     print('Sender ID: ${message.sender.id}');
     print('Sender: ${sender?.toJson()}');
+    print('Sender picture URL: ${sender?.picture}');
 
     // Format the time
     final timeString = DateFormat('HH:mm').format(message.timestamp);

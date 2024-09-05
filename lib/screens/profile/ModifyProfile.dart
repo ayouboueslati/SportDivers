@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/ProfileProvider/EditProfileProvider.dart';
-import 'package:footballproject/screens/profile/profile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';

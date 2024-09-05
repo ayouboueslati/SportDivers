@@ -220,11 +220,13 @@ class _ReportPageState extends State<ReportPage> {
         fillColor: Colors.grey[100],
       ),
       onChanged: _onTargetChanged,
-      items: <String>['Admin', 'Coach', 'Adhérent']
+      items: <String>['ADMIN', 'COACH', 'STUDENT']
           .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(value == 'ADMIN' ? 'Admin' :
+          value == 'COACH' ? 'Coach' :
+          value == 'STUDENT' ? 'Adhérent' : 'Inconnu'),
         );
       }).toList(),
     );
@@ -265,7 +267,7 @@ class _ReportPageState extends State<ReportPage> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(user['profilePic'] ?? ''),
+                backgroundImage: NetworkImage(user['profilePicture'] ?? ''),
                 radius: 16,
               ),
               SizedBox(width: 8),
