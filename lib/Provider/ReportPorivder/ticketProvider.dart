@@ -14,10 +14,15 @@ class TicketsProvider extends ChangeNotifier {
   String? _selectedPerson;
 
   List<dynamic> get tickets => _tickets;
+
   List<Map<String, dynamic>> get userList => _userList;
+
   bool get isLoading => _isLoading;
+
   String get errorMessage => _errorMessage;
+
   String? get selectedTarget => _selectedTarget;
+
   String? get selectedPerson => _selectedPerson;
 
   AuthenticationProvider? _authProvider;
@@ -73,7 +78,6 @@ class TicketsProvider extends ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = json.decode(response.body);
         print(responseBody);
-        print('***********');
         _errorMessage = 'Report submitted successfully'; // Success message
         return responseBody; // Return response data
       } else {

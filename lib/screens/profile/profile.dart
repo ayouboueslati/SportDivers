@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/profile/ModifyProfile.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -19,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   File? _profileImage;
-  
+
   @override
   Widget build(BuildContext context) {
     final userData = widget.userData;
@@ -49,26 +48,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: userData == null
           ? Center(
-              child: Text('Aucune donnée disponible',
-                  style: TextStyle(fontSize: 18, color: Colors.black87)),
-            )
+        child: Text('Aucune donnée disponible',
+            style: TextStyle(fontSize: 18, color: Colors.black87)),
+      )
           : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _buildProfileImage(userData),
-                    const SizedBox(height: 24),
-                    _buildInfoCard(userData),
-                    const SizedBox(height: 30),
-                    _buildModifyProfileButton(context),
-                    const SizedBox(height: 15),
-                    _buildLogoutButton(context),
-                  ],
-                ),
-              ),
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildProfileImage(userData),
+              const SizedBox(height: 24),
+              _buildInfoCard(userData),
+              const SizedBox(height: 30),
+              _buildModifyProfileButton(context),
+              const SizedBox(height: 15),
+              _buildLogoutButton(context),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -251,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _logout(BuildContext context) async {
     final authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+    Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }

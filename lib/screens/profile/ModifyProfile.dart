@@ -10,6 +10,7 @@ class EditProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
 
   const EditProfileScreen({Key? key, this.userData}) : super(key: key);
+
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
@@ -25,11 +26,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: widget.userData?['firstName'] ?? '');
-    _lastNameController = TextEditingController(text: widget.userData?['lastName'] ?? '');
-    _emailController = TextEditingController(text: widget.userData?['email'] ?? '');
-    _phoneController = TextEditingController(text: widget.userData?['phone'] ?? '');
-    _addressController = TextEditingController(text: widget.userData?['address'] ?? '');
+    _firstNameController =
+        TextEditingController(text: widget.userData?['firstName'] ?? '');
+    _lastNameController =
+        TextEditingController(text: widget.userData?['lastName'] ?? '');
+    _emailController =
+        TextEditingController(text: widget.userData?['email'] ?? '');
+    _phoneController =
+        TextEditingController(text: widget.userData?['phone'] ?? '');
+    _addressController =
+        TextEditingController(text: widget.userData?['address'] ?? '');
   }
 
   @override
@@ -85,7 +91,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -116,7 +123,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 radius: 70,
                 backgroundImage: _profileImage != null
                     ? FileImage(_profileImage!)
-                    : NetworkImage(widget.userData!['profilePicture']) as ImageProvider,
+                    : NetworkImage(widget.userData!['profilePicture'])
+                        as ImageProvider,
                 child: _profileImage == null
                     ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
                     : null,
@@ -153,12 +161,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue[900],
               padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textStyle:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
-            child: const Text('Enregistrer Les Modifications',
+            child: const Text(
+              'Enregistrer Les Modifications',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -167,7 +177,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon) {
+  Widget _buildTextField(
+      TextEditingController controller, String label, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
@@ -189,7 +200,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _saveChanges() async {
-    final editProfileProvider = Provider.of<EditProfileProvider>(context, listen: false);
+    final editProfileProvider =
+        Provider.of<EditProfileProvider>(context, listen: false);
 
     Map<String, dynamic> updatedData = {
       'firstName': _firstNameController.text,
@@ -199,7 +211,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       'address': _addressController.text,
     };
 
-    final updatedUser = await editProfileProvider.updateUserProfile(updatedData, profileImage: _profileImage);
+    final updatedUser = await editProfileProvider.updateUserProfile(updatedData,
+        profileImage: _profileImage);
 
     if (updatedUser != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -208,7 +221,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       //Navigator.pop(context); // Go back to the previous screen
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update profile: ${editProfileProvider.error}')),
+        SnackBar(
+            content:
+                Text('Failed to update profile: ${editProfileProvider.error}')),
       );
     }
   }

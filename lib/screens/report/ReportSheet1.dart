@@ -220,12 +220,12 @@ class _ReportPageState extends State<ReportPage> {
         fillColor: Colors.grey[100],
       ),
       onChanged: _onTargetChanged,
-      items: <String>['ADMIN', 'COACH', 'STUDENT']
+      items: <String>['ADMIN', 'TEACHER', 'STUDENT']
           .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value == 'ADMIN' ? 'Admin' :
-          value == 'COACH' ? 'Coach' :
+          value == 'TEACHER' ? 'Coach' :
           value == 'STUDENT' ? 'Adhérent' : 'Inconnu'),
         );
       }).toList(),
