@@ -31,6 +31,7 @@ class TicketsProvider extends ChangeNotifier {
 
   set authProvider(AuthenticationProvider authProvider) {
     _authProvider = authProvider;
+    print("AuthProvider set: ${_authProvider?.token}");
     notifyListeners();
   }
 
@@ -40,11 +41,15 @@ class TicketsProvider extends ChangeNotifier {
     required String target,
     String? person, // 'person' is optional
   }) async {
+    print(
+        "Submitting report: reason=$reason, comment=$comment, target=$target, person=$person");
+
     final url = Uri.parse('${Constants.baseUrl}/tickets');
     final token = _authProvider?.token;
 
     if (token == null) {
       _errorMessage = 'User not authenticated';
+      print(_errorMessage);
       notifyListeners();
       return null;
     }
@@ -59,9 +64,10 @@ class TicketsProvider extends ChangeNotifier {
         'reason': reason,
         'comment': comment,
         'target': target,
-
-        if (target != 'ADMIN' && person != null) 'person': person,
+        if (target != 'ADMIN' && person != null) 'target':person ,
       };
+
+      print("Request body: $requestBody");
 
       final response = await http.post(
         url,
@@ -77,12 +83,12 @@ class TicketsProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = json.decode(response.body);
-        print(responseBody);
+        print("Response Body: $responseBody");
         _errorMessage = 'Report submitted successfully'; // Success message
         return responseBody; // Return response data
       } else {
         final responseBody = json.decode(response.body);
-        print(responseBody);
+        print("Error Response: $responseBody");
         _errorMessage = responseBody['message'] ??
             'Failed to submit report'; // Error message
         return null;
@@ -90,6 +96,7 @@ class TicketsProvider extends ChangeNotifier {
     } catch (error) {
       _errorMessage =
           'Error occurred while submitting report: $error'; // Exception message
+      print(_errorMessage);
       return null;
     } finally {
       _isLoading = false;
@@ -98,6 +105,8 @@ class TicketsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchUserList(String userType) async {
+    print("Fetching user list for: $userType");
+
     _isLoading = true;
     _errorMessage = '';
     notifyListeners();
@@ -109,6 +118,7 @@ class TicketsProvider extends ChangeNotifier {
     } else if (userType == 'Coach') {
       apiUrl = '${Constants.baseUrl}/users/teachers';
     } else {
+      print("Invalid userType: $userType");
       _isLoading = false;
       notifyListeners();
       return;
@@ -118,12 +128,15 @@ class TicketsProvider extends ChangeNotifier {
 
     if (token == null) {
       _errorMessage = 'User not authenticated';
+      print(_errorMessage);
       _isLoading = false;
       notifyListeners();
       return;
     }
 
     try {
+      print("Fetching from API: $apiUrl");
+
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -132,20 +145,30 @@ class TicketsProvider extends ChangeNotifier {
         },
       );
 
+      print('Response Status: ${response.statusCode}');
+
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
+        print("Fetched user data: $data");
+
         _userList = data.map((user) {
           return {
-            'name': '${user['profile']['firstName']} ${user['profile']['lastName']}',
+           'id': user['id'],
+            'name':
+                '${user['profile']['firstName']} ${user['profile']['lastName']}',
             'profilePicture': user['profile']['profilePicture'] ?? '',
           };
         }).toList();
+
+        print("Mapped UserList: $_userList");
       } else {
         final responseBody = json.decode(response.body);
+        print("Error Response: $responseBody");
         _errorMessage = responseBody['message'] ?? 'Failed to load users';
       }
     } catch (e) {
       _errorMessage = 'Error occurred while fetching users: $e';
+      print(_errorMessage);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -153,11 +176,14 @@ class TicketsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchTickets() async {
+    print("Fetching tickets");
+
     final url = Uri.parse('${Constants.baseUrl}/tickets');
     final token = _authProvider?.token;
 
     if (token == null) {
       _errorMessage = 'User not authenticated';
+      print(_errorMessage);
       notifyListeners();
       return;
     }
@@ -167,6 +193,8 @@ class TicketsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      print("Fetching from API: $url");
+
       final response = await http.get(
         url,
         headers: {
@@ -175,14 +203,19 @@ class TicketsProvider extends ChangeNotifier {
         },
       );
 
+      print('Response Status: ${response.statusCode}');
+
       if (response.statusCode == 200) {
         _tickets = json.decode(response.body);
+        print("Fetched tickets: $_tickets");
       } else {
         final responseBody = json.decode(response.body);
+        print("Error Response: $responseBody");
         _errorMessage = responseBody['message'] ?? 'Failed to fetch tickets';
       }
     } catch (e) {
       _errorMessage = 'Error occurred while fetching tickets: $e';
+      print(_errorMessage);
     } finally {
       _isLoading = false;
       notifyListeners();

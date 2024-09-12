@@ -181,12 +181,13 @@ class _MessagesListState extends State<MessagesList> {
             ChatRoom? chatRoom;
             try {
               chatRoom = chatRoomsProvider.chatRooms.firstWhere(
-
-                    (room) =>
+                (room) =>
                     // room.firstUser.id == user.id || room.secondUser.id == user.id,
-                   // (room.firstUser.id == user.id || room.secondUser.id == user.id)&&
-                    ((room.firstUser.id == user.id && room.secondUser.id != currentUser.id) ||
-                    (room.secondUser.id == user.id && room.firstUser.id != currentUser.id)),
+                    // (room.firstUser.id == user.id || room.secondUser.id == user.id)&&
+                    ((room.firstUser.id == user.id &&
+                            room.secondUser.id != currentUser.id) ||
+                        (room.secondUser.id == user.id &&
+                            room.firstUser.id != currentUser.id)),
               );
             } catch (e) {
               // If no matching room is found, chatRoom remains null
@@ -194,25 +195,28 @@ class _MessagesListState extends State<MessagesList> {
 
             return chatRoom != null
                 ? ListTile(
-              leading: CircleAvatar(
-                backgroundImage: user.picture != null
-                    ? NetworkImage(user.picture!)
-                    : AssetImage('assets/images/icons/default_avatar.png') as ImageProvider,
-              ),
-              title: Text('${user.firstName} ${user.lastName}'),
-              subtitle: Text(
-                chatRoom.lastMessage?.text ?? 'Pas encore de messages',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: chatRoom.lastMessage != null
-                  ? Text(_formatTimestamp(chatRoom.lastMessage!.timestamp))
-                  : null,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => ChatScreen.forUser(user: user)),
-              ),
-            )
+                    leading: CircleAvatar(
+                      backgroundImage: user.picture != null
+                          ? NetworkImage(user.picture!)
+                          : AssetImage('assets/images/icons/default_avatar.png')
+                              as ImageProvider,
+                    ),
+                    title: Text('${user.firstName} ${user.lastName}'),
+                    subtitle: Text(
+                      chatRoom.lastMessage?.text ?? 'Pas encore de messages',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: chatRoom.lastMessage != null
+                        ? Text(
+                            _formatTimestamp(chatRoom.lastMessage!.timestamp))
+                        : null,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => ChatScreen.forUser(user: user)),
+                    ),
+                  )
                 : SizedBox(); // Return an empty SizedBox if chatRoom is null
           },
         );

@@ -1,5 +1,6 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class CoachDashboardScreen extends StatefulWidget {
   static const String id = 'coach_dashboard_screen';
@@ -21,9 +22,24 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     {"name": "Thor", "image": "assets/images/thor.png"},
   ];
 
-  final Map<String, double> ratings = {};
+  final Map<String, Map<String, double>> ratings = {};
+  final Map<String, bool> attendance = {};
   DateTime? trainingDate;
   TimeOfDay? trainingTime;
+
+  @override
+  void initState() {
+    super.initState();
+    for (var player in players) {
+      attendance[player['name']!] = false;
+      ratings[player['name']!] = {
+        'Note 1': 0,
+        'Note 2': 0,
+        'Note 3': 0,
+        'Note 4': 0,
+      };
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,99 +66,36 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
         ),
       ),
       body: Container(
-        color:const Color(0xFFF6F6F6),
+        color: const Color(0xFFF6F6F6),
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildDateTimePicker(
-                  title: 'Training Date',
-                  value: trainingDate == null
-                      ? 'Select Training Date'
-                      : DateFormat('yyyy-MM-dd').format(trainingDate!),
-                  icon: Icons.calendar_today,
-                  onTap: _selectDate,
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Adhérents',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[900],
                 ),
-                const SizedBox(height: 20),
-                _buildDateTimePicker(
-                  title: 'Training Time',
-                  value: trainingTime == null
-                      ? 'Select Training Time'
-                      : trainingTime!.format(context),
-                  icon: Icons.access_time,
-                  onTap: _selectTime,
-                ),
-                const SizedBox(height: 30),
-                _buildSectionTitle('Rate Players'),
-                const SizedBox(height: 20),
-                _buildPlayersList(),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: _buildPlayersList(),
+              ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDateTimePicker({
-    required String title,
-    required String value,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.blue[900],
-          ),
-        ),
-        subtitle: Text(
-          value,
-          style: TextStyle(color: Colors.grey[700]),
-        ),
-        trailing: Icon(icon, color: Colors.blue[900]),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      decoration: BoxDecoration(
-        color: Colors.blue[900],
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
         ),
       ),
     );
   }
 
   Widget _buildPlayersList() {
-    return Column(
-      children: players.map((player) {
+    return ListView.builder(
+      itemCount: players.length,
+      itemBuilder: (context, index) {
+        final player = players[index];
         return Card(
           elevation: 2,
           margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -150,66 +103,122 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
             borderRadius: BorderRadius.circular(15),
           ),
           child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: CircleAvatar(
               radius: 25,
               backgroundImage: AssetImage(player['image']!),
             ),
             title: Text(
               player['name']!,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(20),
+            subtitle: Row(
+              children: [
+                const Text('Présent: '),
+                Switch(
+                  value: attendance[player['name']]!,
+                  onChanged: (bool value) {
+                    setState(() {
+                      attendance[player['name']!] = value;
+                    });
+                  },
+                  activeColor: Colors.blue[900],
+                ),
+              ],
+            ),
+            trailing: ElevatedButton(
+              onPressed: () => _showRatingDialog(context, player['name']!),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue[900],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
               ),
-              child: DropdownButton<double>(
-                value: ratings[player['name']],
-                hint: Text('Rate'),
-                underline: SizedBox(),
-                items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                    .map((rating) => DropdownMenuItem<double>(
-                  value: rating.toDouble(),
-                  child: Text(rating.toString()),
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    ratings[player['name']!] = value!;
-                  });
-                },
+              child: const Text(
+                'Note',
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ),
         );
-      }).toList(),
+      },
     );
   }
 
-  void _selectDate() async {
-    DateTime? pickedDate = await showDatePicker(
+  void _showRatingDialog(BuildContext context, String playerName) {
+    showDialog(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2022),
-      lastDate: DateTime(2101),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                'Noter $playerName',
+                style: TextStyle(color: Colors.blue[900]),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildRatingSlider('Note 1', playerName, setState),
+                    _buildRatingSlider('Note 2', playerName, setState),
+                    _buildRatingSlider('Note 3', playerName, setState),
+                    _buildRatingSlider('Note 4', playerName, setState),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child:
+                      Text('Fermer', style: TextStyle(color: Colors.blue[900])),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[900]),
+                  onPressed: () {
+                    // Here you would typically save the ratings
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Sauvegarder',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
-    if (pickedDate != null) {
-      setState(() {
-        trainingDate = pickedDate;
-      });
-    }
   }
 
-  void _selectTime() async {
-    TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
+  Widget _buildRatingSlider(
+      String aspect, String playerName, StateSetter setState) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(aspect,
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.blue[900])),
+        Slider(
+          value: ratings[playerName]![aspect]!,
+          min: 0,
+          max: 10,
+          divisions: 10,
+          label: ratings[playerName]![aspect]!.round().toString(),
+          activeColor: Colors.blue[900],
+          inactiveColor: Colors.blue[100],
+          onChanged: (double value) {
+            setState(() {
+              ratings[playerName]![aspect] = value;
+            });
+          },
+        ),
+      ],
     );
-    if (pickedTime != null) {
-      setState(() {
-        trainingTime = pickedTime;
-      });
-    }
   }
 }

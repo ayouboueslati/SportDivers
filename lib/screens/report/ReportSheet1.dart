@@ -261,7 +261,7 @@ class _ReportPageState extends State<ReportPage> {
       },
       items: _userList.map<DropdownMenuItem<String>>((user) {
         return DropdownMenuItem<String>(
-          value: user['name'],
+          value: user['id'],
           child: Row(
             children: [
               CircleAvatar(

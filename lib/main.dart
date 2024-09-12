@@ -79,7 +79,8 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: CustomLoaderPage(),
+           // home: CustomLoaderPage(),
+            home: CoachDashboardScreen(),
             //initialRoute: LoginScreen.id,
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
