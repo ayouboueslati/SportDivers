@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
       Provider.of<EventProvider>(context, listen: false).fetchEvents();
     });
     _widgetOptions = <Widget>[
-      ProfileScreen(userData: widget.userData),
+     // ProfileScreen(userData: widget.userData),
       TrainingScheduleScreen(),
       const MessagesList(),
       widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),

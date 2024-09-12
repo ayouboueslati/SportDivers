@@ -59,7 +59,7 @@ class TicketsProvider extends ChangeNotifier {
         'reason': reason,
         'comment': comment,
         'target': target,
-        // Include 'person' only if the target is not 'ADMIN'
+
         if (target != 'ADMIN' && person != null) 'person': person,
       };
 
@@ -136,8 +136,7 @@ class TicketsProvider extends ChangeNotifier {
         List<dynamic> data = json.decode(response.body);
         _userList = data.map((user) {
           return {
-            'name':
-                '${user['profile']['firstName']} ${user['profile']['lastName']}',
+            'name': '${user['profile']['firstName']} ${user['profile']['lastName']}',
             'profilePicture': user['profile']['profilePicture'] ?? '',
           };
         }).toList();

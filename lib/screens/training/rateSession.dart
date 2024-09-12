@@ -34,99 +34,104 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Évaluer la Séance',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Évaluez cette séance :',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black54,
-                ),
-              ),
-              SizedBox(height: 8),
-              RatingBar.builder(
-                initialRating: _rating,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => Icon(
-                  Icons.star,
-                  color: Colors.orange,
-                ),
-                onRatingUpdate: (rating) {
-                  setState(() {
-                    _rating = rating;
-                  });
-                },
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: _commentController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.orange, width: 2.0),
+          child: Center(
+            // Added Center here
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              // Centered contents
+              children: <Widget>[
+                const Text(
+                  'Évaluer la Séance',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
-                  labelText: 'Commentaire',
-                  labelStyle: TextStyle(color: Colors.orange),
-                  hintText: 'Partagez vos impressions...',
-                  hintStyle: TextStyle(color: Colors.grey),
                 ),
-                maxLines: 3,
-              ),
-              SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _isLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                const SizedBox(height: 16),
+                // Text(
+                //   'Évaluez cette séance :',
+                //   style: TextStyle(
+                //     fontSize: 18,
+                //     color: Colors.black54,
+                //   ),
+                // ),
+                // SizedBox(height: 8),
+                RatingBar.builder(
+                  initialRating: _rating,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.yellow[600],
+                  ),
+                  onRatingUpdate: (rating) {
+                    setState(() {
+                      _rating = rating;
+                    });
+                  },
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: _commentController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide:
+                          BorderSide(color: Colors.blue[900]!, width: 2.0),
+                    ),
+                    labelText: 'Commentaire',
+                    labelStyle: TextStyle(color: Colors.blue[900]),
+                    hintText: 'Partagez vos impressions...',
+                    hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue[900],
+                              padding:const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                            ),
+                            onPressed: () => _submitRating(context),
+                            child: const Text(
+                              'Soumettre',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                          onPressed: () => _submitRating(context),
-                          child: Text(
-                            'Soumettre',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Annuler',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
                         ),
-                  SizedBox(width: 8),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'Annuler',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -142,8 +147,6 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
         Provider.of<SessionProvider>(context, listen: false);
 
     try {
-      // Extract session date from the session object
-
       await sessionProvider.submitRating(
         rating: _rating,
         comment: _commentController.text.isEmpty ? '' : _commentController.text,
@@ -156,15 +159,10 @@ class _RateSessionDialogState extends State<RateSessionDialog> {
         msg: "Évaluation soumise avec succès !",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.blue[900],
         textColor: Colors.white,
         fontSize: 16.0,
       );
-
-      // Navigator.of(context).pop({
-      //   'rating': _rating,
-      //   'comment': _commentController.text,
-      // });
     } catch (e) {
       print('Échec de la soumission de l\'évaluation. Erreur : $e');
 

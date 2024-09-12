@@ -13,6 +13,7 @@ import 'package:footballproject/screens/Service/SocketService.dart';
 import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
 import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/profile/ModifyProfile.dart';
+import 'package:footballproject/screens/profile/ProfileScreen.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
@@ -89,7 +90,8 @@ class MyApp extends StatelessWidget {
               CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
               TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),
-              ProfileScreen.id: (context) => ProfileScreen(),
+              //ProfileScreen.id: (context) => ProfileScreen(),
+              ProfileScreen1.id: (context) => ProfileScreen1(),
               ReportPage.id: (context) => ReportPage(),
               PollSurveyPage.id: (context) => PollSurveyPage(),
               RatingPage.id: (context) => RatingPage(),
@@ -99,12 +101,9 @@ class MyApp extends StatelessWidget {
               MessagesList.id: (context) =>  MessagesList(),
               PaymentScreen.id: (context) =>  PaymentScreen(),
               EditProfileScreen.id: (context) =>  EditProfileScreen(),
-              PasswordResetSuccessScreen.id: (context) =>
-                  PasswordResetSuccessScreen(),
-              ResetPasswordScreen.id: (context) =>
-                  ResetPasswordScreen(token: authProvider.token ?? ''),
-              HomePage.id: (context) =>
-                  HomePage(role: authProvider.accountType),
+              PasswordResetSuccessScreen.id: (context) => PasswordResetSuccessScreen(),
+              ResetPasswordScreen.id: (context) => ResetPasswordScreen(token: authProvider.token ?? ''),
+              HomePage.id: (context) => HomePage(role: authProvider.accountType),
               // RateSessionDialog.id: (context) {
               //   final session =
               //       ModalRoute.of(context)!.settings.arguments as Session;

@@ -32,8 +32,7 @@ class _ReportPageState extends State<ReportPage> {
       final reason = _reasonController.text;
       final comment = _commentController.text;
 
-      Provider.of<TicketsProvider>(context, listen: false)
-          .submitReport(
+      Provider.of<TicketsProvider>(context, listen: false).submitReport(
         reason: reason,
         comment: comment,
         target: _selectedTarget!,
@@ -81,8 +80,7 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Future<void> _fetchUsers() async {
-    final ticketsProvider =
-        Provider.of<TicketsProvider>(context, listen: false);
+    final ticketsProvider = Provider.of<TicketsProvider>(context, listen: false);
     if (_selectedTarget == 'STUDENT' || _selectedTarget == 'TEACHER') {
       setState(() {
         isLoading = true;

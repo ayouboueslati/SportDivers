@@ -7,32 +7,32 @@ import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/auth/reset_password/resetPasswordWebView.dart';
+import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
 import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:footballproject/screens/training/timetable.dart';
+import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProfileProvider>(
-      builder: (context, profileProvider, child) {
-        final userData = profileProvider.userData?['userData'];
-        return Drawer(
-          child: Column(
-            children: [
-              _buildHeader(context, userData),
-              Expanded(
-                child: _buildDrawerItems(context),
-              ),
-            ],
+    final authProvider = Provider.of<AuthenticationProvider>(context);
+    final user = authProvider.userData;
+
+    return Drawer(
+      child: Column(
+        children: [
+          _buildHeader(context, user),
+          Expanded(
+            child: _buildDrawerItems(context),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, Map<String, dynamic>? userData) {
+  Widget _buildHeader(BuildContext context, Map<String, dynamic>? user) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -40,7 +40,7 @@ class AppDrawer extends StatelessWidget {
       height: screenHeight * 0.20,
       decoration: BoxDecoration(
         color: Colors.blue[900],
-        boxShadow: const [
+        boxShadow:const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 6,
@@ -69,11 +69,11 @@ class AppDrawer extends StatelessWidget {
                   CircleAvatar(
                     radius: screenHeight * 0.045,
                     backgroundImage:
-                    userData != null && userData['profilePicture'] != null
-                        ? NetworkImage(userData['profilePicture'])
+                    user != null && user['profilePicture'] != null
+                        ? NetworkImage(user['profilePicture'])
                         : null,
                     backgroundColor: Colors.white,
-                    child: userData != null && userData['profilePicture'] != null
+                    child: user != null && user['profilePicture'] != null
                         ? null
                         : Icon(Icons.person,
                         size: screenHeight * 0.05, color: Colors.blue[900]),
@@ -84,7 +84,7 @@ class AppDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          userData?['firstName'] ?? 'User Name',
+                          user?['firstName'] ?? 'User Name',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: screenHeight * 0.024,
@@ -94,7 +94,7 @@ class AppDrawer extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          userData?['email'] ?? 'user@example.com',
+                          user?['email'] ?? 'user@example.com',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: screenHeight * 0.018,
@@ -169,6 +169,11 @@ class AppDrawer extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
+              // builder: (context) => ProfileScreen(
+              //   userData:
+              //       Provider.of<AuthenticationProvider>(context, listen: false)
+              //           .userData,
+              // ),
               builder: (context) => ProfileScreen1(),
             ),
           );
