@@ -138,6 +138,7 @@ class Group {
   final List<StudentProfile> students;
   final List<TeacherProfile> teachers;
   final Message? lastMessage;
+  final String? photo;
 
   Group({
     required this.id,
@@ -146,6 +147,7 @@ class Group {
     required this.students,
     required this.teachers,
     this.lastMessage,
+    this.photo,
   });
 
   factory Group.fromJson(Map<String, dynamic> json) {
@@ -170,6 +172,7 @@ class Group {
       lastMessage: json['lastMessage'] != null
           ? Message.fromJson(json['lastMessage'] as Map<String, dynamic>)
           : null,
+      photo: json['photo'] as String?,
     );
   }
 }

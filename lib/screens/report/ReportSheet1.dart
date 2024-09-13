@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
 
@@ -37,10 +38,9 @@ class _ReportPageState extends State<ReportPage> {
         comment: comment,
         target: _selectedTarget!,
         person: _selectedTarget == 'ADMIN' ? '' : (_selectedPerson ?? ''),
-      )
-          .then((_) {
+      ).then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Rapport soumis avec succès'),
             backgroundColor: Colors.green,
           ),
@@ -52,6 +52,12 @@ class _ReportPageState extends State<ReportPage> {
           _selectedPerson = null;
           _userList.clear();
         });
+
+        // Navigate to another page after success
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TicketsScreen()), // Replace with your destination
+        );
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -62,13 +68,14 @@ class _ReportPageState extends State<ReportPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Veuillez remplir tous les champs avant de soumettre.'),
           backgroundColor: Colors.orange,
         ),
       );
     }
   }
+
 
   void _onTargetChanged(String? newValue) {
     setState(() {

@@ -1,13 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
-import 'package:http/http.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:footballproject/models/session.dart';
 import 'package:footballproject/models/sessionTypes.dart';
 import 'package:footballproject/models/teacherProfile.dart';
 
-class SessionCard extends StatelessWidget {
+class SessionCard extends StatefulWidget {
   final TeacherProfile teacher;
   final Session session;
   final bool isLoading;
@@ -22,15 +20,20 @@ class SessionCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SessionCardState createState() => _SessionCardState();
+}
+
+class _SessionCardState extends State<SessionCard> {
+  @override
   Widget build(BuildContext context) {
     // Debugging profile picture URL
-    if (teacher.profilePicture != null) {
-      print('Profile Picture URL: ${teacher.profilePicture}');
+    if (widget.teacher.profilePicture != null) {
+      print('Profile Picture URL: ${widget.teacher.profilePicture}');
     } else {
       print('Profile Picture URL is null');
     }
 
-    if (isLoading) {
+    if (widget.isLoading) {
       return _buildShimmer();
     }
 
@@ -40,8 +43,8 @@ class SessionCard extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return RateSessionDialog(
-              session: session,
-              sessionDate: sessionDate,
+              session: widget.session,
+              sessionDate: widget.sessionDate,
             );
           },
         );
@@ -51,7 +54,7 @@ class SessionCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        color: _getCardColor(session.type),
+        color: _getCardColor(widget.session.type),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -63,11 +66,11 @@ class SessionCard extends StatelessWidget {
                   // Profile Picture
                   CircleAvatar(
                     radius: 24.0,
-                    backgroundImage: teacher.profilePicture != null &&
-                            teacher.profilePicture!.isNotEmpty
-                        ? NetworkImage(teacher.profilePicture!)
-                        : const AssetImage('assets/images/captain-america.jpg')
-                            as ImageProvider,
+                    backgroundImage: widget.teacher.profilePicture != null &&
+                        widget.teacher.profilePicture!.isNotEmpty
+                        ? NetworkImage(widget.teacher.profilePicture!)
+                        : const AssetImage('assets/images/icons/default_avatar.png')
+                    as ImageProvider,
                     backgroundColor: Colors.grey[300],
                     onBackgroundImageError: (_, __) {
                       // Handle the error, e.g., logging or providing a fallback image
@@ -78,7 +81,7 @@ class SessionCard extends StatelessWidget {
                   // First and Last Name
                   Expanded(
                     child: Text(
-                      '${teacher.firstName} ${teacher.lastName}',
+                      '${widget.teacher.firstName} ${widget.teacher.lastName}',
                       style: const TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
@@ -91,11 +94,11 @@ class SessionCard extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               // Field Name
-              if (session.field != null)
+              if (widget.session.field != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
-                    session.field!.designation,
+                    widget.session.field!.designation,
                     style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
@@ -111,13 +114,13 @@ class SessionCard extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        getIconForSessionType(session.type),
+                        getIconForSessionType(widget.session.type),
                         size: 18.0,
                         color: Colors.white,
                       ),
                       const SizedBox(width: 4.0),
                       Text(
-                        sessionTypeToString(session.type),
+                        sessionTypeToString(widget.session.type),
                         style: const TextStyle(
                           fontSize: 16.0,
                           color: Colors.white,
@@ -128,14 +131,14 @@ class SessionCard extends StatelessWidget {
                   // Session Time (HH:mm)
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.access_time,
                         size: 18.0,
                         color: Colors.white,
                       ),
                       const SizedBox(width: 4.0),
                       Text(
-                        formatSessionTime(session.startTime),
+                        formatSessionTime(widget.session.startTime),
                         style: const TextStyle(
                           fontSize: 16.0,
                           color: Colors.white,

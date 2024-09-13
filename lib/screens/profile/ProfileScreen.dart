@@ -160,10 +160,10 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                   _formatDate(userData['birthdate'])),
               _buildInfoRow(Icons.calendar_today, 'Date d\'inscription',
                   _formatDate(userData['inscriptionDate'])),
-              _buildInfoRow(Icons.sports_soccer, 'Catégorie',
-                  userData['group']['category']['designation']),
-              _buildInfoRow(Icons.group, 'Groupe',
-                  userData['group']['designation']),
+              // _buildInfoRow(Icons.sports_soccer, 'Catégorie',
+              //     userData['group']['category']['designation']),
+              // _buildInfoRow(Icons.group, 'Groupe',
+              //     userData['group']['designation']),
             ],
           ),
         ),
@@ -187,13 +187,13 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
       child: Row(
         children: [
           Icon(icon, color: Colors.blue[700], size: 24),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label, style: _labelStyle()),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(value ?? 'Non renseigné', style: _valueStyle()),
               ],
             ),
@@ -212,7 +212,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
   }
 
   TextStyle _valueStyle() {
-    return TextStyle(
+    return const TextStyle(
       fontSize: 16,
       color: Colors.black87,
     );

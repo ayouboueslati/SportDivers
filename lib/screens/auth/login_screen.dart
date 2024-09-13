@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
+import 'package:footballproject/Menu/MenuPageCoach.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -51,6 +52,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _dismissKeyboard() {
     FocusScope.of(context).unfocus();
+  }
+
+  void _navigateBasedOnRole(BuildContext context, String role) {
+    if (role.toLowerCase() == 'STUDENT') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(role: role)),
+      );
+    } else if (role.toLowerCase() == 'TEACHER') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePageCoach(role: role)),
+      );
+    } else {
+      // Handle unknown role or show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unknown user role: $role')),
+      );
+    }
   }
 
   @override

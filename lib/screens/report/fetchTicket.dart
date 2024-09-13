@@ -42,7 +42,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
         elevation: 5,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -60,105 +60,109 @@ class _TicketsScreenState extends State<TicketsScreen> {
       body: ticketsProvider.isLoading
           ? _buildShimmerLoading()
           : ticketsProvider.errorMessage.isNotEmpty
-              ? Center(child: Text(ticketsProvider.errorMessage))
-              : ticketsProvider.tickets.isEmpty
-                  ? Center(child: Text('Aucun billet trouvé'))
-                  : ListView.builder(
-                      itemCount: ticketsProvider.tickets.length,
-                      itemBuilder: (context, index) {
-                        final ticket = ticketsProvider.tickets[index];
-                        final date = formatDate(ticket['createdAt']);
-                        final time = formatTime(ticket['createdAt']);
-                        print(date);
-                        return Card(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 12),
-                                      decoration: BoxDecoration(
-                                        color: index == 0
-                                            ? Colors.blue[900]
-                                            : Colors.grey[300],
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            date,
-                                            style: TextStyle(
-                                              color: index == 0
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            time,
-                                            style: TextStyle(
-                                              color: index == 0
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 24,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            ticket['reason'] ?? 'Aucune raison',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Commentaire : ${ticket['comment'] ?? 'Aucun commentaire'}',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Créé par : ${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.calendar_today_outlined),
-                                      onPressed: () {
-                                        // Ajoutez votre fonctionnalité ici pour ajouter au calendrier
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
+          ? Center(child: Text(ticketsProvider.errorMessage))
+          : ticketsProvider.tickets.isEmpty
+          ? Center(child: Text('Aucun billet trouvé'))
+          : ListView.builder(
+        itemCount: ticketsProvider.tickets.length,
+        itemBuilder: (context, index) {
+          // Reverse the tickets to display from the latest to the oldest
+          final reversedTickets =
+          ticketsProvider.tickets.reversed.toList();
+          final ticket = reversedTickets[index];
+          final date = formatDate(ticket['createdAt']);
+          final time = formatTime(ticket['createdAt']);
+          return Card(
+            margin: const EdgeInsets.symmetric(
+                vertical: 8, horizontal: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: index == 0
+                              ? Colors.blue[900]
+                              : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              date,
+                              style: TextStyle(
+                                color: index == 0
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                            const SizedBox(height: 4),
+                            Text(
+                              time,
+                              style: TextStyle(
+                                color: index == 0
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              ticket['reason'] ??
+                                  'Aucune raison',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Commentaire : ${ticket['comment'] ?? 'Aucun commentaire'}',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Créé par : ${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}',
+                              style:
+                              const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today_outlined),
+                        onPressed: () {
+                          // Ajoutez votre fonctionnalité ici pour ajouter au calendrier
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -167,7 +171,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
       itemCount: 6,
       itemBuilder: (context, index) {
         return Card(
-          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -185,7 +189,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Shimmer.fromColors(
                   baseColor: Colors.grey[400]!,
                   highlightColor: Colors.grey[200]!,
@@ -195,7 +199,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Shimmer.fromColors(
                   baseColor: Colors.grey[400]!,
                   highlightColor: Colors.grey[200]!,

@@ -237,8 +237,12 @@ class _MessagesListState extends State<MessagesList> {
         }
         return ListTile(
           leading: CircleAvatar(
-            child: Text(group.designation[0].toUpperCase()),
-            backgroundColor: Colors.blue[700],
+            backgroundImage: group.photo != null
+                ? NetworkImage(group.photo!)
+                : AssetImage('assets/images/icons/default_avatar.png')
+             as ImageProvider,
+            // child: Text(group.designation[0].toUpperCase()),
+            // backgroundColor: Colors.blue[700],
           ),
           title: Text(group.designation),
           subtitle: groupChatRoom != null && groupChatRoom.lastMessage != null
