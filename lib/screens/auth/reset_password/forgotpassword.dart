@@ -23,7 +23,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
       final authProvider =
-          Provider.of<AuthenticationProvider>(context, listen: false);
+      Provider.of<AuthenticationProvider>(context, listen: false);
 
       try {
         final message = await authProvider.requestPasswordReset(email: email);
@@ -31,6 +31,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           SnackBar(
             content: Text(message),
             backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
           ),
         );
       } catch (e) {
@@ -38,6 +39,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           SnackBar(
             content: Text('Échec de l\'envoi du lien de réinitialisation : $e'),
             backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
           ),
         );
       }
@@ -47,82 +49,106 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Mot de passe oublié'),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.blue[900]),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Image.asset(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Image.asset(
                       'assets/images/football_logo.jpg',
-                      height: 100,
-                      width: 100,
+                      height: 150,
+                      width: 150,
                     ),
-                  ),
-                  SizedBox(height: 24),
-                  Text(
-                    'Réinitialiser le mot de passe',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 40),
+                    Text(
+                      'Mot de passe oublié ?',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[900],
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Entrez votre adresse e-mail ci-dessous et nous vous enverrons des instructions sur la façon de réinitialiser votre mot de passe.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
+                   const SizedBox(height: 16),
+                    Text(
+                      'Entrez votre adresse e-mail pour recevoir les instructions de réinitialisation.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  SizedBox(height: 24),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'E-mail',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
+                    const SizedBox(height: 40),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'E-mail',
+                        hintText: 'Entrez votre adresse e-mail',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        prefixIcon: Icon(Icons.email, color: Colors.blue[900]),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer votre e-mail';
+                        }
+                        bool isValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value);
+                        if (!isValid) {
+                          return 'Entrez une adresse e-mail valide';
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre e-mail';
-                      }
-                      bool isValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value);
-                      if (!isValid) {
-                        return 'Entrez une adresse e-mail valide';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
+                    const SizedBox(height: 24),
+                    ElevatedButton(
                       onPressed: _requestPasswordReset,
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[900],
+                        foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        'Réinitialiser le mot de passe',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                    SizedBox(height: 24),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
                       child: Text(
-                        'Envoyer le lien de réinitialisation',
+                        'Retour à la connexion',
                         style: TextStyle(
+                          color: Colors.blue[900],
                           fontSize: 16,
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

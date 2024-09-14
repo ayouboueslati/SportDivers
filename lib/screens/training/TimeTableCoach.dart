@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
-import 'package:footballproject/models/weekday.dart';
 import 'package:footballproject/screens/training/SessionCardCoach.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class TrainingScheduleScreen extends StatefulWidget {
-  static const String id = 'Training_Schedule_Screen';
+class TrainingScheduleScreenCoach extends StatefulWidget {
+  static const String id = 'Training_Schedule_Coach_Screen';
 
   @override
-  _TrainingScheduleScreenState createState() => _TrainingScheduleScreenState();
+  _TrainingScheduleScreenCoachState createState() =>
+      _TrainingScheduleScreenCoachState();
 }
 
-class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
+class _TrainingScheduleScreenCoachState
+    extends State<TrainingScheduleScreenCoach> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -23,7 +24,8 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
+    _selectedDay = null;
+    _focusedDay = DateTime.now();
     _fetchSessions();
   }
 
@@ -31,10 +33,9 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     setState(() {
       _isLoading = true;
     });
-
     try {
       final authProvider =
-      Provider.of<AuthenticationProvider>(context, listen: false);
+          Provider.of<AuthenticationProvider>(context, listen: false);
       final token = authProvider.token;
       if (token != null) {
         await Provider.of<SessionProvider>(context, listen: false)
@@ -58,17 +59,18 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   }
 
   List<DateTime> _getSessionDays(DateTime day) {
-    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+    final sessionProvider =
+        Provider.of<SessionProvider>(context, listen: false);
     final sessions = sessionProvider.sessions;
 
-    return sessions.where((session) {
-      return session.weekday.index == (day.weekday - 1) % 7 &&
-          _isWithinRange(day, session.schedule.startDate, session.schedule.endDate);
-    }).map((_) => day).toList();
-  }
-
-  bool _isWithinRange(DateTime date, DateTime start, DateTime end) {
-    return !date.isBefore(start) && !date.isAfter(end);
+    return sessions
+        .where((session) {
+          return session.weekday.index == day.weekday - 1 &&
+              session.isWithinRange(
+                  day, session.schedule.startDate, session.schedule.endDate);
+        })
+        .map((_) => day)
+        .toList();
   }
 
   @override
@@ -135,9 +137,9 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
         ),
         markerSize: 8,
         markersMaxCount: 3,
-        markerDecoration: BoxDecoration(
+        markerDecoration: const BoxDecoration(
           color: Colors.red,
-          shape: BoxShape.circle,
+          shape: BoxShape.rectangle,
         ),
       ),
       headerStyle: const HeaderStyle(
@@ -186,9 +188,9 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
             ),
             markerSize: 8,
             markersMaxCount: 3,
-            markerDecoration: BoxDecoration(
+            markerDecoration: const BoxDecoration(
               color: Colors.red,
-              shape: BoxShape.circle,
+              shape: BoxShape.rectangle,
             ),
           ),
           headerStyle: const HeaderStyle(
@@ -202,15 +204,20 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
           ),
         ),
         Expanded(
-          child: _buildAppointmentList(),
+          child: _buildAppointmentList(context),
         ),
       ],
     );
   }
 
-  Widget _buildAppointmentList() {
+  Widget _buildAppointmentList(BuildContext context) {
+    final sessionProvider = Provider.of<SessionProvider>(context);
+    final sessions = sessionProvider.sessions;
+
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
     if (_selectedDay == null) {
@@ -218,12 +225,15 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
           child: Text('Sélectionnez un jour pour voir les rendez-vous'));
     }
 
-    final sessionProvider = Provider.of<SessionProvider>(context);
-    final sessions = sessionProvider.sessions;
+    final selectedDate = DateTime(
+      _selectedDay!.year,
+      _selectedDay!.month,
+      _selectedDay!.day,
+    );
 
     final dayAppointments = sessions.where((session) {
-      return session.weekday.index == (_selectedDay!.weekday - 1) % 7 &&
-          _isWithinRange(_selectedDay!, session.schedule.startDate,
+      return session.weekday.index == selectedDate.weekday - 1 &&
+          session.isWithinRange(selectedDate, session.schedule.startDate,
               session.schedule.endDate);
     }).toList();
 
@@ -243,17 +253,17 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
           child: dayAppointments.isEmpty
               ? const Center(child: Text('Aucun rendez-vous pour ce jour'))
               : ListView.builder(
-            itemCount: dayAppointments.length,
-            itemBuilder: (context, index) {
-              final appointment = dayAppointments[index];
-              return SessionCardCoach(
-                teacher: appointment.teacher,
-                session: appointment,
-                isLoading: _isLoading,
-                sessionDate: _selectedDay!,
-              );
-            },
-          ),
+                  itemCount: dayAppointments.length,
+                  itemBuilder: (context, index) {
+                    final appointment = dayAppointments[index];
+                    return SessionCardCoach(
+                      teacher: appointment.teacher,
+                      session: appointment,
+                      isLoading: _isLoading,
+                      sessionDate: selectedDate,
+                    );
+                  },
+                ),
         ),
       ],
     );
@@ -262,5 +272,11 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
   String _formatDate(DateTime date) {
     final formatter = DateFormat('yyyy-MM-dd');
     return formatter.format(date);
+  }
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+    date1 = DateTime(date1.year, date1.month, date1.day);
+    date2 = DateTime(date2.year, date2.month, date2.day);
+    return date1 == date2;
   }
 }

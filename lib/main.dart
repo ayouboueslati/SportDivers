@@ -5,6 +5,7 @@ import 'package:footballproject/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
 import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
 import 'package:footballproject/Provider/ProfileProvider/EditProfileProvider.dart';
+import 'package:footballproject/Provider/TrainingSchedule/CoachDashboardProvider.dart';
 import 'package:footballproject/Provider/UserProvider/userProvider.dart';
 import 'package:footballproject/components/Loader.dart';
 import 'package:footballproject/models/session.dart';
@@ -14,6 +15,7 @@ import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess
 import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/profile/ModifyProfile.dart';
 import 'package:footballproject/screens/profile/ProfileScreen.dart';
+import 'package:footballproject/screens/training/TimeTableCoach.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
@@ -69,6 +71,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatRoomsProvider()),
         ChangeNotifierProvider(create: (_) => PollProvider()),
         ChangeNotifierProvider(create: (_) => EditProfileProvider()),
+        ChangeNotifierProvider(create: (_) => ApiProvider()),
 
       ],
       child: Consumer<AuthenticationProvider>(
@@ -88,9 +91,10 @@ class MyApp extends StatelessWidget {
                   }),
               ForgotPasswordScreen.id: (context) => ForgotPasswordScreen(),
               //FriendScreen.id: (context) => const FriendScreen(),
-              CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
+              //CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
               TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),
+              TrainingScheduleScreenCoach.id: (context) => TrainingScheduleScreenCoach(),
               //ProfileScreen.id: (context) => ProfileScreen(),
               ProfileScreen1.id: (context) => ProfileScreen1(),
               ReportPage.id: (context) => ReportPage(),

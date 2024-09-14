@@ -11,6 +11,7 @@ import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
+import 'package:footballproject/screens/training/TimeTableCoach.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -43,8 +44,9 @@ class _HomePageState extends State<HomePage> {
     _widgetOptions = <Widget>[
      // ProfileScreen(userData: widget.userData),
       TrainingScheduleScreen(),
+      TrainingScheduleScreenCoach(),
       const MessagesList(),
-      widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
+     // widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
     ];
 
     // Fetch events once the widget is initialized
@@ -94,11 +96,12 @@ class _HomePageState extends State<HomePage> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _buildSportCard(
+                  _buildSportCardWithRoleBasedRoute(
                     context,
                     'Calendrier',
                     Icons.calendar_today_outlined,
                     TrainingScheduleScreen.id,
+                    TrainingScheduleScreenCoach.id,
                   ),
                   _buildSportCard(
                     context,
@@ -118,18 +121,20 @@ class _HomePageState extends State<HomePage> {
                     Icons.help_outline,
                     ReportPage.id,
                   ),
-                  _buildSportCard(
-                    context,
-                    'Sondages',
-                    Icons.poll_outlined,
-                    PollSurveyPage.id,
-                  ),
-                  _buildSportCard(
-                    context,
-                    'paiements',
-                    Icons.payment_outlined,
-                    PaymentScreen.id,
-                  ),
+                  if (widget.role != 'TEACHER') ...[
+                    _buildSportCard(
+                      context,
+                      'Sondages',
+                      Icons.poll_outlined,
+                      PollSurveyPage.id,
+                    ),
+                    _buildSportCard(
+                      context,
+                      'paiements',
+                      Icons.payment_outlined,
+                      PaymentScreen.id,
+                    ),
+                  ],
                 ],
               ),
               Consumer<EventProvider>(
@@ -176,36 +181,6 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(height: 10),
-              // Card(
-              //   margin: const EdgeInsets.all(16),
-              //   elevation: 15,
-              //   shadowColor: Colors.blue.withOpacity(0.4),
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(15),
-              //   ),
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(16),
-              //     child: Column(
-              //       children: [
-              //         Text(
-              //           'Autres Fonctionnalités',
-              //           style: TextStyle(
-              //             fontSize: 20,
-              //             fontWeight: FontWeight.bold,
-              //             color: Colors.blue[900],
-              //           ),
-              //         ),
-              //         const SizedBox(height: 16),
-              //         // _buildFeatureButton(context, 'Statistiques des Joueurs',
-              //         //     Icons.area_chart, CoachDashboardScreen.id),
-              //         // _buildFeatureButton(context, 'Classements',
-              //         //     Icons.poll_outlined, PollSurveyPage.id),
-              //         // _buildFeatureButton(context, 'paiement en ligne',
-              //         //     Icons.payment_outlined, PaymentScreen.id),
-              //       ],
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -223,6 +198,55 @@ class _HomePageState extends State<HomePage> {
       ),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, route),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              top: -20,
+              right: -20,
+              child: Icon(
+                icon,
+                size: 150,
+                color: Colors.blue[100]!.withOpacity(0.3),
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 48, color: Colors.blue[900]),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _buildSportCardWithRoleBasedRoute(
+      BuildContext context,
+      String title,
+      IconData icon,
+      String studentRoute,
+      String teacherRoute,
+      ) {
+    return Card(
+      elevation: 15,
+      shadowColor: Colors.blue.withOpacity(0.4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: InkWell(
+        onTap: () {
+          String route = widget.role == 'TEACHER' ? teacherRoute : studentRoute;
+          Navigator.pushNamed(context, route);
+        },
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -349,7 +373,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 10.0,
@@ -451,14 +475,4 @@ class _HomePageState extends State<HomePage> {
     final dateTime = DateTime.parse(dateTimeString);
     return DateFormat(' d/M/y  HH:mm').format(dateTime);
   }
-
-  // Widget _buildFeatureButton(
-  //     BuildContext context, String title, IconData icon, String route) {
-  //   return ListTile(
-  //     leading: Icon(icon, color: Colors.blue[900]),
-  //     title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-  //     trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-  //     onTap: () => Navigator.pushNamed(context, route),
-  //   );
-  // }
 }

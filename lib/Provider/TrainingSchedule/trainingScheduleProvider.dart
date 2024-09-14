@@ -30,6 +30,9 @@ class SessionProvider with ChangeNotifier {
         List<dynamic> jsonResponse = json.decode(response.body);
         _sessions = jsonResponse.map((json) => Session.fromJson(json)).toList();
         notifyListeners();
+
+        print('Number of sessions fetched: ${_sessions.length}');
+
       } catch (e) {
         print('Error parsing response: $e');
         throw Exception('Error parsing sessions data');

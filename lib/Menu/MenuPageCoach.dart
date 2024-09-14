@@ -42,7 +42,7 @@ class _HomePageCoachState extends State<HomePageCoach> {
       // ProfileScreen(userData: widget.userData),
       TrainingScheduleScreen(),
       const MessagesList(),
-      widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
+     // widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
     ];
 
     // Fetch events once the widget is initialized
