@@ -67,7 +67,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
         elevation: 5,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -91,7 +91,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 final studentId = student['id'];
 
                 return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin:const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 2,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -111,12 +111,12 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                           child: student['profile']['profilePicture'] == null
                               ? Text(
                                   student['profile']['firstName'][0],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 24, color: Colors.white),
                                 )
                               : null,
                         ),
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,11 +129,11 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                                   color: Colors.blue[900],
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Row(
                                 children: [
                                   Text(
-                                    'Present:',
+                                    'Présent:',
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.blue[700],
@@ -154,18 +154,18 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                           ),
                         ),
                         ElevatedButton(
-                          child: Text('Grade'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue[900],
                             foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(15),
                             ),
                           ),
                           onPressed: () =>
                               _showGradingDialog(context, studentId),
+                          child: const Text('Note'),
                         ),
                       ],
                     ),
@@ -174,7 +174,10 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
               },
             ),
       floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.save,color: Colors.white,),
+        icon: const Icon(
+          Icons.save,
+          color: Colors.white,
+        ),
         label: const Text(
           'Valider',
           style: TextStyle(color: Colors.white),
@@ -213,15 +216,15 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 ElevatedButton(
-                  child: Text('Enregistrer'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[900],
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    this.setState(() {}); // Refresh the main UI
+                    this.setState(() {});
                   },
+                  child: const Text('Enregistrer'),
                 ),
               ],
             );
@@ -301,7 +304,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     try {
       await apiProvider.setAttendance(widget.sessionId, attendanceData);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Attendance and grades saved successfully'),
           backgroundColor: Colors.green,
         ),

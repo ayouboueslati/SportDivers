@@ -32,14 +32,12 @@ import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
-import 'package:footballproject/screens/profile/CardPicture.dart';
 import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/rating/RatingCoachPage.dart';
 import 'package:footballproject/screens/rating/ratingPage.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
 import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:footballproject/screens/training/timetable.dart';
-import 'package:footballproject/bottomNavBar.dart';
 import 'package:footballproject/Provider/VideosProvider/videoProvider.dart';
 
 void main() {
