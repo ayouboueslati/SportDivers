@@ -53,6 +53,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _initializeChat() async {
+    Provider.of<MessagesProvider>(context, listen: false).clearMessages();
+    
     if (widget.isGroupChat) {
       _fetchGroupMessages();
     } else {
@@ -123,6 +125,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     SocketService.socket!.off('new-message', handleNewMessage);
+    Provider.of<MessagesProvider>(context, listen: false).clearMessages();
     super.dispose();
   }
 
@@ -460,7 +463,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Text(
                     widget.isGroupChat
                         ? "Group"
-                        : widget.user!.type.capitalize(),
+                        : "Coach",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

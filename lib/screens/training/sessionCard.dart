@@ -245,9 +245,9 @@ class _SessionCardState extends State<SessionCard> {
 
   IconData getIconForSessionType(Sessiontypes type) {
     switch (type) {
-      case Sessiontypes.TRAINING_SESSION:
+      case Sessiontypes.SEANCE_ENTRAINEMENT:
         return Icons.fitness_center;
-      case Sessiontypes.FRIENDLY_GAME:
+      case Sessiontypes.MATCH_AMICAL:
         return Icons.sports_soccer;
       default:
         return Icons.emoji_events;
@@ -269,9 +269,9 @@ class _SessionCardState extends State<SessionCard> {
 
   Color _getCardColor(Sessiontypes type) {
     switch (type) {
-      case Sessiontypes.TRAINING_SESSION:
+      case Sessiontypes.SEANCE_ENTRAINEMENT:
         return Colors.blue[700]!; // Blue for training
-      case Sessiontypes.FRIENDLY_GAME:
+      case Sessiontypes.MATCH_AMICAL:
         return Colors.green[600]!; // Green for friendly games
       default:
         return Colors.orange[800]!; // Orange for other session types

@@ -78,7 +78,7 @@ class _MessagesListState extends State<MessagesList> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Groups',
+                        'Discussions',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -171,9 +171,8 @@ class _MessagesListState extends State<MessagesList> {
       builder: (context, userProvider, child) {
         User? currentUser = userProvider.currentUser;
 
-        if (currentUser == null) {
-          // Handle the case when current user is not available
-          return SizedBox();
+        if (currentUser == null || currentUser.id == user.id) {
+          return SizedBox(); // Hide the item if it's the current user
         }
 
         return Consumer<ChatRoomsProvider>(
@@ -182,42 +181,41 @@ class _MessagesListState extends State<MessagesList> {
             try {
               chatRoom = chatRoomsProvider.chatRooms.firstWhere(
                 (room) =>
-                    // room.firstUser.id == user.id || room.secondUser.id == user.id,
-                    // (room.firstUser.id == user.id || room.secondUser.id == user.id)&&
-                    ((room.firstUser.id == user.id &&
-                            room.secondUser.id != currentUser.id) ||
-                        (room.secondUser.id == user.id &&
-                            room.firstUser.id != currentUser.id)),
+                    (room.firstUser.id == user.id && room.secondUser.id == currentUser.id) ||
+                    (room.secondUser.id == user.id && room.firstUser.id == currentUser.id),
+
+
+                    // ((room.firstUser.id == user.id &&
+                    //         room.secondUser.id != currentUser.id) ||
+                    //     (room.secondUser.id == user.id &&
+                    //         room.firstUser.id != currentUser.id)),
               );
             } catch (e) {
               // If no matching room is found, chatRoom remains null
             }
 
-            return chatRoom != null
-                ? ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: user.picture != null
-                          ? NetworkImage(user.picture!)
-                          : AssetImage('assets/images/icons/default_avatar.png')
-                              as ImageProvider,
-                    ),
-                    title: Text('${user.firstName} ${user.lastName}'),
-                    subtitle: Text(
-                      chatRoom.lastMessage?.text ?? 'Pas encore de messages',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: chatRoom.lastMessage != null
-                        ? Text(
-                            _formatTimestamp(chatRoom.lastMessage!.timestamp))
-                        : null,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => ChatScreen.forUser(user: user)),
-                    ),
-                  )
-                : SizedBox(); // Return an empty SizedBox if chatRoom is null
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: user.picture != null
+                    ? NetworkImage(user.picture!)
+                    : AssetImage('assets/images/icons/default_avatar.png')
+                as ImageProvider,
+              ),
+              title: Text('${user.firstName} ${user.lastName}'),
+              subtitle: Text(
+                chatRoom?.lastMessage?.text ?? 'Pas encore de messages',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: chatRoom?.lastMessage != null
+                  ? Text(_formatTimestamp(chatRoom!.lastMessage!.timestamp))
+                  : null,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ChatScreen.forUser(user: user)),
+              ),
+            );
           },
         );
       },

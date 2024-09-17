@@ -15,7 +15,15 @@ class MessagesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearMessages() {
+    _messages.clear();
+    print('Cleared all messages');
+    notifyListeners();
+  }
+
   Future<void> fetchPrivateMessages(String chatRoomId) async {
+    clearMessages();
+
     final url = '${Constants.baseUrl}/chats/rooms/$chatRoomId/messages';
     print('Fetching private messages for chatRoomId: $chatRoomId');
 
@@ -65,6 +73,7 @@ class MessagesProvider with ChangeNotifier {
   }
 
   Future<void> fetchGroupMessages(String groupChatId) async {
+    clearMessages();
     final url = '${Constants.baseUrl}/chats/group-rooms/$groupChatId/messages';
     print('Fetching group messages for groupChatId: $groupChatId');
 
@@ -89,6 +98,7 @@ class MessagesProvider with ChangeNotifier {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
+
         final data = json.decode(response.body) as List;
         print('Decoded data: $data');
 
