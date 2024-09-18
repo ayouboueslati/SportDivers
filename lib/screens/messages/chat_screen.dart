@@ -54,7 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _initializeChat() async {
     Provider.of<MessagesProvider>(context, listen: false).clearMessages();
-    
+
     if (widget.isGroupChat) {
       _fetchGroupMessages();
     } else {

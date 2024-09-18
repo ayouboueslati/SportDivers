@@ -109,6 +109,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
       eventLoader: _getSessionDays,
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2050, 12, 31),
+      startingDayOfWeek:StartingDayOfWeek.monday,
       focusedDay: _focusedDay,
       calendarFormat: _calendarFormat,
       selectedDayPredicate: (day) {
@@ -156,6 +157,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
           eventLoader: _getSessionDays,
           firstDay: DateTime.utc(2020, 1, 1),
           lastDay: DateTime.utc(2050, 12, 31),
+          startingDayOfWeek:StartingDayOfWeek.monday,
           focusedDay: _focusedDay,
           calendarFormat: _calendarFormat,
           selectedDayPredicate: (day) {
@@ -178,7 +180,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
-              color: Colors.blue[700],
+              color: Colors.blue[900],
               shape: BoxShape.circle,
             ),
             markerSize: 8,

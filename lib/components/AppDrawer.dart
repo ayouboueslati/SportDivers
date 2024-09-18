@@ -19,24 +19,6 @@ class AppDrawer extends StatefulWidget {
 
 class _AppDrawerState extends State<AppDrawer> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchUserData();
-    });
-  }
-
-  void _fetchUserData() async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-    final token = authProvider.token;
-
-    if (token != null) {
-      await profileProvider.fetchUserData(token);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
       builder: (context, profileProvider, child) {

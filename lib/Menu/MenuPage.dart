@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
 import 'package:footballproject/Provider/EventProvider/eventProvider.dart';
+import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
 import 'package:footballproject/components/AppDrawer.dart';
 import 'package:footballproject/models/event.dart';
 import 'package:footballproject/screens/Payment/PaymentScreen.dart';
@@ -53,6 +55,20 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<EventProvider>(context, listen: false).fetchEvents();
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchUserData();
+    });
+  }
+
+  void _fetchUserData() async {
+    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final token = authProvider.token;
+
+    if (token != null) {
+      await profileProvider.fetchUserData(token);
+    }
   }
 
   @override
@@ -310,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                   borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(10)),
                   child: Image.network(
-                    'https://sports.becker-brand.store/storage/${event.image}',
+                    'https://sportdivers.tn/storage/${event.image}',
                     height: imageHeight,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -389,7 +405,7 @@ class _HomePageState extends State<HomePage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      'https://sports.becker-brand.store/storage/${event.image}',
+                      'https://sportdivers.tn/storage/${event.image}',
                       height:  230,
                       width: double.infinity,
                       fit: BoxFit.cover,

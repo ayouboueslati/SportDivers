@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/components/TranslationSessionType.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:shimmer/shimmer.dart';
@@ -47,7 +48,6 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
             ),
           ),
         );
-        print('1111111111111111111111: ${widget.sessionDate}');
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -61,51 +61,51 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Teacher's Name and Profile Picture
-              Row(
-                children: [
-                  // Profile Picture
-                  CircleAvatar(
-                    radius: 24.0,
-                    backgroundImage: widget.teacher.profilePicture != null &&
-                        widget.teacher.profilePicture!.isNotEmpty
-                        ? NetworkImage(widget.teacher.profilePicture!)
-                        : const AssetImage('assets/images/icons/default_avatar.png')
-                    as ImageProvider,
-                    backgroundColor: Colors.grey[300],
-                    onBackgroundImageError: (_, __) {
-                      // Handle the error, e.g., logging or providing a fallback image
-                    },
-                  ),
-
-                  const SizedBox(width: 8.0),
-                  // First and Last Name
-                  Expanded(
-                    child: Text(
-                      '${widget.teacher.firstName} ${widget.teacher.lastName}',
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8.0),
+              // Row(
+              //   children: [
+              //     // Profile Picture
+              //     CircleAvatar(
+              //       radius: 24.0,
+              //       backgroundImage: widget.teacher.profilePicture != null &&
+              //           widget.teacher.profilePicture!.isNotEmpty
+              //           ? NetworkImage(widget.teacher.profilePicture!)
+              //           : const AssetImage('assets/images/icons/default_avatar.png')
+              //       as ImageProvider,
+              //       backgroundColor: Colors.grey[300],
+              //       onBackgroundImageError: (_, __) {
+              //         // Handle the error, e.g., logging or providing a fallback image
+              //       },
+              //     ),
+              //
+              //     const SizedBox(width: 8.0),
+              //     // First and Last Name
+              //     Expanded(
+              //       child: Text(
+              //         '${widget.teacher.firstName} ${widget.teacher.lastName}',
+              //         style: const TextStyle(
+              //           fontSize: 18.0,
+              //           fontWeight: FontWeight.bold,
+              //           color: Colors.white,
+              //         ),
+              //         overflow: TextOverflow.ellipsis,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              //const SizedBox(height: 8.0),
               // Field Name
               if (widget.session.field != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
+                  padding: const EdgeInsets.only(top: 5.0),
                   child: Text(
                     widget.session.field!.designation,
                     style: const TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 22.0,
                       color: Colors.white,
                     ),
                   ),
                 ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 15.0),
               // Session Type and Date
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,7 +120,7 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
                       ),
                       const SizedBox(width: 4.0),
                       Text(
-                        sessionTypeToString(widget.session.type),
+                        translateSessionType(widget.session.type),
                         style: const TextStyle(
                           fontSize: 16.0,
                           color: Colors.white,
@@ -245,9 +245,9 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
 
   IconData getIconForSessionType(Sessiontypes type) {
     switch (type) {
-      case Sessiontypes.SEANCE_ENTRAINEMENT:
+      case Sessiontypes.TRAINING_SESSION:
         return Icons.fitness_center;
-      case Sessiontypes.MATCH_AMICAL:
+      case Sessiontypes.FRIENDLY_GAME:
         return Icons.sports_soccer;
       default:
         return Icons.emoji_events;
@@ -269,9 +269,9 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
 
   Color _getCardColor(Sessiontypes type) {
     switch (type) {
-      case Sessiontypes.SEANCE_ENTRAINEMENT:
+      case Sessiontypes.TRAINING_SESSION:
         return Colors.blue[700]!; // Blue for training
-      case Sessiontypes.MATCH_AMICAL:
+      case Sessiontypes.FRIENDLY_GAME:
         return Colors.green[600]!; // Green for friendly games
       default:
         return Colors.orange[800]!; // Orange for other session types

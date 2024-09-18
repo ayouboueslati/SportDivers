@@ -37,7 +37,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
       setState(() {
         students = loadedStudents;
         for (var student in students) {
-          final studentId = student['id'];
+          final studentId = student['profile']['id'];
           attendance[studentId] = false;
           ratings[studentId] = {
             'grade1': 0,
@@ -88,7 +88,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
               itemCount: students.length,
               itemBuilder: (context, index) {
                 final student = students[index];
-                final studentId = student['id'];
+                final studentId = student['profile']['id'];
 
                 return Card(
                   margin:const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -305,14 +305,15 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
       await apiProvider.setAttendance(widget.sessionId, attendanceData);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Attendance and grades saved successfully'),
-          backgroundColor: Colors.green,
+          content: Text('Présence et notes enregistrées avec succès'),
+          backgroundColor: Colors.blue,
         ),
       );
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save attendance and grades: $e'),
+          content: Text('Échec de l\'enregistrement des présences et des notes: $e'),
           backgroundColor: Colors.red,
         ),
       );

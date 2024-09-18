@@ -60,12 +60,12 @@ class Session {
   factory Session.fromJson(Map<String, dynamic> json) {
     Weekday weekday = Weekday.MONDAY; // Default value
     List<Attendance> attendances = [];
-    Sessiontypes type = Sessiontypes.MATCH_AMICAL; // Default value
+    Sessiontypes type = Sessiontypes.FRIENDLY_GAME; // Default value
 
     if (json.containsKey('type') && json['type'] != null) {
       type = Sessiontypes.values.firstWhere(
         (e) => e.toString().split('.').last == json['type'],
-        orElse: () => Sessiontypes.MATCH_AMICAL,
+        orElse: () => Sessiontypes.FRIENDLY_GAME,
       );
     }
 

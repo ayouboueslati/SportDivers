@@ -60,7 +60,6 @@ class usersChatProvider with ChangeNotifier {
           allUsers.add(User.fromJson({
             ...studentData,
             'type': 'student',
-            'id': id,
           }));
         });
 
@@ -69,7 +68,6 @@ class usersChatProvider with ChangeNotifier {
           allUsers.add(User.fromJson({
             ...teacherData,
             'type': 'teacher',
-            'id': id,
           }));
         });
 

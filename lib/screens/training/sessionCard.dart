@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footballproject/components/TranslationSessionType.dart';
 import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:footballproject/models/session.dart';
@@ -120,7 +121,7 @@ class _SessionCardState extends State<SessionCard> {
                       ),
                       const SizedBox(width: 4.0),
                       Text(
-                        sessionTypeToString(widget.session.type),
+                        translateSessionType(widget.session.type),
                         style: const TextStyle(
                           fontSize: 16.0,
                           color: Colors.white,
@@ -245,9 +246,9 @@ class _SessionCardState extends State<SessionCard> {
 
   IconData getIconForSessionType(Sessiontypes type) {
     switch (type) {
-      case Sessiontypes.SEANCE_ENTRAINEMENT:
+      case Sessiontypes.TRAINING_SESSION:
         return Icons.fitness_center;
-      case Sessiontypes.MATCH_AMICAL:
+      case Sessiontypes.FRIENDLY_GAME:
         return Icons.sports_soccer;
       default:
         return Icons.emoji_events;
@@ -269,9 +270,9 @@ class _SessionCardState extends State<SessionCard> {
 
   Color _getCardColor(Sessiontypes type) {
     switch (type) {
-      case Sessiontypes.SEANCE_ENTRAINEMENT:
+      case Sessiontypes.TRAINING_SESSION:
         return Colors.blue[700]!; // Blue for training
-      case Sessiontypes.MATCH_AMICAL:
+      case Sessiontypes.FRIENDLY_GAME:
         return Colors.green[600]!; // Green for friendly games
       default:
         return Colors.orange[800]!; // Orange for other session types

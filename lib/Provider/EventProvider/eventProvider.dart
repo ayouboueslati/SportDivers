@@ -19,7 +19,7 @@ class EventProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('https://sports.becker-brand.store/api/events'));
+      final response = await http.get(Uri.parse('https://sportdivers.tn/api/events'));
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
