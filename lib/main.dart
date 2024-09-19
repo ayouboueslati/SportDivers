@@ -3,20 +3,20 @@ import 'package:footballproject/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:footballproject/Provider/ChatProvider/FindMessagesProvider.dart';
 import 'package:footballproject/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
+import 'package:footballproject/Provider/DashboardProvider/DashboardProvider.dart';
 import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
 import 'package:footballproject/Provider/ProfileProvider/EditProfileProvider.dart';
 import 'package:footballproject/Provider/TrainingSchedule/CoachDashboardProvider.dart';
 import 'package:footballproject/Provider/UserProvider/userProvider.dart';
 import 'package:footballproject/components/Loader.dart';
-import 'package:footballproject/models/session.dart';
 import 'package:footballproject/screens/Payment/PaymentScreen.dart';
 import 'package:footballproject/screens/Service/SocketService.dart';
 import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
+import 'package:footballproject/screens/dashboard/StatDashboardAdhrt.dart';
 import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/profile/ModifyProfile.dart';
 import 'package:footballproject/screens/profile/ProfileScreen.dart';
 import 'package:footballproject/screens/training/TimeTableCoach.dart';
-import 'package:footballproject/screens/training/rateSession.dart';
 import 'package:provider/provider.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
 import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
@@ -28,11 +28,7 @@ import 'package:footballproject/screens/Survey/PollsPage.dart';
 import 'package:footballproject/screens/auth/login_screen.dart';
 import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
 import 'package:footballproject/screens/auth/reset_password/resetPasswordWebView.dart';
-import 'package:footballproject/screens/dashboard/dashboard.dart';
-import 'package:footballproject/screens/messages/friend_list.dart';
-import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
-import 'package:footballproject/screens/profile/profile.dart';
 import 'package:footballproject/screens/rating/RatingCoachPage.dart';
 import 'package:footballproject/screens/rating/ratingPage.dart';
 import 'package:footballproject/screens/report/ReportSheet1.dart';
@@ -70,6 +66,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PollProvider()),
         ChangeNotifierProvider(create: (_) => EditProfileProvider()),
         ChangeNotifierProvider(create: (_) => ApiProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
 
       ],
       child: Consumer<AuthenticationProvider>(
@@ -81,7 +78,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             home: CustomLoaderPage(),
-           // home: CoachDashboardScreen(),
+            //home: StatDashboardAdhrt(),
             //initialRoute: LoginScreen.id,
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
@@ -100,11 +97,11 @@ class MyApp extends StatelessWidget {
               RatingPage.id: (context) => RatingPage(),
               TicketsScreen.id: (context) => TicketsScreen(),
               RatingCoachPage.id: (context) => RatingCoachPage(),
-              DashboardScreen.id: (context) => DashboardScreen(),
               MessagesList.id: (context) =>  MessagesList(),
               PaymentScreen.id: (context) =>  PaymentScreen(),
               EditProfileScreen.id: (context) =>  EditProfileScreen(),
               PasswordResetSuccessScreen.id: (context) => PasswordResetSuccessScreen(),
+              StatDashboardAdhrt.id: (context) => StatDashboardAdhrt(),
               ResetPasswordScreen.id: (context) => ResetPasswordScreen(token: authProvider.token ?? ''),
               HomePage.id: (context) => HomePage(role: authProvider.accountType),
               // RateSessionDialog.id: (context) {

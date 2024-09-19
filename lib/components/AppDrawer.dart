@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:footballproject/Menu/MenuPage.dart';
 import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
+import 'package:footballproject/screens/dashboard/StatDashboardAdhrt.dart';
 import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/profile/ProfileScreen.dart';
 import 'package:provider/provider.dart';
@@ -128,8 +129,7 @@ class _AppDrawerState extends State<AppDrawer> {
         _buildDrawerItem(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
         _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined, ReportPage.id),
         _buildDrawerItem(context, 'Changer mot de passe', Icons.password, ResetPasswordScreen.id),
-        // Divider(),
-        // _buildDrawerItem(context, 'Statistiques', Icons.poll, '/player-stats'),
+        _buildDrawerItem(context, 'Dashboard', Icons.poll, StatDashboardAdhrt.id),
         // _buildDrawerItem(context, 'Classement', Icons.leaderboard, '/standings'),
         // _buildDrawerItem(context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
         const Divider(),

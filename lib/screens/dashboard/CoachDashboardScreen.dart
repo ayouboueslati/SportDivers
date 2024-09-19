@@ -202,10 +202,10 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildGradeSlider('Grade 1', studentId, 'grade1', setState),
-                    _buildGradeSlider('Grade 2', studentId, 'grade2', setState),
-                    _buildGradeSlider('Grade 3', studentId, 'grade3', setState),
-                    _buildGradeSlider('Grade 4', studentId, 'grade4', setState),
+                    _buildGradeSlider('Assiduité', studentId, 'grade1', setState),
+                    _buildGradeSlider('Comportement', studentId, 'grade2', setState),
+                    _buildGradeSlider('Performance', studentId, 'grade3', setState),
+                    _buildGradeSlider('Jeu Collectif', studentId, 'grade4', setState),
                   ],
                 ),
               ),

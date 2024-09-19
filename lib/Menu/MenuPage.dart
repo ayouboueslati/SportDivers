@@ -8,7 +8,6 @@ import 'package:footballproject/screens/Payment/PaymentScreen.dart';
 import 'package:footballproject/screens/Survey/PollsPage.dart';
 import 'package:footballproject/screens/Tutorials/tutorials.dart';
 import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
-import 'package:footballproject/screens/dashboard/dashboard.dart';
 import 'package:footballproject/screens/messages/MessagesList.dart';
 import 'package:footballproject/screens/messages/friend_list.dart';
 import 'package:footballproject/screens/profile/profile.dart';
