@@ -463,7 +463,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Text(
                     widget.isGroupChat
                         ? "Group"
-                        : "Coach",
+                        : "",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

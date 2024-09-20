@@ -16,9 +16,11 @@ class MessagesProvider with ChangeNotifier {
   }
 
   void clearMessages() {
-    _messages.clear();
-    print('Cleared all messages');
-    notifyListeners();
+    Future.microtask(() {
+      _messages.clear();
+      print('Cleared all messages');
+      notifyListeners();
+    });
   }
 
   Future<void> fetchPrivateMessages(String chatRoomId) async {
