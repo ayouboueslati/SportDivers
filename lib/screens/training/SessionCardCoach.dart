@@ -45,6 +45,7 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
             builder: (context) => CoachDashboardScreen(
               sessionDate: widget.sessionDate,
               sessionId: widget.session.id,
+              groupId: widget.session.schedule.group?.id ?? '',
             ),
           ),
         );

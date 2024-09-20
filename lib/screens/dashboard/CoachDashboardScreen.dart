@@ -7,11 +7,13 @@ class CoachDashboardScreen extends StatefulWidget {
 
   final DateTime sessionDate;
   final String sessionId;
+  final String groupId;
 
   const CoachDashboardScreen({
     Key? key,
     required this.sessionDate,
     required this.sessionId,
+    required this.groupId,
   }) : super(key: key);
 
   @override
@@ -35,7 +37,10 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     try {
       final loadedStudents = await apiProvider.getStudents();
       setState(() {
-        students = loadedStudents;
+        students = loadedStudents.where((student) =>
+        student['profile']['group'] != null &&
+            student['profile']['group']['id'] == widget.groupId
+        ).toList();
         for (var student in students) {
           final studentId = student['profile']['id'];
           attendance[studentId] = false;
