@@ -124,7 +124,7 @@ class _AppDrawerState extends State<AppDrawer> {
         _buildDrawerItem(context, 'Menu principal', Icons.home, HomePage.id),
         _buildDrawerItem(context, 'Profil', Icons.account_box_rounded, ProfileScreen1.id),
         _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined, TrainingScheduleScreen.id),
-        _buildDrawerItem(context, 'Mes tickets', Icons.support_agent, TicketsScreen.id),
+        _buildDrawerItem(context, 'Mes tickets', Icons.history, TicketsScreen.id),
         _buildDrawerItem(context, 'Messages', Icons.mark_unread_chat_alt_outlined, MessagesList.id),
         _buildDrawerItem(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
         _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined, ReportPage.id),

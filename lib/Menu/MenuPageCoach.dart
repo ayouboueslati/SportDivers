@@ -109,7 +109,7 @@ class _HomePageCoachState extends State<HomePageCoach> {
                   _buildSportCard(
                     context,
                     'Assistance',
-                    Icons.help_outline,
+                    Icons.support_agent_outlined,
                     ReportPage.id,
                   ),
                 ],
@@ -179,8 +179,8 @@ class _HomePageCoachState extends State<HomePageCoach> {
           alignment: Alignment.center,
           children: [
             Positioned(
-              top: -20,
-              right: -20,
+              // top: -20,
+              // right: -20,
               child: Icon(
                 icon,
                 size: 150,
@@ -220,14 +220,14 @@ class _HomePageCoachState extends State<HomePageCoach> {
             width: cardWidth,
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white, // Make sure the card is white
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
+                  color: Colors.grey.withOpacity(0.3), // Subtle shadow for depth
                   spreadRadius: 1,
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3), // Slightly raise the card
                 ),
               ],
             ),
@@ -235,10 +235,9 @@ class _HomePageCoachState extends State<HomePageCoach> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(10)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   child: Image.network(
-                    'https://sports.becker-brand.store/storage/${event.image}',
+                    'https://sportdivers.tn/storage/${event.image}',
                     height: imageHeight,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -252,7 +251,7 @@ class _HomePageCoachState extends State<HomePageCoach> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -261,6 +260,7 @@ class _HomePageCoachState extends State<HomePageCoach> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: maxWidth < 600 ? 14 : 16,
+                          color: Colors.black87, // Darker text for contrast
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -269,7 +269,7 @@ class _HomePageCoachState extends State<HomePageCoach> {
                       Text(
                         '${_formatDate(event.start)} - ${_formatDate(event.end)}',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Colors.grey[600], // Light grey for secondary text
                           fontSize: maxWidth < 600 ? 12 : 14,
                         ),
                       ),

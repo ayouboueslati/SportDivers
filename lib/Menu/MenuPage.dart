@@ -75,11 +75,11 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 65,
+          toolbarHeight: 70,
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colors.blue[900],
-          elevation: 12,
-          shadowColor: Colors.blue.withOpacity(0.4),
+          elevation: 14,
+          shadowColor: Colors.blue.withOpacity(0.5),
           title: const Text(
             'SportDivers',
             style: TextStyle(
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                   _buildSportCard(
                     context,
                     'Assistance',
-                    Icons.help_outline,
+                    Icons.support_agent_outlined,
                     ReportPage.id,
                   ),
                   if (widget.role != 'TEACHER') ...[
@@ -217,8 +217,8 @@ class _HomePageState extends State<HomePage> {
           alignment: Alignment.center,
           children: [
             Positioned(
-              top: -20,
-              right: -20,
+              // top: -20,
+              // right: -20,
               child: Icon(
                 icon,
                 size: 150,
@@ -266,8 +266,8 @@ class _HomePageState extends State<HomePage> {
           alignment: Alignment.center,
           children: [
             Positioned(
-              top: -20,
-              right: -20,
+              // top: -20,
+              // right: -20,
               child: Icon(
                 icon,
                 size: 150,
@@ -307,14 +307,14 @@ class _HomePageState extends State<HomePage> {
             width: cardWidth,
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white, // Make sure the card is white
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
+                  color: Colors.grey.withOpacity(0.3), // Subtle shadow for depth
                   spreadRadius: 1,
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3), // Slightly raise the card
                 ),
               ],
             ),
@@ -322,8 +322,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(10)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   child: Image.network(
                     'https://sportdivers.tn/storage/${event.image}',
                     height: imageHeight,
@@ -339,7 +338,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -348,6 +347,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: maxWidth < 600 ? 14 : 16,
+                          color: Colors.black87, // Darker text for contrast
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -356,7 +356,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         '${_formatDate(event.start)} - ${_formatDate(event.end)}',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Colors.grey[600], // Light grey for secondary text
                           fontSize: maxWidth < 600 ? 12 : 14,
                         ),
                       ),
@@ -370,6 +370,8 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+
+
 
   void _showEventDialog(BuildContext context, Event event) {
     showDialog(
