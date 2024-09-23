@@ -3,8 +3,8 @@ import 'package:footballproject/Provider/constantsProvider.dart';
 import 'package:footballproject/models/DashboardModel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class DashboardProvider with ChangeNotifier {
   DashboardStats? _stats;
@@ -15,12 +15,17 @@ class DashboardProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String get error => _error;
 
-  Future<void> fetchDashboardStats() async {
+  Future<void> fetchDashboardStats({String? startDate, String? endDate})  async {
     _isLoading = true;
     _error = '';
     notifyListeners();
 
-    final url = '${Constants.baseUrl}/stats';
+    var url = '${Constants.baseUrl}/stats';
+
+    // Add query parameters if dates are provided
+    if (startDate != null && endDate != null) {
+      url += '?startDate=$startDate&endDate=$endDate';
+    }
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');

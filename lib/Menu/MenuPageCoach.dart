@@ -37,7 +37,6 @@ class _HomePageCoachState extends State<HomePageCoach> {
     _widgetOptions = <Widget>[
       // ProfileScreen(userData: widget.userData),
       TrainingScheduleScreen(),
-      const MessagesList(),
      // widget.role == 'TEACHER' ? CoachDashboardScreen() : DashboardScreen(),
     ];
 

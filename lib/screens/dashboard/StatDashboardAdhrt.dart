@@ -42,8 +42,15 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
       setState(() {
         _dateRange = picked;
       });
-      // Here you would typically call a method to update your data based on the new date range
-      // For example: Provider.of<DashboardProvider>(context, listen: false).fetchDashboardStats(_dateRange);
+
+      // Format dates as per your requirement (yyyy-MM-dd)
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      String startDate = formatter.format(_dateRange.start);
+      String endDate = formatter.format(_dateRange.end);
+
+      // Call the provider with the new date range
+      Provider.of<DashboardProvider>(context, listen: false)
+          .fetchDashboardStats(startDate: startDate, endDate: endDate);
     }
   }
 
@@ -51,8 +58,13 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Format initial dates
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      String startDate = formatter.format(_dateRange.start);
+      String endDate = formatter.format(_dateRange.end);
+
       Provider.of<DashboardProvider>(context, listen: false)
-          .fetchDashboardStats();
+          .fetchDashboardStats(startDate: startDate, endDate: endDate);
     });
   }
 
@@ -83,7 +95,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
       body: Consumer<DashboardProvider>(
         builder: (context, dashboardProvider, child) {
           if (dashboardProvider.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (dashboardProvider.error.isNotEmpty) {
             return Center(child: Text('Error: ${dashboardProvider.error}'));
           } else if (dashboardProvider.stats != null) {
@@ -123,7 +135,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
               ),
             );
           } else {
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
         },
       ),
@@ -144,15 +156,21 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Text(
-              //   'Plage De Dates',
-              //   style: TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.bold,
-              //     color: Colors.blue[900],
-              //   ),
-              // ),
-              // const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Filtrer par date',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                  Icon(Icons.date_range, color: Colors.blue[900]),
+                ],
+              ),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -160,8 +178,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Du',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[600])),
+                          style: TextStyle(fontSize: 14, color: Colors.grey[600])),
                       Text(
                         formatter.format(_dateRange.start),
                         style: TextStyle(
@@ -176,8 +193,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text('Au',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[600])),
+                          style: TextStyle(fontSize: 14, color: Colors.grey[600])),
                       Text(
                         formatter.format(_dateRange.end),
                         style: TextStyle(
@@ -188,6 +204,15 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     ],
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Appuyez pour modifier la plage de dates',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.blue[700],
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -276,20 +301,29 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Moyenne Des Notes',
+            Text('Moyenne Des Notes Par Mois',
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blue[900])),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Container(
-              height: 200,
+              height: 300,
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
                   maxY: 10,
                   barTouchData: BarTouchData(
-                    enabled: false,
+                    enabled: true,
+                    touchTooltipData: BarTouchTooltipData(
+                      //tooltipBgColor: Colors.blueAccent,
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        return BarTooltipItem(
+                          '${grades[group.x].month}\n${rod.toY.toStringAsFixed(2)}',
+                          const TextStyle(color: Colors.white),
+                        );
+                      },
+                    ),
                   ),
                   titlesData: FlTitlesData(
                     show: true,
@@ -297,33 +331,57 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (double value, TitleMeta meta) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              grades[value.toInt()].month.substring(5),
-                              style: const TextStyle(
-                                color: Color(0xff7589a2),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                          // Custom parsing for "YYYY-MM" format
+                          final parts = grades[value.toInt()].month.split('-');
+                          if (parts.length == 2) {
+                            final year = int.parse(parts[0]);
+                            final month = int.parse(parts[1]);
+                            final date = DateTime(year, month);
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                DateFormat('MMM').format(date),
+                                style: const TextStyle(
+                                  color: Color(0xff7589a2),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          }
+                          return const Text(''); // Fallback if parsing fails
                         },
                         reservedSize: 40,
                       ),
+                      // axisNameWidget: Text('Mois', style: TextStyle(color: Colors.blue[900], fontWeight: FontWeight.bold)),
                     ),
-                    leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        interval: 2,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(
+                                color: Color(0xff7589a2),
+                                fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                      // axisNameWidget: Text('Note Moyenne', style: TextStyle(color: Colors.blue[900], fontWeight: FontWeight.bold)),
                     ),
                     topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                        sideTitles: SideTitles(showTitles: false)),
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
-                  borderData: FlBorderData(
-                    show: false,
+                  borderData: FlBorderData(show: false),
+                  gridData: const FlGridData(
+                    show: true,
+                    drawHorizontalLine: true,
+                    horizontalInterval: 2,
+                    drawVerticalLine: false,
                   ),
                   barGroups: grades
                       .asMap()

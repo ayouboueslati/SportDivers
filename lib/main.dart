@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
               RatingPage.id: (context) => RatingPage(),
               TicketsScreen.id: (context) => TicketsScreen(),
               RatingCoachPage.id: (context) => RatingCoachPage(),
-              MessagesList.id: (context) =>  MessagesList(),
+              MessagesList.id: (context) =>  MessagesList(role: authProvider.accountType),
               PaymentScreen.id: (context) =>  PaymentScreen(),
               EditProfileScreen.id: (context) =>  EditProfileScreen(),
               PasswordResetSuccessScreen.id: (context) => PasswordResetSuccessScreen(),

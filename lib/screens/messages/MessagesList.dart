@@ -10,8 +10,9 @@ import 'chat_screen.dart';
 
 class MessagesList extends StatefulWidget {
   static String id = 'friend_screen';
+  final String role;
 
-  const MessagesList({Key? key}) : super(key: key);
+  const MessagesList({Key? key, required this.role}) : super(key: key);
 
   @override
   _MessagesListState createState() => _MessagesListState();
@@ -112,56 +113,6 @@ class _MessagesListState extends State<MessagesList> {
             }
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search',
-          prefixIcon: const Icon(Icons.search),
-          filled: true,
-          fillColor: Colors.grey[200],
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStoriesRow(List<User> users) {
-    return Container(
-      height: 100,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          final User user = users[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: user.picture != null
-                      ? NetworkImage(user.picture!)
-                      : AssetImage('assets/images/icons/default_avatar.png')
-                          as ImageProvider,
-                ),
-                SizedBox(height: 4),
-                Text(
-                  user.firstName,
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-          );
-        },
       ),
     );
   }
