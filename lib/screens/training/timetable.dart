@@ -106,6 +106,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
 
   Widget _buildFullScreenCalendar() {
     return TableCalendar(
+      locale: 'fr_FR',
       eventLoader: _getSessionDays,
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2050, 12, 31),
@@ -154,6 +155,7 @@ class _TrainingScheduleScreenState extends State<TrainingScheduleScreen> {
     return Column(
       children: [
         TableCalendar(
+          locale: 'fr_FR',
           eventLoader: _getSessionDays,
           firstDay: DateTime.utc(2020, 1, 1),
           lastDay: DateTime.utc(2050, 12, 31),

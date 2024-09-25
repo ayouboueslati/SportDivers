@@ -70,6 +70,21 @@ class _MessagesListState extends State<MessagesList> {
               return Center(child: Text('Error: ${userProvider.errorMessage}'));
             } else if (userProvider.users.isNotEmpty ||
                 userProvider.groups.isNotEmpty) {
+              // Filter users and groups based on the role
+              List<User> filteredUsers;
+              print("111111111111111111111111111111");
+              print(widget.role);
+              if (widget.role == 'TEACHER') {
+                filteredUsers = userProvider.users
+                    .where((user) => user.type == 'student')
+                    .toList(); // Teachers can chat with students
+              } else if (widget.role == 'STUDENT') {
+                filteredUsers = userProvider.users
+                    .where((user) => user.type == 'teacher')
+                    .toList(); // Students can chat with teachers
+              } else {
+                filteredUsers = []; // Empty if role doesn't match
+              }
               return Column(
                 children: [
                   //_buildSearchBar(),
@@ -90,17 +105,15 @@ class _MessagesListState extends State<MessagesList> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: userProvider.users.length +
+                      itemCount: filteredUsers.length +
                           userProvider.groups.length,
-                      // itemCount:userProvider.groups.length,
                       itemBuilder: (BuildContext context, int index) {
-                        if (index < userProvider.users.length) {
-                          final User user = userProvider.users[index];
+                        if (index < filteredUsers.length) {
+                          final User user = filteredUsers[index];
                           return _buildChatItem(context, user);
                         } else {
                           final Group group = userProvider
-                              .groups[index - userProvider.users.length];
-                          // final Group group = userProvider.groups[index];
+                              .groups[index - filteredUsers.length];
                           return _buildGroupItem(context, group);
                         }
                       },

@@ -35,6 +35,7 @@ import 'package:footballproject/screens/report/ReportSheet1.dart';
 import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:footballproject/Provider/VideosProvider/videoProvider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(MyApp());
@@ -77,6 +78,20 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
+
+            locale: Locale('fr', 'FR'), // Set French locale
+            supportedLocales: [
+              Locale('en', 'US'), // Add other locales if needed
+              Locale('fr', 'FR'),
+            ],
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+
+
+
             home: CustomLoaderPage(),
             //home: StatDashboardAdhrt(),
             //initialRoute: LoginScreen.id,
