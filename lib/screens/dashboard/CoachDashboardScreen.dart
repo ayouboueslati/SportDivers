@@ -309,9 +309,9 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     try {
       await apiProvider.setAttendance(widget.sessionId, attendanceData);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+         SnackBar(
           content: Text('Présence et notes enregistrées avec succès'),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.blue[900],
         ),
       );
       Navigator.pop(context);

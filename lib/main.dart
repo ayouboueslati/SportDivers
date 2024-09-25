@@ -36,8 +36,13 @@ import 'package:footballproject/screens/report/fetchTicket.dart';
 import 'package:footballproject/screens/training/timetable.dart';
 import 'package:footballproject/Provider/VideosProvider/videoProvider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() {
+void main() async  {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 
@@ -68,7 +73,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EditProfileProvider()),
         ChangeNotifierProvider(create: (_) => ApiProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
-
       ],
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
@@ -142,4 +146,10 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Handle background message here
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
 }
