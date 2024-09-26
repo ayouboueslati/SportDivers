@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147978774737",
+    "project_id": "sport-divers",
+    "storage_bucket": "sport-divers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147978774737:android:ee9f18d3e8e97689a03df0",
+        "android_client_info": {
+          "package_name": "com.ebuild.sportdivers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqjfEk1UfOdX6WMJVwU-ei1qdiO52diys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Menu/MenuPage.dart';
-import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
-import 'package:footballproject/screens/dashboard/StatDashboardAdhrt.dart';
-import 'package:footballproject/screens/messages/MessagesList.dart';
-import 'package:footballproject/screens/profile/ProfileScreen.dart';
+import 'package:sportdivers/Menu/MenuPage.dart';
+import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
+import 'package:sportdivers/screens/dashboard/StatDashboardAdhrt.dart';
+import 'package:sportdivers/screens/messages/MessagesList.dart';
+import 'package:sportdivers/screens/profile/ProfileScreen.dart';
 import 'package:provider/provider.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/screens/Tutorials/tutorials.dart';
-import 'package:footballproject/screens/auth/reset_password/resetPasswordWebView.dart';
-import 'package:footballproject/screens/report/ReportSheet1.dart';
-import 'package:footballproject/screens/report/fetchTicket.dart';
-import 'package:footballproject/screens/training/timetable.dart';
-import 'package:footballproject/screens/auth/login_screen.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/screens/Tutorials/tutorials.dart';
+import 'package:sportdivers/screens/auth/reset_password/resetPasswordWebView.dart';
+import 'package:sportdivers/screens/report/ReportSheet1.dart';
+import 'package:sportdivers/screens/report/fetchTicket.dart';
+import 'package:sportdivers/screens/training/timetable.dart';
+import 'package:sportdivers/screens/auth/login_screen.dart';
 
 class AppDrawer extends StatefulWidget {
   @override

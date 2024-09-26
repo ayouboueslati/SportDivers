@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/components/TranslationSessionType.dart';
-import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
-import 'package:footballproject/screens/training/rateSession.dart';
+import 'package:sportdivers/components/TranslationSessionType.dart';
+import 'package:sportdivers/screens/dashboard/CoachDashboardScreen.dart';
+import 'package:sportdivers/screens/training/rateSession.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:footballproject/models/session.dart';
-import 'package:footballproject/models/sessionTypes.dart';
-import 'package:footballproject/models/teacherProfile.dart';
+import 'package:sportdivers/models/session.dart';
+import 'package:sportdivers/models/sessionTypes.dart';
+import 'package:sportdivers/models/teacherProfile.dart';
 
 class SessionCardCoach extends StatefulWidget {
   final TeacherProfile teacher;

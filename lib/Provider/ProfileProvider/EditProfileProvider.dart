@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/constantsProvider.dart';
-import 'package:footballproject/models/user_model.dart';
+import 'package:sportdivers/Provider/constantsProvider.dart';
+import 'package:sportdivers/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

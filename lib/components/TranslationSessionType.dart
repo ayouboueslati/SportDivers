@@ -1,4 +1,4 @@
-import 'package:footballproject/models/sessionTypes.dart';
+import 'package:sportdivers/models/sessionTypes.dart';
 
 String translateSessionType(Sessiontypes type) {
   switch (type) {

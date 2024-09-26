@@ -1,5 +1,5 @@
-import 'package:footballproject/models/category.dart';
-import 'package:footballproject/models/studentProfile.dart';
+import 'package:sportdivers/models/category.dart';
+import 'package:sportdivers/models/studentProfile.dart';
 
 class Group {
   String id;

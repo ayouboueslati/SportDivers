@@ -1,6 +1,6 @@
-import 'package:footballproject/models/gender.dart';
-import 'package:footballproject/models/role.dart';
-import 'package:footballproject/models/user.dart';
+import 'package:sportdivers/models/gender.dart';
+import 'package:sportdivers/models/role.dart';
+import 'package:sportdivers/models/user.dart';
 
 class StaffProfile {
   String id;

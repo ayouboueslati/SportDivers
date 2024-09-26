@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Menu/MenuPage.dart';
-import 'package:footballproject/Menu/MenuPageCoach.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
+import 'package:sportdivers/Menu/MenuPage.dart';
+import 'package:sportdivers/Menu/MenuPageCoach.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/screens/auth/reset_password/forgotpassword.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 

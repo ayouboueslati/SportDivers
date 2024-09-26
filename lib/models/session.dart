@@ -1,14 +1,14 @@
-import 'package:footballproject/models/attendances.dart';
-import 'package:footballproject/models/rating.dart';
-import 'package:footballproject/models/sessionTypes.dart';
-import 'package:footballproject/models/teacherPayment.dart';
-import 'package:footballproject/models/teacherProfile.dart';
-import 'package:footballproject/models/field.dart';
-import 'package:footballproject/models/schedule.dart';
-import 'package:footballproject/models/weekday.dart';
-import 'package:footballproject/models/group.dart';
-import 'package:footballproject/models/user.dart';
-import 'package:footballproject/models/gender.dart';
+import 'package:sportdivers/models/attendances.dart';
+import 'package:sportdivers/models/rating.dart';
+import 'package:sportdivers/models/sessionTypes.dart';
+import 'package:sportdivers/models/teacherPayment.dart';
+import 'package:sportdivers/models/teacherProfile.dart';
+import 'package:sportdivers/models/field.dart';
+import 'package:sportdivers/models/schedule.dart';
+import 'package:sportdivers/models/weekday.dart';
+import 'package:sportdivers/models/group.dart';
+import 'package:sportdivers/models/user.dart';
+import 'package:sportdivers/models/gender.dart';
 
 class Session {
   String id;

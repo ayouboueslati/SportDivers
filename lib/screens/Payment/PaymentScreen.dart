@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/PaymentProvider/PaymentProvider.dart';
-import 'package:footballproject/models/payment.dart';
+import 'package:sportdivers/Provider/PaymentProvider/PaymentProvider.dart';
+import 'package:sportdivers/models/payment.dart';
 import 'package:provider/provider.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 

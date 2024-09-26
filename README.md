@@ -1,4 +1,4 @@
-# footballproject
+# sportdivers
 
 A new Flutter project.
 

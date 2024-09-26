@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:footballproject/Menu/MenuPage.dart';
+import 'package:sportdivers/Menu/MenuPage.dart';
 
 class StatDashboardAdhrt extends StatefulWidget {
   static String id = 'dashboard_screen';

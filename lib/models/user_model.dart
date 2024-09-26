@@ -1,4 +1,4 @@
-import 'package:footballproject/models/ChatModel.dart';
+import 'package:sportdivers/models/ChatModel.dart';
 
 class User {
   final String id;

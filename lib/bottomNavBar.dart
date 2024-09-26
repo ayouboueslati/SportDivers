@@ -1,13 +1,13 @@
 // import 'package:flutter/material.dart';
 // import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-// import 'package:footballproject/screens/Tutorials/tutorials.dart';
-// import 'package:footballproject/screens/dashboard/CoachDashboardScreen.dart';
-// import 'package:footballproject/screens/dashboard/dashboard.dart';
-// import 'package:footballproject/screens/profile/profile.dart';
-// import 'package:footballproject/screens/training/timetable.dart';
-// import 'package:footballproject/screens/messages/friend_list.dart';
-// import 'package:footballproject/screens/report/report_sheet.dart';
-// import 'package:footballproject/models/user_model.dart';
+// import 'package:sportdivers/screens/Tutorials/tutorials.dart';
+// import 'package:sportdivers/screens/dashboard/CoachDashboardScreen.dart';
+// import 'package:sportdivers/screens/dashboard/dashboard.dart';
+// import 'package:sportdivers/screens/profile/profile.dart';
+// import 'package:sportdivers/screens/training/timetable.dart';
+// import 'package:sportdivers/screens/messages/friend_list.dart';
+// import 'package:sportdivers/screens/report/report_sheet.dart';
+// import 'package:sportdivers/models/user_model.dart';
 
 // class Bottomnavbar extends StatefulWidget {
 //   const Bottomnavbar({Key? key, required this.role, this.userData})

@@ -1,4 +1,4 @@
-import 'package:footballproject/models/user.dart';
+import 'package:sportdivers/models/user.dart';
 
 class Ticket {
   final String id;

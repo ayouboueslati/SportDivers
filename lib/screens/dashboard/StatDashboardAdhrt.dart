@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/DashboardProvider/DashboardProvider.dart';
-import 'package:footballproject/models/DashboardModel.dart';
+import 'package:sportdivers/Provider/DashboardProvider/DashboardProvider.dart';
+import 'package:sportdivers/models/DashboardModel.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';

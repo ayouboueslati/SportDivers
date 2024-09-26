@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:footballproject/Menu/MenuPage.dart';
-import 'package:footballproject/screens/auth/login_screen.dart';
+import 'package:sportdivers/Menu/MenuPage.dart';
+import 'package:sportdivers/screens/auth/login_screen.dart';
 
 class CustomLoaderPage extends StatefulWidget {
   //static String id = 'Custom_Loader_Page';

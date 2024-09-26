@@ -1,4 +1,4 @@
-import 'package:footballproject/models/staffProfile.dart';
+import 'package:sportdivers/models/staffProfile.dart';
 
 class Role {
   String id;

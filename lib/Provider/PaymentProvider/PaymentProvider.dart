@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:footballproject/Provider/constantsProvider.dart';
-import 'package:footballproject/models/payment.dart';
+import 'package:sportdivers/Provider/constantsProvider.dart';
+import 'package:sportdivers/models/payment.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

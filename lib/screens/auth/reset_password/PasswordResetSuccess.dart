@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/screens/auth/login_screen.dart';
+import 'package:sportdivers/screens/auth/login_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart'; // Import your AuthProvider
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart'; // Import your AuthProvider
 
 class PasswordResetSuccessScreen extends StatelessWidget {
   static String id = 'reset_success';

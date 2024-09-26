@@ -1,10 +1,10 @@
-import 'package:footballproject/models/category.dart';
-import 'package:footballproject/models/gender.dart';
-import 'package:footballproject/models/group.dart';
-import 'package:footballproject/models/session.dart';
-import 'package:footballproject/models/teacherHourCost.dart';
-import 'package:footballproject/models/teacherPayment.dart';
-import 'package:footballproject/models/user.dart';
+import 'package:sportdivers/models/category.dart';
+import 'package:sportdivers/models/gender.dart';
+import 'package:sportdivers/models/group.dart';
+import 'package:sportdivers/models/session.dart';
+import 'package:sportdivers/models/teacherHourCost.dart';
+import 'package:sportdivers/models/teacherPayment.dart';
+import 'package:sportdivers/models/user.dart';
 
 class TeacherProfile {
   String id;

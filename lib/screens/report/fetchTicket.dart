@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
+import 'package:sportdivers/Provider/ReportPorivder/ticketProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';

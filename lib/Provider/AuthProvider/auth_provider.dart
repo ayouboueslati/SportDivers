@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/UserProvider/userProvider.dart';
-import 'package:footballproject/models/user_model.dart';
-import 'package:footballproject/screens/Service/SocketService.dart';
+import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
+import 'package:sportdivers/models/user_model.dart';
+import 'package:sportdivers/screens/Service/SocketService.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

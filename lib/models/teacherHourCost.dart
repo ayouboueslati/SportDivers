@@ -1,4 +1,4 @@
-import 'package:footballproject/models/teacherProfile.dart';
+import 'package:sportdivers/models/teacherProfile.dart';
 
 class TeacherHourCost {
   String id;

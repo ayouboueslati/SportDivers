@@ -1,6 +1,6 @@
 // lib/providers/event_provider.dart
 import 'package:flutter/foundation.dart';
-import 'package:footballproject/models/event.dart';
+import 'package:sportdivers/models/event.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

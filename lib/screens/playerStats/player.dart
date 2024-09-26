@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:footballproject/components/components.dart';
+import 'package:sportdivers/components/components.dart';
 
 class PlayerStatsScreen extends StatelessWidget {
   @override

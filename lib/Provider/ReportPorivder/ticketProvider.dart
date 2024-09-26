@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../constantsProvider.dart';

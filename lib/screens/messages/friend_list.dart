@@ -1,9 +1,9 @@
 // import 'package:flutter/material.dart';
-// import 'package:footballproject/models/ChatModel.dart';
+// import 'package:sportdivers/models/ChatModel.dart';
 // import 'package:provider/provider.dart';
-// import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
-// import 'package:footballproject/models/user_model.dart';
-// import 'package:footballproject/screens/Service/SocketService.dart';
+// import 'package:sportdivers/Provider/ChatProvider/usersChat.dart';
+// import 'package:sportdivers/models/user_model.dart';
+// import 'package:sportdivers/screens/Service/SocketService.dart';
 // import 'chat_screen.dart';
 //
 // class FriendScreen extends StatefulWidget {

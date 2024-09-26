@@ -1,7 +1,7 @@
-import 'package:footballproject/models/group.dart';
-import 'package:footballproject/models/session.dart';
+import 'package:sportdivers/models/group.dart';
+import 'package:sportdivers/models/session.dart';
 
-import 'package:footballproject/models/group.dart';
+import 'package:sportdivers/models/group.dart';
 
 class Schedule {
   String id;

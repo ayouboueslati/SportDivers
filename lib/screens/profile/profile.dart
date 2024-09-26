@@ -1,8 +1,8 @@
 // import 'dart:io';
 // import 'package:flutter/material.dart';
-// import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-// import 'package:footballproject/screens/auth/login_screen.dart';
-// import 'package:footballproject/screens/profile/ModifyProfile.dart';
+// import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
+// import 'package:sportdivers/screens/auth/login_screen.dart';
+// import 'package:sportdivers/screens/profile/ModifyProfile.dart';
 // import 'package:provider/provider.dart';
 //
 // class ProfileScreen extends StatefulWidget {

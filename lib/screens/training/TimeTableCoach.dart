@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
-import 'package:footballproject/screens/training/SessionCardCoach.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/Provider/TrainingSchedule/trainingScheduleProvider.dart';
+import 'package:sportdivers/screens/training/SessionCardCoach.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';

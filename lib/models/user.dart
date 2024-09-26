@@ -1,10 +1,10 @@
-import 'package:footballproject/models/accountType.dart';
-import 'package:footballproject/models/adminProfile.dart';
-import 'package:footballproject/models/staffProfile.dart';
-import 'package:footballproject/models/studentProfile.dart';
-import 'package:footballproject/models/teacherProfile.dart';
-import 'package:footballproject/models/tutorial.dart';
-import 'package:footballproject/models/ChatModel.dart';
+import 'package:sportdivers/models/accountType.dart';
+import 'package:sportdivers/models/adminProfile.dart';
+import 'package:sportdivers/models/staffProfile.dart';
+import 'package:sportdivers/models/studentProfile.dart';
+import 'package:sportdivers/models/teacherProfile.dart';
+import 'package:sportdivers/models/tutorial.dart';
+import 'package:sportdivers/models/ChatModel.dart';
 
 class User {
   String id;

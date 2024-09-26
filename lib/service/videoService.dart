@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:footballproject/models/tutorial.dart';
+import 'package:sportdivers/models/tutorial.dart';
 
 class Videoservice {
   final String baseUrl;

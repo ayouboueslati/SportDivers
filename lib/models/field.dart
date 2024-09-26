@@ -1,4 +1,4 @@
-import 'package:footballproject/models/session.dart';
+import 'package:sportdivers/models/session.dart';
 
 class Field {
   String id;

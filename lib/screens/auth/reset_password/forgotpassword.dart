@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   static String id = 'forgot_password_screen';

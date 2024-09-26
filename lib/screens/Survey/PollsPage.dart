@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
-import 'package:footballproject/models/PollsModel.dart';
+import 'package:sportdivers/Provider/PollsProvider/PollsProvider.dart';
+import 'package:sportdivers/models/PollsModel.dart';
 import 'package:provider/provider.dart';
 
 class PollSurveyPage extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:footballproject/Provider/constantsProvider.dart';
-import 'package:footballproject/models/DashboardModel.dart';
+import 'package:sportdivers/Provider/constantsProvider.dart';
+import 'package:sportdivers/models/DashboardModel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';

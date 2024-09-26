@@ -1,6 +1,6 @@
-import 'package:footballproject/models/ratingTargetType.dart';
-import 'package:footballproject/models/session.dart';
-import 'package:footballproject/models/user.dart';
+import 'package:sportdivers/models/ratingTargetType.dart';
+import 'package:sportdivers/models/session.dart';
+import 'package:sportdivers/models/user.dart';
 
 class Rating {
   String id;

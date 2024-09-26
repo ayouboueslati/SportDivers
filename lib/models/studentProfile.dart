@@ -1,10 +1,10 @@
-import 'package:footballproject/models/attendances.dart';
-import 'package:footballproject/models/gender.dart';
-import 'package:footballproject/models/group.dart';
-import 'package:footballproject/models/paymentType.dart';
-import 'package:footballproject/models/studentDiscount.dart';
-import 'package:footballproject/models/studentPayment.dart';
-import 'package:footballproject/models/user.dart';
+import 'package:sportdivers/models/attendances.dart';
+import 'package:sportdivers/models/gender.dart';
+import 'package:sportdivers/models/group.dart';
+import 'package:sportdivers/models/paymentType.dart';
+import 'package:sportdivers/models/studentDiscount.dart';
+import 'package:sportdivers/models/studentPayment.dart';
+import 'package:sportdivers/models/user.dart';
 
 class StudentProfile {
   String id;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:footballproject/models/session.dart';
+import 'package:sportdivers/models/session.dart';
 import 'package:provider/provider.dart';
-import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
+import 'package:sportdivers/Provider/TrainingSchedule/trainingScheduleProvider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class RateSessionDialog extends StatefulWidget {

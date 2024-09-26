@@ -1,48 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:footballproject/Provider/ChatProvider/ChatRoomsProvider.dart';
-import 'package:footballproject/Provider/ChatProvider/FindMessagesProvider.dart';
-import 'package:footballproject/Provider/ChatProvider/SendMsgProvider.dart';
-import 'package:footballproject/Provider/ChatProvider/usersChat.dart';
-import 'package:footballproject/Provider/DashboardProvider/DashboardProvider.dart';
-import 'package:footballproject/Provider/PollsProvider/PollsProvider.dart';
-import 'package:footballproject/Provider/ProfileProvider/EditProfileProvider.dart';
-import 'package:footballproject/Provider/TrainingSchedule/CoachDashboardProvider.dart';
-import 'package:footballproject/Provider/UserProvider/userProvider.dart';
-import 'package:footballproject/components/Loader.dart';
-import 'package:footballproject/screens/Payment/PaymentScreen.dart';
-import 'package:footballproject/screens/Service/SocketService.dart';
-import 'package:footballproject/screens/auth/reset_password/PasswordResetSuccess.dart';
-import 'package:footballproject/screens/dashboard/StatDashboardAdhrt.dart';
-import 'package:footballproject/screens/messages/MessagesList.dart';
-import 'package:footballproject/screens/profile/ModifyProfile.dart';
-import 'package:footballproject/screens/profile/ProfileScreen.dart';
-import 'package:footballproject/screens/training/TimeTableCoach.dart';
+import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
+import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
+import 'package:sportdivers/Provider/ChatProvider/SendMsgProvider.dart';
+import 'package:sportdivers/Provider/ChatProvider/usersChat.dart';
+import 'package:sportdivers/Provider/DashboardProvider/DashboardProvider.dart';
+import 'package:sportdivers/Provider/PollsProvider/PollsProvider.dart';
+import 'package:sportdivers/Provider/ProfileProvider/EditProfileProvider.dart';
+import 'package:sportdivers/Provider/TrainingSchedule/CoachDashboardProvider.dart';
+import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
+import 'package:sportdivers/components/Loader.dart';
+import 'package:sportdivers/screens/Payment/PaymentScreen.dart';
+import 'package:sportdivers/screens/Service/SocketService.dart';
+import 'package:sportdivers/screens/auth/reset_password/PasswordResetSuccess.dart';
+import 'package:sportdivers/screens/dashboard/StatDashboardAdhrt.dart';
+import 'package:sportdivers/screens/messages/MessagesList.dart';
+import 'package:sportdivers/screens/profile/ModifyProfile.dart';
+import 'package:sportdivers/screens/profile/ProfileScreen.dart';
+import 'package:sportdivers/screens/training/TimeTableCoach.dart';
 import 'package:provider/provider.dart';
-import 'package:footballproject/Menu/MenuPage.dart';
-import 'package:footballproject/Provider/AuthProvider/auth_provider.dart';
-import 'package:footballproject/Provider/EventProvider/eventProvider.dart';
-import 'package:footballproject/Provider/ProfileProvider/profileProvider.dart';
-import 'package:footballproject/Provider/ReportPorivder/ticketProvider.dart';
-import 'package:footballproject/Provider/TrainingSchedule/trainingScheduleProvider.dart';
-import 'package:footballproject/screens/Survey/PollsPage.dart';
-import 'package:footballproject/screens/auth/login_screen.dart';
-import 'package:footballproject/screens/auth/reset_password/forgotpassword.dart';
-import 'package:footballproject/screens/auth/reset_password/resetPasswordWebView.dart';
-import 'package:footballproject/screens/Tutorials/tutorials.dart';
-import 'package:footballproject/screens/rating/RatingCoachPage.dart';
-import 'package:footballproject/screens/rating/ratingPage.dart';
-import 'package:footballproject/screens/report/ReportSheet1.dart';
-import 'package:footballproject/screens/report/fetchTicket.dart';
-import 'package:footballproject/screens/training/timetable.dart';
-import 'package:footballproject/Provider/VideosProvider/videoProvider.dart';
+import 'package:sportdivers/Menu/MenuPage.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/Provider/EventProvider/eventProvider.dart';
+import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
+import 'package:sportdivers/Provider/ReportPorivder/ticketProvider.dart';
+import 'package:sportdivers/Provider/TrainingSchedule/trainingScheduleProvider.dart';
+import 'package:sportdivers/screens/Survey/PollsPage.dart';
+import 'package:sportdivers/screens/auth/login_screen.dart';
+import 'package:sportdivers/screens/auth/reset_password/forgotpassword.dart';
+import 'package:sportdivers/screens/auth/reset_password/resetPasswordWebView.dart';
+import 'package:sportdivers/screens/Tutorials/tutorials.dart';
+import 'package:sportdivers/screens/rating/RatingCoachPage.dart';
+import 'package:sportdivers/screens/rating/ratingPage.dart';
+import 'package:sportdivers/screens/report/ReportSheet1.dart';
+import 'package:sportdivers/screens/report/fetchTicket.dart';
+import 'package:sportdivers/screens/training/timetable.dart';
+import 'package:sportdivers/Provider/VideosProvider/videoProvider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
 
-void main() async  {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  print('------------------------------------------------------');
+  print(await FirebaseMessaging.instance.getToken());
+  print('------------------------------------------------------');
   runApp(MyApp());
 }
 
@@ -94,8 +100,6 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
 
-
-
             home: CustomLoaderPage(),
             //home: StatDashboardAdhrt(),
             //initialRoute: LoginScreen.id,
@@ -108,7 +112,8 @@ class MyApp extends StatelessWidget {
               //CoachDashboardScreen.id: (context) => CoachDashboardScreen(),
               VideoApp.id: (context) => VideoApp(),
               TrainingScheduleScreen.id: (context) => TrainingScheduleScreen(),
-              TrainingScheduleScreenCoach.id: (context) => TrainingScheduleScreenCoach(),
+              TrainingScheduleScreenCoach.id: (context) =>
+                  TrainingScheduleScreenCoach(),
               //ProfileScreen.id: (context) => ProfileScreen(),
               ProfileScreen1.id: (context) => ProfileScreen1(),
               ReportPage.id: (context) => ReportPage(),
@@ -116,13 +121,17 @@ class MyApp extends StatelessWidget {
               RatingPage.id: (context) => RatingPage(),
               TicketsScreen.id: (context) => TicketsScreen(),
               RatingCoachPage.id: (context) => RatingCoachPage(),
-              MessagesList.id: (context) =>  MessagesList(role: authProvider.accountType),
-              PaymentScreen.id: (context) =>  PaymentScreen(),
-              EditProfileScreen.id: (context) =>  EditProfileScreen(),
-              PasswordResetSuccessScreen.id: (context) => PasswordResetSuccessScreen(),
+              MessagesList.id: (context) =>
+                  MessagesList(role: authProvider.accountType),
+              PaymentScreen.id: (context) => PaymentScreen(),
+              EditProfileScreen.id: (context) => EditProfileScreen(),
+              PasswordResetSuccessScreen.id: (context) =>
+                  PasswordResetSuccessScreen(),
               StatDashboardAdhrt.id: (context) => StatDashboardAdhrt(),
-              ResetPasswordScreen.id: (context) => ResetPasswordScreen(token: authProvider.token ?? ''),
-              HomePage.id: (context) => HomePage(role: authProvider.accountType),
+              ResetPasswordScreen.id: (context) =>
+                  ResetPasswordScreen(token: authProvider.token ?? ''),
+              HomePage.id: (context) =>
+                  HomePage(role: authProvider.accountType),
               // RateSessionDialog.id: (context) {
               //   final session =
               //       ModalRoute.of(context)!.settings.arguments as Session;

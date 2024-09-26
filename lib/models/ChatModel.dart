@@ -1,6 +1,6 @@
-import 'package:footballproject/models/studentProfile.dart';
-import 'package:footballproject/models/teacherProfile.dart';
-import 'package:footballproject/models/user_model.dart';
+import 'package:sportdivers/models/studentProfile.dart';
+import 'package:sportdivers/models/teacherProfile.dart';
+import 'package:sportdivers/models/user_model.dart';
 
 class GroupChatRoom {
   final String id;

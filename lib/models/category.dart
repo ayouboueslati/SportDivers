@@ -1,4 +1,4 @@
-import 'package:footballproject/models/group.dart';
+import 'package:sportdivers/models/group.dart';
 
 class Category {
   String id;

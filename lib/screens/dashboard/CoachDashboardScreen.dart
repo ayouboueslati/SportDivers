@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:footballproject/Provider/TrainingSchedule/CoachDashboardProvider.dart';
+import 'package:sportdivers/Provider/TrainingSchedule/CoachDashboardProvider.dart';
 
 class CoachDashboardScreen extends StatefulWidget {
   static String id = 'Coach_Dashboard_Screen';
