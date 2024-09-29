@@ -3,6 +3,7 @@ import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/usersChat.dart';
+import 'package:sportdivers/Provider/DashboardProvider/DashboardCoachProvider.dart';
 import 'package:sportdivers/Provider/DashboardProvider/DashboardProvider.dart';
 import 'package:sportdivers/Provider/PollsProvider/PollsProvider.dart';
 import 'package:sportdivers/Provider/ProfileProvider/EditProfileProvider.dart';
@@ -13,6 +14,7 @@ import 'package:sportdivers/screens/Payment/PaymentScreen.dart';
 import 'package:sportdivers/screens/Service/SocketService.dart';
 import 'package:sportdivers/screens/auth/reset_password/PasswordResetSuccess.dart';
 import 'package:sportdivers/screens/dashboard/StatDashboardAdhrt.dart';
+import 'package:sportdivers/screens/dashboard/StatDashboardCoach.dart';
 import 'package:sportdivers/screens/messages/MessagesList.dart';
 import 'package:sportdivers/screens/profile/ModifyProfile.dart';
 import 'package:sportdivers/screens/profile/ProfileScreen.dart';
@@ -38,13 +40,14 @@ import 'package:sportdivers/Provider/VideosProvider/videoProvider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:sportdivers/service/FCMHandler.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   print('------------------------------------------------------');
   print(await FirebaseMessaging.instance.getToken());
@@ -79,9 +82,32 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EditProfileProvider()),
         ChangeNotifierProvider(create: (_) => ApiProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardCoachProvider()),
+        ChangeNotifierProvider(create: (_) => PollProvider()),
+        Provider<FCMHandler>(
+          create: (context) {
+            final fcmHandler = FCMHandler();
+            fcmHandler.init(onNewPoll: () {
+              // This callback will be called when a new poll notification is received
+              Provider.of<PollProvider>(context, listen: false).fetchPollData();
+            });
+            return fcmHandler;
+          },
+        ),
       ],
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
+
+
+          // Get the FCM token when the user logs in
+          if (authProvider.isAuthenticated) {
+            Provider.of<FCMHandler>(context, listen: false).getToken().then((token) {
+              // Send this token to your server
+              authProvider.updateFCMToken(token);
+            });
+          }
+
+
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'SprotDivers',
@@ -89,7 +115,8 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
 
-            locale: Locale('fr', 'FR'), // Set French locale
+            locale: Locale('fr', 'FR'),
+            // Set French locale
             supportedLocales: [
               Locale('en', 'US'), // Add other locales if needed
               Locale('fr', 'FR'),
@@ -128,6 +155,7 @@ class MyApp extends StatelessWidget {
               PasswordResetSuccessScreen.id: (context) =>
                   PasswordResetSuccessScreen(),
               StatDashboardAdhrt.id: (context) => StatDashboardAdhrt(),
+              StatDashboardCoach.id: (context) => StatDashboardCoach(),
               ResetPasswordScreen.id: (context) =>
                   ResetPasswordScreen(token: authProvider.token ?? ''),
               HomePage.id: (context) =>

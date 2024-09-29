@@ -40,45 +40,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    // Initialize Firebase Messaging when the app is in the foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Message received in the foreground!');
-      print('Message data: ${message.data}');
-      if (message.notification != null) {
-        print('Notification: ${message.notification!.title}');
-      }
-    });
-    // Request permission for notifications on iOS
-    FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      sound: true,
-    ).then((settings) {
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('User granted permission');
-      } else {
-        print('User declined or has not accepted permission');
-      }
-    });
-    // Fetch the FCM token
-    FirebaseMessaging.instance.getToken().then((token) {
-      print("FCM Token: $token");  // Print the token for debugging
-      // You can now send this token to your backend to associate with the user
-      // or store it for later use
-      // For example, send the token to your server:
-      // sendTokenToServer(token);
-    });
-    // Listen for foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Message received in the foreground!');
-      print('Message data: ${message.data}');
-      if (message.notification != null) {
-        print('Notification: ${message.notification!.title}');
-      }
-    });
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<EventProvider>(context, listen: false).fetchEvents();
     });
@@ -138,7 +99,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        drawer: AppDrawer(),
+        drawer: AppDrawer(role: widget.role),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sportdivers/Menu/MenuPage.dart';
 import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
 import 'package:sportdivers/screens/dashboard/StatDashboardAdhrt.dart';
+import 'package:sportdivers/screens/dashboard/StatDashboardCoach.dart';
 import 'package:sportdivers/screens/messages/MessagesList.dart';
 import 'package:sportdivers/screens/profile/ProfileScreen.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,10 @@ import 'package:sportdivers/screens/training/timetable.dart';
 import 'package:sportdivers/screens/auth/login_screen.dart';
 
 class AppDrawer extends StatefulWidget {
+  final String role;
+
+  const AppDrawer({Key? key, required this.role}) : super(key: key);
+
   @override
   _AppDrawerState createState() => _AppDrawerState();
 }
@@ -117,7 +122,7 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  Widget _buildDrawerItems(BuildContext context) {
+  Widget _buildDrawerItems(BuildContext context,) {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
@@ -129,7 +134,13 @@ class _AppDrawerState extends State<AppDrawer> {
         _buildDrawerItem(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
         _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined, ReportPage.id),
         _buildDrawerItem(context, 'Changer mot de passe', Icons.password, ResetPasswordScreen.id),
-        _buildDrawerItem(context, 'Dashboard', Icons.poll, StatDashboardAdhrt.id),
+        //_buildDrawerItem(context, 'Dashboard', Icons.poll, StatDashboardAdhrt.id),
+        _buildDrawerItem(
+            context,
+            'Dashboard',
+            Icons.poll,
+            widget.role == 'TEACHER' ? StatDashboardCoach.id : StatDashboardAdhrt.id
+        ),
         // _buildDrawerItem(context, 'Classement', Icons.leaderboard, '/standings'),
         // _buildDrawerItem(context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
         const Divider(),

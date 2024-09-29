@@ -219,4 +219,34 @@ class AuthenticationProvider extends ChangeNotifier {
       throw Exception('Error occurred while requesting password reset: $e');
     }
   }
+
+
+
+
+  Future<void> updateFCMToken(String? token) async {
+    if (token != null && _token != null) {
+      try {
+        final response = await http.post(
+          Uri.parse('${Constants.baseUrl}/users/update-fcm-token'),
+          headers: {
+            'Authorization': 'Bearer $_token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({'fcm_token': token}),
+        );
+
+        if (response.statusCode == 200) {
+          print('FCM token updated successfully on server');
+        } else {
+          print('Failed to update FCM token on server: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+      } catch (e) {
+        print('Error updating FCM token: $e');
+      }
+    } else {
+      print('Cannot update FCM token: token is null or user is not authenticated');
+    }
+  }
+
 }

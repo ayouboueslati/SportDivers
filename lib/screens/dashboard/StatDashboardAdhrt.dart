@@ -6,7 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
 class StatDashboardAdhrt extends StatefulWidget {
-  static String id = 'dashboard_screen';
+  static String id = 'Stat_Dashboard_Adhrt';
 
   const StatDashboardAdhrt({Key? key}) : super(key: key);
 
@@ -265,29 +265,49 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     fontWeight: FontWeight.bold,
                     color: Colors.blue[900])),
             const SizedBox(height: 16),
-            ...absenceRatio.entries
-                .map((entry) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(entry.key,
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.blue[900])),
-                          Text('${(entry.value * 100).toStringAsFixed(1)}%',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue[900])),
-                        ],
-                      ),
-                    ))
-                .toList(),
+            // Check if absenceRatio is empty
+            if (absenceRatio.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Absence Total',
+                        style: TextStyle(
+                            fontSize: 16, color: Colors.blue[900])),
+                    Text('0.0%',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[900])),
+                  ],
+                ),
+              )
+            else
+              ...absenceRatio.entries
+                  .map((entry) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(entry.key,
+                        style: TextStyle(
+                            fontSize: 16, color: Colors.blue[900])),
+                    Text('${entry.value.toStringAsFixed(1)}%',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[900])),
+                  ],
+                ),
+              ))
+                  .toList(),
           ],
         ),
       ),
     );
   }
+
 
   Widget _buildAverageGradesCard(List<MonthlyGrade> grades) {
     return Card(

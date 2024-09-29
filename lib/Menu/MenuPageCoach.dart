@@ -76,7 +76,7 @@ class _HomePageCoachState extends State<HomePageCoach> {
             ),
           ],
         ),
-        drawer: AppDrawer(),
+        drawer: AppDrawer(role: widget.role),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
