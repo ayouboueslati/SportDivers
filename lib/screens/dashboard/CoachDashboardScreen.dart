@@ -37,10 +37,11 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     try {
       final loadedStudents = await apiProvider.getStudents();
       setState(() {
-        students = loadedStudents.where((student) =>
-        student['profile']['group'] != null &&
-            student['profile']['group']['id'] == widget.groupId
-        ).toList();
+        students = loadedStudents
+            .where((student) =>
+                student['profile']['group'] != null &&
+                student['profile']['group']['id'] == widget.groupId)
+            .toList();
         for (var student in students) {
           final studentId = student['profile']['id'];
           attendance[studentId] = false;
@@ -96,7 +97,8 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 final studentId = student['profile']['id'];
 
                 return Card(
-                  margin:const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 2,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -207,10 +209,14 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildGradeSlider('Assiduité', studentId, 'grade1', setState),
-                    _buildGradeSlider('Comportement', studentId, 'grade2', setState),
-                    _buildGradeSlider('Performance', studentId, 'grade3', setState),
-                    _buildGradeSlider('Jeu Collectif', studentId, 'grade4', setState),
+                    _buildGradeSlider(
+                        'Assiduité', studentId, 'grade1', setState),
+                    _buildGradeSlider(
+                        'Comportement', studentId, 'grade2', setState),
+                    _buildGradeSlider(
+                        'Performance', studentId, 'grade3', setState),
+                    _buildGradeSlider(
+                        'Jeu Collectif', studentId, 'grade4', setState),
                   ],
                 ),
               ),
@@ -226,8 +232,10 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
+                    double average = _calculateAverageGrade(studentId);
                     Navigator.of(context).pop();
                     this.setState(() {});
+                    _showAverageGradeToast(average);
                   },
                   child: const Text('Enregistrer'),
                 ),
@@ -236,6 +244,24 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
           },
         );
       },
+    );
+  }
+
+  double _calculateAverageGrade(String studentId) {
+    double sum = ratings[studentId]!.values.reduce((a, b) => a + b);
+    return sum / 4;
+  }
+
+  void _showAverageGradeToast(double average) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Moyenne des notes: ${average.toStringAsFixed(2)}',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blue[900],
+        duration: Duration(seconds: 3),
+      ),
     );
   }
 
@@ -309,7 +335,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     try {
       await apiProvider.setAttendance(widget.sessionId, attendanceData);
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text('Présence et notes enregistrées avec succès'),
           backgroundColor: Colors.blue[900],
         ),
@@ -318,7 +344,8 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Échec de l\'enregistrement des présences et des notes: $e'),
+          content:
+              Text('Échec de l\'enregistrement des présences et des notes: $e'),
           backgroundColor: Colors.red,
         ),
       );

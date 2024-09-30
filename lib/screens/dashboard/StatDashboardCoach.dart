@@ -97,7 +97,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
           if (DashboardCoachProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (DashboardCoachProvider.error.isNotEmpty) {
-            return Center(child: Text('Error: ${DashboardCoachProvider.error}'));
+            return Center(
+                child: Text('Error: ${DashboardCoachProvider.error}'));
           } else if (DashboardCoachProvider.stats != null) {
             final stats = DashboardCoachProvider.stats!;
             return SingleChildScrollView(
@@ -111,18 +112,18 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                       children: [
                         Expanded(
                           child: _buildSmallCard(
-                              'Nombre De Groupes',
-                              '${stats.groupsCount}',
-                              Icons.check_circle_outline,
+                            'Nombre De Groupes',
+                            '${stats.groupsCount}',
+                            Icons.check_circle_outline,
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildSmallCard(
-                              'Nombre De Séances',
-                              '${stats.sessionsCount}',
-                              Icons.cancel_outlined,
-                             ),
+                            'Nombre De Séances',
+                            '${stats.sessionsCount}',
+                            Icons.cancel_outlined,
+                          ),
                         ),
                       ],
                     ),
@@ -176,7 +177,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Du',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[600])),
                       Text(
                         formatter.format(_dateRange.start),
                         style: TextStyle(
@@ -191,7 +193,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text('Au',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[600])),
                       Text(
                         formatter.format(_dateRange.end),
                         style: TextStyle(
@@ -219,8 +222,7 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
     );
   }
 
-  Widget _buildSmallCard(
-      String title, String number, IconData icon) {
+  Widget _buildSmallCard(String title, String number, IconData icon) {
     return Card(
       elevation: 15,
       shadowColor: Colors.blue.withOpacity(0.4),
@@ -234,11 +236,20 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
           children: [
             //Icon(icon, size: 40, color: Colors.blue[900]),
             const SizedBox(height: 8),
-            Text(title, style: TextStyle(fontSize: 18, color: Colors.blue[900], fontWeight: FontWeight.bold),
+            Text(
+              title,
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blue[900],
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
-            Text(number, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.blue[900])),
+            Text(number,
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[900])),
           ],
         ),
       ),
@@ -343,16 +354,16 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                       .asMap()
                       .entries
                       .map((entry) => BarChartGroupData(
-                    x: entry.key,
-                    barRods: [
-                      BarChartRodData(
-                        toY: entry.value.value,
-                        color: Colors.lightBlueAccent,
-                        width: 22,
-                        borderRadius: BorderRadius.circular(4),
-                      )
-                    ],
-                  ))
+                            x: entry.key,
+                            barRods: [
+                              BarChartRodData(
+                                toY: entry.value.value,
+                                color: Colors.lightBlueAccent,
+                                width: 22,
+                                borderRadius: BorderRadius.circular(4),
+                              )
+                            ],
+                          ))
                       .toList(),
                 ),
               ),

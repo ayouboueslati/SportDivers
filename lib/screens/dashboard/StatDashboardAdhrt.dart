@@ -16,7 +16,7 @@ class StatDashboardAdhrt extends StatefulWidget {
 
 class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
   DateTimeRange _dateRange = DateTimeRange(
-    start: DateTime.now().subtract(Duration(days: 7)),
+    start: DateTime.now().subtract(Duration(days: 30)),
     end: DateTime.now(),
   );
 
@@ -178,7 +178,8 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Du',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[600])),
                       Text(
                         formatter.format(_dateRange.start),
                         style: TextStyle(
@@ -193,7 +194,8 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text('Au',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[600])),
                       Text(
                         formatter.format(_dateRange.end),
                         style: TextStyle(
@@ -273,8 +275,8 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Absence Total',
-                        style: TextStyle(
-                            fontSize: 16, color: Colors.blue[900])),
+                        style:
+                            TextStyle(fontSize: 16, color: Colors.blue[900])),
                     Text('0.0%',
                         style: TextStyle(
                             fontSize: 16,
@@ -286,28 +288,27 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
             else
               ...absenceRatio.entries
                   .map((entry) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(entry.key,
-                        style: TextStyle(
-                            fontSize: 16, color: Colors.blue[900])),
-                    Text('${entry.value.toStringAsFixed(1)}%',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[900])),
-                  ],
-                ),
-              ))
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(entry.key,
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.blue[900])),
+                            Text('${entry.value.toStringAsFixed(1)}%',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue[900])),
+                          ],
+                        ),
+                      ))
                   .toList(),
           ],
         ),
       ),
     );
   }
-
 
   Widget _buildAverageGradesCard(List<MonthlyGrade> grades) {
     return Card(

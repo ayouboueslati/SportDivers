@@ -18,7 +18,7 @@ class PaymentScreen extends StatelessWidget {
           elevation: 5,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -36,7 +36,7 @@ class PaymentScreen extends StatelessWidget {
         body: Consumer<PaymentProvider>(
           builder: (context, paymentProvider, child) {
             if (paymentProvider.isLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             return Container(
               color: Colors.grey[100],
@@ -50,16 +50,21 @@ class PaymentScreen extends StatelessWidget {
                     isLast: index == paymentProvider.payments.length - 1,
                     indicatorStyle: IndicatorStyle(
                       width: 25,
-                      color: paymentProvider.payments[index].paid ? Colors.green[600]! : Colors.red[600]!,
-                      padding: EdgeInsets.all(6),
+                      color: paymentProvider.payments[index].paid
+                          ? Colors.green[600]!
+                          : Colors.red[600]!,
+                      padding: const EdgeInsets.all(6),
                       iconStyle: IconStyle(
                         color: Colors.white,
-                        iconData: paymentProvider.payments[index].paid ? Icons.check : Icons.close,
+                        iconData: paymentProvider.payments[index].paid
+                            ? Icons.check
+                            : Icons.close,
                       ),
                     ),
                     endChild: PaymentItem(
                       payment: paymentProvider.payments[index],
-                      onPay: () => paymentProvider.makePayment(paymentProvider.payments[index].id),
+                      onPay: () => paymentProvider
+                          .makePayment(paymentProvider.payments[index].id),
                     ),
                     beforeLineStyle: LineStyle(
                       color: Colors.blue[900]!,
@@ -88,19 +93,20 @@ class PaymentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Paiement #${payment.id.substring(0, 8)}',
+                const Text(
+                  // 'Paiement #${payment.id.substring(0,8)}',
+                  '',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Text(
@@ -109,10 +115,10 @@ class PaymentItem extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 1),
             Text(
               'Montant: ${payment.amount.toStringAsFixed(3)} DT',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
             Text(
               'Heure: ${payment.formattedTime}',
@@ -128,17 +134,19 @@ class PaymentItem extends StatelessWidget {
                 'Date de dépôt: ${payment.formattedDepositDate}',
                 style: TextStyle(color: Colors.grey[600]),
               ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             if (payment.paid)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.green[100],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   'Payé le ${payment.formattedPaidAt}',
-                  style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.green[700], fontWeight: FontWeight.bold),
                 ),
               )
             else
@@ -161,7 +169,8 @@ class PaymentItem extends StatelessWidget {
                   color: Colors.blue[900],
                   borderRadius: BorderRadius.circular(14),
                 ),
-                padding:const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: const Center(
                   child: Text(
                     'À payer',

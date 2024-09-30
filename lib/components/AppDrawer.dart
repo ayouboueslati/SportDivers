@@ -79,13 +79,17 @@ class _AppDrawerState extends State<AppDrawer> {
                 children: [
                   CircleAvatar(
                     radius: screenHeight * 0.045,
-                    backgroundImage: userData != null && userData['profilePicture'] != null
-                        ? NetworkImage(userData['profilePicture'])
-                        : null,
+                    backgroundImage:
+                        userData != null && userData['profilePicture'] != null
+                            ? NetworkImage(userData['profilePicture'])
+                            : null,
                     backgroundColor: Colors.white,
-                    child: userData != null && userData['profilePicture'] != null
-                        ? null
-                        : Icon(Icons.person, size: screenHeight * 0.05, color: Colors.blue[900]),
+                    child:
+                        userData != null && userData['profilePicture'] != null
+                            ? null
+                            : Icon(Icons.person,
+                                size: screenHeight * 0.05,
+                                color: Colors.blue[900]),
                   ),
                   SizedBox(width: screenWidth * 0.04),
                   Expanded(
@@ -122,35 +126,48 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 
-  Widget _buildDrawerItems(BuildContext context,) {
+  Widget _buildDrawerItems(
+    BuildContext context,
+  ) {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
         _buildDrawerItem(context, 'Menu principal', Icons.home, HomePage.id),
-        _buildDrawerItem(context, 'Profil', Icons.account_box_rounded, ProfileScreen1.id),
-        _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined, TrainingScheduleScreen.id),
-        _buildDrawerItem(context, 'Mes tickets', Icons.history, TicketsScreen.id),
-        _buildDrawerItem(context, 'Messages', Icons.mark_unread_chat_alt_outlined, MessagesList.id),
-        _buildDrawerItem(context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
-        _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined, ReportPage.id),
-        _buildDrawerItem(context, 'Changer mot de passe', Icons.password, ResetPasswordScreen.id),
-        //_buildDrawerItem(context, 'Dashboard', Icons.poll, StatDashboardAdhrt.id),
+        _buildDrawerItem(
+            context, 'Profil', Icons.account_box_rounded, ProfileScreen1.id),
+        _buildDrawerItem(context, 'Calendrier', Icons.calendar_month_outlined,
+            TrainingScheduleScreen.id),
+        _buildDrawerItem(
+            context, 'Mes tickets', Icons.history, TicketsScreen.id),
+        _buildDrawerItem(context, 'Messages',
+            Icons.mark_unread_chat_alt_outlined, MessagesList.id),
+        _buildDrawerItem(
+            context, 'Video', Icons.video_camera_back_outlined, VideoApp.id),
+        _buildDrawerItem(context, 'Assistance', Icons.report_problem_outlined,
+            ReportPage.id),
+
         _buildDrawerItem(
             context,
             'Dashboard',
             Icons.poll,
-            widget.role == 'TEACHER' ? StatDashboardCoach.id : StatDashboardAdhrt.id
-        ),
+            widget.role == 'TEACHER'
+                ? StatDashboardCoach.id
+                : StatDashboardAdhrt.id),
+        _buildDrawerItem(context, 'Changer mot de passe', Icons.password,
+            ResetPasswordScreen.id),
         // _buildDrawerItem(context, 'Classement', Icons.leaderboard, '/standings'),
         // _buildDrawerItem(context, 'Fantasy Leagues', Icons.emoji_events, '/fantasy'),
         const Divider(),
         // _buildDrawerItem(context, 'Paramètres', Icons.settings, '/settings'),
-        _buildDrawerItem(context, 'Déconnexion', Icons.exit_to_app, '/logout', isLogout: true),
+        _buildDrawerItem(context, 'Déconnexion', Icons.exit_to_app, '/logout',
+            isLogout: true),
       ],
     );
   }
 
-  Widget _buildDrawerItem(BuildContext context, String title, IconData icon, String route, {bool isLogout = false}) {
+  Widget _buildDrawerItem(
+      BuildContext context, String title, IconData icon, String route,
+      {bool isLogout = false}) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ListTile(
@@ -182,7 +199,8 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   void _logout(BuildContext context) async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }
