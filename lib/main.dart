@@ -10,6 +10,7 @@ import 'package:sportdivers/Provider/ProfileProvider/EditProfileProvider.dart';
 import 'package:sportdivers/Provider/TrainingSchedule/CoachDashboardProvider.dart';
 import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:sportdivers/components/Loader.dart';
+import 'package:sportdivers/screens/Championnat/MatchsList.dart';
 import 'package:sportdivers/screens/Payment/PaymentScreen.dart';
 import 'package:sportdivers/screens/Service/SocketService.dart';
 import 'package:sportdivers/screens/auth/reset_password/PasswordResetSuccess.dart';
@@ -127,8 +128,10 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
 
-            home: CustomLoaderPage(),
-            //home: StatDashboardAdhrt(),
+            //home: CustomLoaderPage(),
+
+            //tests
+            home: MatchListPage(),
             //initialRoute: LoginScreen.id,
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
