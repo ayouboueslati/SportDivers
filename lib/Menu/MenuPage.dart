@@ -1,24 +1,26 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:sportdivers/Provider/EventProvider/eventProvider.dart';
 import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
 import 'package:sportdivers/components/AppDrawer.dart';
+import 'package:sportdivers/components/BtmNavBar.dart';
 import 'package:sportdivers/models/event.dart';
-import 'package:sportdivers/screens/Payment/PaymentScreen.dart';
 import 'package:sportdivers/screens/Survey/PollsPage.dart';
 import 'package:sportdivers/screens/Tutorials/tutorials.dart';
-import 'package:sportdivers/screens/dashboard/CoachDashboardScreen.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_icons.dart';
+import 'package:sportdivers/screens/dashboard/StatDashboardAdhrt.dart';
+import 'package:sportdivers/screens/dashboard/StatDashboardCoach.dart';
 import 'package:sportdivers/screens/messages/MessagesList.dart';
-import 'package:sportdivers/screens/messages/friend_list.dart';
-import 'package:sportdivers/screens/profile/profile.dart';
+import 'package:sportdivers/screens/Payment/PaymentScreen.dart';
+import 'package:sportdivers/screens/profile/ProfileScreen.dart';
 import 'package:sportdivers/screens/report/ReportSheet1.dart';
+import 'package:sportdivers/screens/report/fetchTicket.dart';
 import 'package:sportdivers/screens/training/TimeTableCoach.dart';
 import 'package:sportdivers/screens/training/timetable.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
-import '../models/user_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.role, this.userData})
@@ -34,22 +36,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final User chatUser;
   late final List<Widget> _widgetOptions;
+
+  int _selectedIndex = 0;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<EventProvider>(context, listen: false).fetchEvents();
-    });
-    _widgetOptions = <Widget>[
-      TrainingScheduleScreen(),
-      TrainingScheduleScreenCoach(),
-      MessagesList(role: widget.role),
-    ];
 
-    // Fetch events once the widget is initialized
+    _pageController = PageController(initialPage: _selectedIndex);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<EventProvider>(context, listen: false).fetchEvents();
     });
@@ -60,8 +57,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _fetchUserData() async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
     final token = authProvider.token;
 
     if (token != null) {
@@ -71,130 +70,309 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 70,
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: Colors.blue[900],
-          elevation: 14,
-          shadowColor: Colors.blue.withOpacity(0.5),
-          title: const Text(
-            'SportDivers',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              letterSpacing: 1.2,
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+
+    return Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: Colors.white,
+      //   elevation: 0,
+      //   leading: Builder(
+      //     builder: (BuildContext context) {
+      //       return IconButton(
+      //         icon: const Icon(Icons.menu, color: Colors.black),
+      //         onPressed: () {
+      //           Scaffold.of(context).openDrawer();
+      //         },
+      //       );
+      //     },
+      //   ),
+      //   actions: [
+      //     Padding(
+      //       padding: EdgeInsets.only(right: width / 36),
+      //       child: CircleAvatar(
+      //         radius: height / 32,
+      //         backgroundImage: widget.userData != null &&
+      //                 widget.userData?['profilePicture'] != null
+      //             ? NetworkImage(widget.userData?['profilePicture'])
+      //             : null,
+      //         backgroundColor: Colors.transparent,
+      //         child: widget.userData != null &&
+      //                 widget.userData?['profilePicture'] != null
+      //             ? null
+      //             : Container(
+      //                 decoration: BoxDecoration(
+      //                   shape: BoxShape.circle,
+      //                   gradient: LinearGradient(
+      //                     begin: Alignment.topLeft,
+      //                     end: Alignment.bottomRight,
+      //                     colors: [Colors.blue[300]!, Colors.blue[900]!],
+      //                   ),
+      //                 ),
+      //                 child: Icon(
+      //                   Icons.person,
+      //                   size: height * 0.035,
+      //                   color: Colors.white,
+      //                 ),
+      //               ),
+      //       ),
+      //     )
+      //   ],
+      // ),
+      // drawer: AppDrawer(role: widget.role),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() => _selectedIndex = index);
+        },
+        children: [
+          _buildHomePage(height, width),
+          widget.role == 'TEACHER'
+              ? StatDashboardCoach()
+              : StatDashboardAdhrt(),
+          widget.role == 'TEACHER'
+              ? TrainingScheduleScreenCoach()
+              : TrainingScheduleScreen(),
+          MessagesList(role: widget.role),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigation(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() => _selectedIndex = index);
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHomePage(double height, double width) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: width / 36, vertical: height / 36),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: height / 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Salut, ${widget.userData?['firstName'] ?? 'User'}",
+                        style: TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.bold)),
+                    Text("Bienvenue Chez SportDivers",
+                        style: TextStyle(fontSize: 14, color: Colors.grey)),
+                  ],
+                ),
+                CircleAvatar(
+                  radius: height / 32,
+                  backgroundImage: widget.userData != null &&
+                          widget.userData?['profilePicture'] != null
+                      ? NetworkImage(widget.userData?['profilePicture'])
+                      : null,
+                  backgroundColor: Colors.transparent,
+                  child: widget.userData != null &&
+                          widget.userData?['profilePicture'] != null
+                      ? null
+                      : Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.blue[300]!, Colors.blue[900]!],
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: height * 0.035,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              ],
             ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search, color: Colors.white),
-              onPressed: () {},
+            SizedBox(height: height / 36),
+            Text("Menu",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            //SizedBox(height: height / 150),
+            _buildTaskGrid(height, width),
+            SizedBox(height: height / 26),
+            Row(
+              children: [
+                Text("Événements à venir",
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Spacer(),
+                Text("Voir tout",
+                    style: TextStyle(fontSize: 12, color: Colors.blue[900])),
+              ],
             ),
-            IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.white),
-              onPressed: () {},
+            SizedBox(height: height / 36),
+            _buildEventList(height, width),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomTabBar(double height, double width) {
+    return Padding(
+      padding:
+          EdgeInsets.symmetric(horizontal: width / 30, vertical: height / 36),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)]),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          elevation: 0,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          backgroundColor: Colors.transparent,
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                DailozSvgimage.task,
+                height: height / 30,
+                width: width / 30,
+              ),
+              activeIcon: SvgPicture.asset(
+                DailozSvgimage.taskfill,
+                height: height / 30,
+                width: width / 30,
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(DailozSvgimage.graphic,
+                  height: height / 32, width: width / 32),
+              activeIcon: SvgPicture.asset(
+                DailozSvgimage.graphicfill,
+                height: height / 34,
+                width: width / 34,
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                DailozSvgimage.folder,
+                height: height / 32,
+                width: width / 32,
+              ),
+              activeIcon: SvgPicture.asset(
+                DailozSvgimage.folderfill,
+                height: height / 32,
+                width: width / 32,
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                DailozSvgimage.home,
+                height: height / 30,
+                width: width / 30,
+              ),
+              activeIcon: SvgPicture.asset(
+                DailozSvgimage.homefill,
+                height: height / 35,
+                width: width / 35,
+              ),
+              label: '',
             ),
           ],
         ),
-        drawer: AppDrawer(role: widget.role),
-        body: SingleChildScrollView(
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Widget _buildTaskGrid(double height, double width) {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      childAspectRatio: 1.2,
+      crossAxisSpacing: width / 36,
+      mainAxisSpacing: height / 56,
+      children: [
+        // _buildTaskCard(
+        //     'Calendrier',
+        //     "assets/images/icons/chat.png",
+        //     Colors.blue[100]!,
+        //     TrainingScheduleScreen.id,
+        //     TrainingScheduleScreenCoach.id),
+        // _buildTaskCard('Messages', "assets/images/icons/chat.png",
+        //     Colors.purple[100]!, MessagesList.id, MessagesList.id),
+        _buildTaskCard('Video', "assets/images/icons/film.png",
+            Colors.blue[100]!, VideoApp.id, VideoApp.id),
+        _buildTaskCard('Assistance', "assets/images/icons/caution.png",
+            Colors.orange[100]!, ReportPage.id, ReportPage.id),
+        if (widget.role != 'TEACHER') ...[
+          _buildTaskCard('Sondages', "assets/images/icons/phone.png",
+              Colors.red[100]!, PollSurveyPage.id, PollSurveyPage.id),
+          _buildTaskCard('Paiements', "assets/images/icons/payment.png",
+              Colors.teal[100]!, PaymentScreen.id, PaymentScreen.id),
+        ],
+        _buildTaskCard('Profil', "assets/images/icons/employee.png",
+            Colors.green[100]!, ProfileScreen1.id, ProfileScreen1.id),
+        _buildTaskCard('Tickets', "assets/images/icons/byod.png",
+            Colors.purple[100]!, TicketsScreen.id, TicketsScreen.id),
+      ],
+    );
+  }
+
+  Widget _buildTaskCard(String title, String image, Color color,
+      String studentRoute, String teacherRoute) {
+    return InkWell(
+      onTap: () {
+        String route = widget.role == 'TEACHER' ? teacherRoute : studentRoute;
+        Navigator.pushNamed(context, route);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _buildSportCardWithRoleBasedRoute(
-                    context,
-                    'Calendrier',
-                    Icons.calendar_today_outlined,
-                    TrainingScheduleScreen.id,
-                    TrainingScheduleScreenCoach.id,
-                  ),
-                  _buildSportCard(
-                    context,
-                    'Messages',
-                    Icons.message_outlined,
-                    MessagesList.id,
-                  ),
-                  _buildSportCard(
-                    context,
-                    'Vidéo',
-                    Icons.video_library_outlined,
-                    VideoApp.id,
-                  ),
-                  _buildSportCard(
-                    context,
-                    'Assistance',
-                    Icons.support_agent_outlined,
-                    ReportPage.id,
-                  ),
-                  if (widget.role != 'TEACHER') ...[
-                    _buildSportCard(
-                      context,
-                      'Sondages',
-                      Icons.poll_outlined,
-                      PollSurveyPage.id,
-                    ),
-                    _buildSportCard(
-                      context,
-                      'paiements',
-                      Icons.payment_outlined,
-                      PaymentScreen.id,
-                    ),
-                  ],
-                ],
+              Image.asset(
+                image,
+                height: 60,
+                width: 60,
               ),
-              Consumer<EventProvider>(
-                builder: (context, eventProvider, child) {
-                  if (eventProvider.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (eventProvider.error.isNotEmpty) {
-                    return Center(child: Text(eventProvider.error));
-                  } else {
-                    return LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: Text(
-                                'Événements à venir',
-                                style: TextStyle(
-                                  fontSize:
-                                      constraints.maxWidth < 600 ? 18 : 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue[900],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: constraints.maxWidth < 650 ? 260 : 300,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: eventProvider.events.length,
-                                itemBuilder: (context, index) {
-                                  return _buildEventCard(
-                                      context, eventProvider.events[index]);
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 10),
+              //  Icon(icon, size: 40, color: Colors.blue[900]),
+              SizedBox(height: 16),
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[900])),
+              Text("Appuyez pour voir",
+                  style: TextStyle(fontSize: 12, color: Colors.blue[900])),
             ],
           ),
         ),
@@ -202,293 +380,84 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSportCard(
-      BuildContext context, String title, IconData icon, String route) {
-    return Card(
-      elevation: 15,
-      shadowColor: Colors.blue.withOpacity(0.4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: InkWell(
-        onTap: () => Navigator.pushNamed(context, route),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              // top: -20,
-              // right: -20,
-              child: Icon(
-                icon,
-                size: 150,
-                color: Colors.blue[100]!.withOpacity(0.3),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 48, color: Colors.blue[900]),
-                const SizedBox(height: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget _buildSportCardWithRoleBasedRoute(
-      BuildContext context,
-      String title,
-      IconData icon,
-      String studentRoute,
-      String teacherRoute,
-      ) {
-    return Card(
-      elevation: 15,
-      shadowColor: Colors.blue.withOpacity(0.4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: InkWell(
-        onTap: () {
-          String route = widget.role == 'TEACHER' ? teacherRoute : studentRoute;
-          Navigator.pushNamed(context, route);
-        },
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              // top: -20,
-              // right: -20,
-              child: Icon(
-                icon,
-                size: 150,
-                color: Colors.blue[100]!.withOpacity(0.3),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 48, color: Colors.blue[900]),
-                const SizedBox(height: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEventCard(BuildContext context, Event event) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        double maxWidth = constraints.maxWidth;
-        double cardWidth = maxWidth < 700 ? maxWidth * 0.8 : 250.0;
-        double imageHeight = cardWidth * 0.6;
-
-        return GestureDetector(
-          onTap: () => _showEventDialog(context, event),
-          child: Container(
-            width: cardWidth,
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white, // Make sure the card is white
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3), // Subtle shadow for depth
-                  spreadRadius: 1,
-                  blurRadius: 8,
-                  offset: const Offset(0, 3), // Slightly raise the card
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                  child: Image.network(
-                    'https://sportdivers.tn/storage/${event.image}',
-                    height: imageHeight,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: imageHeight,
-                        color: Colors.grey[300],
-                        child: const Center(child: Text('Image non disponible')),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.titre,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: maxWidth < 600 ? 14 : 16,
-                          color: Colors.black87, // Darker text for contrast
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_formatDate(event.start)} - ${_formatDate(event.end)}',
-                        style: TextStyle(
-                          color: Colors.grey[600], // Light grey for secondary text
-                          fontSize: maxWidth < 600 ? 12 : 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+  Widget _buildEventList(double height, double width) {
+    return Consumer<EventProvider>(
+      builder: (context, eventProvider, child) {
+        if (eventProvider.isLoading) {
+          return Center(child: CircularProgressIndicator());
+        } else if (eventProvider.error.isNotEmpty) {
+          return Center(child: Text(eventProvider.error));
+        } else {
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: eventProvider.events.length,
+            itemBuilder: (context, index) {
+              return _buildEventCard(
+                  context, eventProvider.events[index], height, width);
+            },
+          );
+        }
       },
     );
   }
 
-
-
-  void _showEventDialog(BuildContext context, Event event) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: Container(
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: const Offset(0.0, 10.0),
-                ),
-              ],
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      'https://sportdivers.tn/storage/${event.image}',
-                      height:  230,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 200,
-                          color: Colors.grey[300],
-                          child: const Center(child: Text('Image non disponible')),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    event.titre,
-                    style:  TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[900],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildInfoRow(Icons.calendar_today, 'Début: ${_formatDateTime(event.start)}'),
-                  const SizedBox(height: 5),
-                  _buildInfoRow(Icons.calendar_today, 'Fin: ${_formatDateTime(event.end)}'),
-                  const SizedBox(height: 15),
-                   Text(
-                    'Description:',
+  Widget _buildEventCard(
+      BuildContext context, Event event, double height, double width) {
+    return Container(
+      margin: EdgeInsets.only(bottom: height / 46),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: Colors.grey[100],
+      ),
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: width / 36, vertical: height / 66),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(event.titre,
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[900],
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    event.description,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                      child: const Text('Fermer',style: TextStyle(color: Colors.white),),
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[900],
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                        textStyle: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+                Spacer(),
+                Icon(Icons.more_vert, color: Colors.grey),
+              ],
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.blue[900], size: 20),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
+            SizedBox(height: height / 200),
+            Text("${_formatDate(event.start)} - ${_formatDate(event.end)}",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            SizedBox(height: height / 66),
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: width / 36, vertical: height / 120),
+                    child: Text("Événement",
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.blue[900],
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   String _formatDate(String dateString) {
     final date = DateTime.parse(dateString);
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatDateTime(String dateTimeString) {
-    final dateTime = DateTime.parse(dateTimeString);
-    return DateFormat(' d/M/y  HH:mm').format(dateTime);
+    return DateFormat('MMM d, y').format(date);
   }
 }

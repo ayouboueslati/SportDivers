@@ -1,10 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sportdivers/Provider/ProfileProvider/EditProfileProvider.dart';
+import 'package:sportdivers/components/CustomToast.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 import 'package:sportdivers/screens/profile/ProfileScreen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
+
 
 class EditProfileScreen extends StatefulWidget {
   static String id = 'Edit_Profile_Screen';
@@ -27,16 +31,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _firstNameController =
-        TextEditingController(text: widget.userData?['firstName'] ?? '');
-    _lastNameController =
-        TextEditingController(text: widget.userData?['lastName'] ?? '');
-    _emailController =
-        TextEditingController(text: widget.userData?['email'] ?? '');
-    _phoneController =
-        TextEditingController(text: widget.userData?['phone'] ?? '');
-    _addressController =
-        TextEditingController(text: widget.userData?['address'] ?? '');
+    _firstNameController = TextEditingController(text: widget.userData?['firstName'] ?? '');
+    _lastNameController = TextEditingController(text: widget.userData?['lastName'] ?? '');
+    _emailController = TextEditingController(text: widget.userData?['email'] ?? '');
+    _phoneController = TextEditingController(text: widget.userData?['phone'] ?? '');
+    _addressController = TextEditingController(text: widget.userData?['address'] ?? '');
   }
 
   @override
@@ -51,38 +50,67 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+
     return Scaffold(
+      backgroundColor: DailozColor.white,
       appBar: AppBar(
-        toolbarHeight: 60,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              height: height / 20,
+              width: height / 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DailozColor.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: DailozColor.grey.withOpacity(0.3), blurRadius: 5)
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width / 56),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
+            ),
+          ),
         ),
-        backgroundColor: Colors.blue[900],
-        title: const Text(
-          'Modifier le profil',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        title: Text(
+          'Modifier votre profil',
+          style: hsBold.copyWith(
+            color: DailozColor.black,
             fontSize: 22,
           ),
         ),
+        backgroundColor: DailozColor.white,
+        elevation: 0,
       ),
       body: Consumer<ProfileProvider>(
         builder: (context, profileProvider, child) {
           if (profileProvider.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: DailozColor.appcolor));
           }
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
-                _buildProfileImage(),
-                const SizedBox(height: 20),
-                _buildForm(),
-              ],
+            child: Padding(
+              padding: EdgeInsets.all(width / 36),
+              child: Column(
+                children: [
+                  SizedBox(height: height / 36),
+                  _buildProfileImage(height),
+                  SizedBox(height: height / 24),
+                  _buildForm(height, width),
+                ],
+              ),
             ),
           );
         },
@@ -92,8 +120,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _selectProfileImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -101,76 +128,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  Widget _buildProfileImage() {
-    return Center(
-      child: GestureDetector(
-        onTap: _selectProfileImage,
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.blue[900]!, width: 4),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: _profileImage != null
-                    ? FileImage(_profileImage!)
-                    : NetworkImage(widget.userData!['profilePicture'])
-                        as ImageProvider,
-                child: _profileImage == null
-                    ? Icon(Icons.camera_alt, size: 40, color: Colors.white70)
-                    : null,
-              ),
-            ),
-            Positioned(
-              bottom: 5,
-              right: 5,
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.blue[900],
-                child: Icon(Icons.edit, size: 20, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForm() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
+  Widget _buildProfileImage(double height) {
+    return GestureDetector(
+      onTap: _selectProfileImage,
+      child: Stack(
         children: [
-          _buildTextField(_firstNameController, 'Prénom', Icons.person),
-          _buildTextField(_lastNameController, 'Nom', Icons.person_outline),
-          _buildTextField(_emailController, 'E-mail', Icons.email),
-          _buildTextField(_phoneController, 'Téléphone', Icons.phone),
-          _buildTextField(_addressController, 'Adresse', Icons.home),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _saveChanges,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[900],
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              textStyle:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
+          Container(
+            height: height / 7,
+            width: height / 7,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: DailozColor.appcolor, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: DailozColor.black.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: const Text(
-              'Enregistrer Les Modifications',
-              style: TextStyle(color: Colors.white),
+            child: CircleAvatar(
+              backgroundImage: _profileImage != null
+                  ? FileImage(_profileImage!)
+                  : NetworkImage(widget.userData!['profilePicture']) as ImageProvider,
+              child: _profileImage == null
+                  ? const Icon(Icons.camera_alt, size: 40, color: DailozColor.white)
+                  : null,
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: DailozColor.appcolor,
+              ),
+              child: const Icon(Icons.edit, size: 20, color: DailozColor.white),
             ),
           ),
         ],
@@ -178,31 +174,70 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildTextField(
-      TextEditingController controller, String label, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, color: Colors.blue[900]),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.blue[900]!),
+  Widget _buildForm(double height, double width) {
+    return Column(
+      children: [
+        _buildTextField(_firstNameController, 'Prénom', Icons.person),
+        SizedBox(height: height / 60),
+        _buildTextField(_lastNameController, 'Nom ', Icons.person_outline),
+        SizedBox(height: height / 60),
+        _buildTextField(_emailController, 'E-mail', Icons.email),
+        SizedBox(height: height / 60),
+        _buildTextField(_phoneController, 'Téléphone', Icons.phone),
+        SizedBox(height: height / 60),
+        _buildTextField(_addressController, 'Adresse', Icons.home),
+        SizedBox(height: height / 30),
+        _buildSaveButton(height, width),
+      ],
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon) {
+    return TextField(
+      controller: controller,
+      style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+        prefixIcon: Icon(icon, color: DailozColor.appcolor),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: DailozColor.bggray),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: DailozColor.appcolor, width: 2),
+        ),
+        filled: true,
+        fillColor: DailozColor.bggray,
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(double height, double width) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _saveChanges,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: DailozColor.appcolor,
+          foregroundColor: DailozColor.white,
+          padding: EdgeInsets.symmetric(vertical: height / 60),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.blue[900]!, width: 2),
-          ),
+          elevation: 4,
+        ),
+        child: Text(
+          'Enregistrer les modifications',
+          style: hsSemiBold.copyWith(fontSize: 16),
         ),
       ),
     );
   }
 
   void _saveChanges() async {
-    final editProfileProvider =
-        Provider.of<EditProfileProvider>(context, listen: false);
+    final editProfileProvider = Provider.of<EditProfileProvider>(context, listen: false);
 
     Map<String, dynamic> updatedData = {
       'firstName': _firstNameController.text,
@@ -212,12 +247,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       'address': _addressController.text,
     };
 
-    final updatedUser = await editProfileProvider.updateUserProfile(updatedData,
-        profileImage: _profileImage);
+    final updatedUser = await editProfileProvider.updateUserProfile(updatedData, profileImage: _profileImage);
 
     if (updatedUser != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile updated successfully')),
+      showReusableToast(
+        context: context,
+        message: 'Profil mis à jour avec succès',
+        duration: Duration(seconds: 5),
       );
       Navigator.pushReplacement(
         context,
@@ -226,10 +262,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text('Failed to update profile: ${editProfileProvider.error}')),
+      showReusableToast(
+        context: context,
+        message: 'Échec de la mise à jour du profil: ${editProfileProvider.error}',
+        duration: Duration(seconds: 5),
       );
     }
   }

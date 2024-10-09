@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:sportdivers/models/user_model.dart';
@@ -24,6 +25,7 @@ class AuthenticationProvider extends ChangeNotifier {
   Map<String, dynamic>? get userData => _userData;
 
   AuthenticationProvider() {
+    //_loadAuthState();
     _loadToken();
   }
 
@@ -40,6 +42,30 @@ class AuthenticationProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
   }
+
+  //stay connected
+  Future<void> _loadAuthState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('token');
+    _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
+    _accountType = prefs.getString('accountType') ?? '';
+    String? userDataString = prefs.getString('userData');
+    if (userDataString != null) {
+      _userData = json.decode(userDataString);
+    }
+    notifyListeners();
+  }
+
+  Future<void> _saveAuthState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', _token ?? '');
+    await prefs.setBool('isAuthenticated', _isAuthenticated);
+    await prefs.setString('accountType', _accountType);
+    if (_userData != null) {
+      await prefs.setString('userData', json.encode(_userData));
+    }
+  }
+  //*************
 
   Future<void> resetPassword({
     required String oldPassword,
@@ -100,6 +126,7 @@ class AuthenticationProvider extends ChangeNotifier {
     notifyListeners();
     late SocketService _socketService;
     try {
+      String? deviceToken = await FirebaseMessaging.instance.getToken();
       final response = await http.post(
         Uri.parse('${Constants.baseUrl}/auth/login'),
         headers: {
@@ -108,6 +135,7 @@ class AuthenticationProvider extends ChangeNotifier {
         body: jsonEncode({
           'email': email,
           'password': password,
+          'token' : deviceToken,
         }),
       );
 
@@ -119,10 +147,9 @@ class AuthenticationProvider extends ChangeNotifier {
         _isAuthenticated = true;
         _resMessage = 'Login successful';
 
-        // print('Login successful');
-        // print('Token: $_token');
-        // print('User Data: $_userData');
-        // print('Account Type: $_accountType');
+
+        // Save the authentication state
+        await _saveAuthState();
 
         //socket
         _socketService = Provider.of<SocketService>(context, listen: false);
@@ -190,9 +217,14 @@ class AuthenticationProvider extends ChangeNotifier {
   Future<void> logoutUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
+    await prefs.remove('isAuthenticated');
+    await prefs.remove('accountType');
+    await prefs.remove('userData');
     await _clearUserCredentials();
     _isAuthenticated = false;
     _token = null;
+    _userData = null;
+    _accountType = '';
     notifyListeners();
   }
 
@@ -223,30 +255,30 @@ class AuthenticationProvider extends ChangeNotifier {
 
 
 
-  Future<void> updateFCMToken(String? token) async {
-    if (token != null && _token != null) {
-      try {
-        final response = await http.post(
-          Uri.parse('${Constants.baseUrl}/users/update-fcm-token'),
-          headers: {
-            'Authorization': 'Bearer $_token',
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({'fcm_token': token}),
-        );
-
-        if (response.statusCode == 200) {
-          print('FCM token updated successfully on server');
-        } else {
-          print('Failed to update FCM token on server: ${response.statusCode}');
-          print('Response body: ${response.body}');
-        }
-      } catch (e) {
-        print('Error updating FCM token: $e');
-      }
-    } else {
-      print('Cannot update FCM token: token is null or user is not authenticated');
-    }
-  }
+  // Future<void> updateFCMToken(String? token) async {
+  //   if (token != null && _token != null) {
+  //     try {
+  //       final response = await http.post(
+  //         Uri.parse('${Constants.baseUrl}/users/update-fcm-token'),
+  //         headers: {
+  //           'Authorization': 'Bearer $_token',
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: json.encode({'fcm_token': token}),
+  //       );
+  //
+  //       if (response.statusCode == 200) {
+  //         print('FCM token updated successfully on server');
+  //       } else {
+  //         print('Failed to update FCM token on server: ${response.statusCode}');
+  //         print('Response body: ${response.body}');
+  //       }
+  //     } catch (e) {
+  //       print('Error updating FCM token: $e');
+  //     }
+  //   } else {
+  //     print('Cannot update FCM token: token is null or user is not authenticated');
+  //   }
+  // }
 
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sportdivers/Provider/PaymentProvider/PaymentProvider.dart';
 import 'package:sportdivers/models/payment.dart';
 import 'package:provider/provider.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class PaymentScreen extends StatelessWidget {
@@ -9,29 +11,43 @@ class PaymentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
     return ChangeNotifierProvider(
       create: (context) => PaymentProvider()..fetchPayments(),
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 60,
-          shadowColor: Colors.grey.withOpacity(0.3),
-          elevation: 5,
-          iconTheme: const IconThemeData(color: Colors.white),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          backgroundColor: Colors.blue[900],
-          title: const Text(
-            'Historique des paiements',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
+          leading: Padding(
+            padding: const EdgeInsets.all(10),
+            child: InkWell(
+              splashColor: DailozColor.transparent,
+              highlightColor: DailozColor.transparent,
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                height: height / 20,
+                width: height / 20,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: DailozColor.white,
+                    boxShadow: const [
+                      BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                    ]),
+                child: Padding(
+                  padding: EdgeInsets.only(left: width / 56),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    size: 18,
+                    color: DailozColor.black,
+                  ),
+                ),
+              ),
             ),
           ),
+          title: Text("Historique des paiements",
+              style: hsSemiBold.copyWith(fontSize: 22)),
         ),
         body: Consumer<PaymentProvider>(
           builder: (context, paymentProvider, child) {
@@ -51,8 +67,8 @@ class PaymentScreen extends StatelessWidget {
                     indicatorStyle: IndicatorStyle(
                       width: 25,
                       color: paymentProvider.payments[index].paid
-                          ? Colors.green[600]!
-                          : Colors.red[600]!,
+                          ? Colors.green[500]!
+                          : Colors.red[500]!,
                       padding: const EdgeInsets.all(6),
                       iconStyle: IconStyle(
                         color: Colors.white,
@@ -61,13 +77,29 @@ class PaymentScreen extends StatelessWidget {
                             : Icons.close,
                       ),
                     ),
-                    endChild: PaymentItem(
-                      payment: paymentProvider.payments[index],
-                      onPay: () => paymentProvider
-                          .makePayment(paymentProvider.payments[index].id),
+                    endChild: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, top: 8, bottom: 4),
+                          child: Text(
+                            paymentProvider.payments[index].formattedDate,
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        PaymentItem(
+                          payment: paymentProvider.payments[index],
+                          onPay: () => paymentProvider
+                              .makePayment(paymentProvider.payments[index].id),
+                        ),
+                      ],
                     ),
                     beforeLineStyle: LineStyle(
-                      color: Colors.blue[900]!,
+                      color: Colors.blue[500]!,
                       thickness: 2,
                     ),
                   );
@@ -92,96 +124,88 @@ class PaymentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: InkWell(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onTap: () {
+          // Handle tap if needed
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: Colors.blue[50], // Light blue background
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  // 'Paiement #${payment.id.substring(0,8)}',
-                  '',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Montant: ${payment.amount.toStringAsFixed(3)} DT',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    Text(
+                      'Heure: ${payment.formattedTime}',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
-                Text(
-                  payment.formattedDate,
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
+                const SizedBox(height: 8),
+                if (payment.type != null)
+                  Text(
+                    'Type: ${payment.type}',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                if (payment.depositDate != null)
+                  Text(
+                    'Date de dépôt: ${payment.formattedDepositDate}',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                const SizedBox(height: 12),
+                if (payment.paid)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      'Payé le ${payment.formattedPaidAt}',
+                      style: TextStyle(
+                          color: Colors.green[500],
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )
+                else
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.red[500],
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'À payer',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
               ],
             ),
-            const SizedBox(height: 1),
-            Text(
-              'Montant: ${payment.amount.toStringAsFixed(3)} DT',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-            Text(
-              'Heure: ${payment.formattedTime}',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            if (payment.type != null)
-              Text(
-                'Type: ${payment.type}',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            if (payment.depositDate != null)
-              Text(
-                'Date de dépôt: ${payment.formattedDepositDate}',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            const SizedBox(height: 12),
-            if (payment.paid)
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.green[100],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Payé le ${payment.formattedPaidAt}',
-                  style: TextStyle(
-                      color: Colors.green[700], fontWeight: FontWeight.bold),
-                ),
-              )
-            else
-              // ElevatedButton(
-              //   onPressed: onPay,
-              //   child: Text('À payer'),
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: Colors.blue[900],
-              //     foregroundColor: Colors.white,
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(20),
-              //     ),
-              //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              //   ),
-              // ),
-              Container(
-                width: 90,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.blue[900],
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: const Center(
-                  child: Text(
-                    'À payer',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              )
-          ],
+          ),
         ),
       ),
     );

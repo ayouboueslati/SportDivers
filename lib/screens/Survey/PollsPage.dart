@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sportdivers/Provider/PollsProvider/PollsProvider.dart';
 import 'package:sportdivers/models/PollsModel.dart';
 import 'package:provider/provider.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_icons.dart';
 
 class PollSurveyPage extends StatelessWidget {
   static const String id = 'Poll_Survey_Page';
@@ -9,52 +12,82 @@ class PollSurveyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pollProvider = Provider.of<PollProvider>(context);
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: DailozColor.bggray,
       appBar: AppBar(
-        toolbarHeight: 60,
-        shadowColor: Colors.grey.withOpacity(0.3),
-        elevation: 5,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-        backgroundColor: Colors.blue[900],
-        title: const Text(
-          'Sondages',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              height: height / 20,
+              width: height / 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DailozColor.white,
+                boxShadow: [
+                  BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width / 56),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
+            ),
           ),
         ),
+        title: Text(
+          'Sondages',
+          style: hsSemiBold.copyWith(fontSize: 18),
+        ),
+        backgroundColor: DailozColor.white,
+        elevation: 0,
       ),
       body: pollProvider.isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: DailozColor.appcolor))
           : pollProvider.pollInstances.isEmpty
           ? _buildNoPollsDialog(context)
           : SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: pollProvider.pollInstances.map((pollInstance) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildQuestionCard(pollInstance),
-                  SizedBox(height: 20),
-                  ...pollInstance.poll.options.asMap().entries.map(
-                          (entry) => _buildOptionCard(
-                          pollProvider, pollInstance, entry.key)),
-                  SizedBox(height: 20),
-                  _buildSubmitButton(pollProvider, pollInstance),
-                  SizedBox(height: 40),
-                ],
-              );
-            }).toList(),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Sondages disponibles',
+                style: hsSemiBold.copyWith(
+                  fontSize: 24,
+                  color: DailozColor.black,
+                ),
+              ),
+              SizedBox(height: height / 36),
+              ...pollProvider.pollInstances.map((pollInstance) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildQuestionCard(pollInstance, width, height),
+                    SizedBox(height: height / 36),
+                    ...pollInstance.poll.options.asMap().entries.map(
+                            (entry) => _buildOptionCard(pollProvider,
+                            pollInstance, entry.key, width, height)),
+                    SizedBox(height: height / 36),
+                    _buildSubmitButton(
+                        pollProvider, pollInstance, width, height),
+                    SizedBox(height: height / 24),
+                  ],
+                );
+              }).toList(),
+            ],
           ),
         ),
       ),
@@ -74,31 +107,30 @@ class PollSurveyPage extends StatelessWidget {
               Icon(
                 Icons.poll_outlined,
                 size: 64,
-                color: Colors.blue[900],
+                color: DailozColor.appcolor,
               ),
               SizedBox(height: 20),
               Text(
                 'Aucun sondage disponible',
-                style: TextStyle(
+                style: hsBold.copyWith(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[900],
+                  color: DailozColor.appcolor,
                 ),
               ),
               SizedBox(height: 12),
               Text(
-                'Il n’y a actuellement aucun sondage auquel participer.',
+                'Il n\'y a actuellement aucun sondage auquel participer.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: hsRegular.copyWith(
                   fontSize: 16,
-                  color: Colors.grey[700],
+                  color: DailozColor.textgray,
                 ),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[900],
-                  foregroundColor: Colors.white,
+                  backgroundColor: DailozColor.lightred,
+                  foregroundColor: DailozColor.white,
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -107,7 +139,7 @@ class PollSurveyPage extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Retourner',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: hsSemiBold.copyWith(fontSize: 18),
                 ),
               ),
             ],
@@ -117,98 +149,90 @@ class PollSurveyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuestionCard(PollInstance pollInstance) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+  Widget _buildQuestionCard(
+      PollInstance pollInstance, double width, double height) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: DailozColor.lightred,
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Text(
-          pollInstance.poll.text,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue[900],
-          ),
+        padding:
+        EdgeInsets.symmetric(horizontal: width / 36, vertical: height / 56),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Question',
+              style: hsMedium.copyWith(
+                fontSize: 18,
+                color: DailozColor.white.withOpacity(0.8),
+              ),
+            ),
+            SizedBox(height: height / 100),
+            Text(
+              pollInstance.poll.text,
+              style: hsMedium.copyWith(
+                fontSize: 18,
+                color: DailozColor.white,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildOptionCard(
-      PollProvider pollProvider, PollInstance pollInstance, int index) {
+      PollProvider pollProvider,
+      PollInstance pollInstance,
+      int index,
+      double width,
+      double height,
+      ) {
     final option = pollInstance.poll.options[index];
     final userAnswer = pollProvider.getUserAnswer(pollInstance.id);
-    //final voteCounts = pollProvider.getVoteCounts(pollInstance.id);
-    // final count = voteCounts != null ? voteCounts[option.id] ?? 0 : 0;
     final isSelected = pollProvider.selectedPollId == pollInstance.id &&
         pollProvider.selectedOptionId == option.id;
     final isPreviousAnswer = userAnswer == option.id;
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      margin: EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: isPreviousAnswer
-            ? Colors.green[50]
-            : (isSelected ? Colors.blue[50] : Colors.white),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(0, 2),
+    return InkWell(
+      splashColor: DailozColor.transparent,
+      highlightColor: DailozColor.transparent,
+      onTap: () {
+        pollProvider.selectPoll(pollInstance.id);
+        pollProvider.selectOption(option.id);
+      },
+      child: Row(
+        children: [
+          Icon(
+            isPreviousAnswer || isSelected
+                ? Icons.check_box_sharp
+                : Icons.check_box_outline_blank,
+            size: 22,
+            color: isPreviousAnswer || isSelected
+                ? DailozColor.appcolor
+                : DailozColor.textgray,
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(15),
-          onTap: () {
-            pollProvider.selectPoll(pollInstance.id);
-            pollProvider.selectOption(option.id);
-          },
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    option.text,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: isPreviousAnswer || isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      color: Colors.blue[900],
-                    ),
-                  ),
-                ),
-                // if (userAnswer != null)
-                //   Text(
-                //     '$count votes',
-                //     style: TextStyle(
-                //       fontSize: 16,
-                //       fontWeight: FontWeight.bold,
-                //       color: Colors.blue[700],
-                //     ),
-                //   ),
-                if (isPreviousAnswer)
-                  Icon(Icons.check_circle, color: Colors.green, size: 24),
-              ],
+          SizedBox(width: width / 36),
+          Expanded(
+            child: Text(
+              option.text,
+              style: hsRegular.copyWith(fontSize: 16, color: DailozColor.black),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildSubmitButton(
-      PollProvider pollProvider, PollInstance pollInstance) {
+      PollProvider pollProvider,
+      PollInstance pollInstance,
+      double width,
+      double height,
+      ) {
     bool isSelected = pollProvider.selectedPollId == pollInstance.id &&
         pollProvider.selectedOptionId != null;
 
@@ -216,11 +240,11 @@ class PollSurveyPage extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[900],
-          foregroundColor: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 15),
+          backgroundColor: DailozColor.lightred,
+          foregroundColor: DailozColor.white,
+          padding: EdgeInsets.symmetric(vertical: height / 56),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
         onPressed: isSelected ? () => pollProvider.submitVote() : null,
@@ -228,7 +252,7 @@ class PollSurveyPage extends StatelessWidget {
           pollProvider.getUserAnswer(pollInstance.id) != null
               ? 'Changer de vote'
               : 'Soumettre le vote',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: hsSemiBold.copyWith(fontSize: 16),
         ),
       ),
     );

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/components/CustomToast.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 import 'package:sportdivers/screens/report/fetchTicket.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/ReportPorivder/ticketProvider.dart';
@@ -39,11 +42,10 @@ class _ReportPageState extends State<ReportPage> {
         target: _selectedTarget!,
         person: _selectedTarget == 'ADMIN' ? '' : (_selectedPerson ?? ''),
       ).then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Rapport soumis avec succès'),
-            backgroundColor: Colors.green,
-          ),
+        showReusableToast(
+          context: context,
+          message: 'Rapport soumis avec succès',
+          duration: Duration(seconds: 5),
         );
         _reasonController.clear();
         _commentController.clear();
@@ -112,70 +114,71 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 60,
-          shadowColor: Colors.grey.withOpacity(0.3),
-          elevation: 5,
-          iconTheme: const IconThemeData(color: Colors.white),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () {
               Navigator.pop(context);
             },
-          ),
-          backgroundColor: Colors.blue[900],
-          title: const Text(
-            'Réclamation',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 26,
+            child: Container(
+              height: height/20,
+              width: height/20,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: DailozColor.white,
+                  boxShadow: const [
+                    BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                  ]
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width/56),
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding:const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Détails du Rapport',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[900],
-                      ),
-                ),
-                const SizedBox(height: 24.0),
-                _buildTextField(
-                  controller: _reasonController,
-                  label: 'Raison',
-                  hint: 'Entrez la raison de votre rapport',
-                ),
-                const SizedBox(height: 16.0),
-                _buildTextField(
-                  controller: _commentController,
-                  label: 'Commentaire',
-                  hint: 'Fournissez des détails supplémentaires',
-                  maxLines: 5,
-                ),
-                const SizedBox(height: 16.0),
-                _buildDropdown(),
-                if (_selectedTarget != 'ADMIN') ...[
-                  SizedBox(height: 16.0),
-                  _buildPersonDropdown(),
-                ],
-                const SizedBox(height: 60),
-                Center(
-                 child:  _buildSubmitButton(),
-                ),
+        title: Text("Réclamation", style: hsSemiBold.copyWith(fontSize: 22)),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Détails du Rapport", style: hsSemiBold.copyWith(fontSize: 20, color: DailozColor.textgray)),
+              SizedBox(height: height/36),
+              _buildTextField(
+                controller: _reasonController,
+                label: 'Raison',
+                hint: 'Entrez la raison de votre rapport',
+              ),
+              SizedBox(height: height/36),
+              _buildTextField(
+                controller: _commentController,
+                label: 'Commentaire',
+                hint: 'Fournissez des détails supplémentaires',
+                maxLines: 5,
+              ),
+              SizedBox(height: height/36),
+              _buildDropdown(),
+              if (_selectedTarget != 'ADMIN') ...[
+                SizedBox(height: height/36),
+                _buildPersonDropdown(),
               ],
-            ),
+              SizedBox(height: height/26),
+              _buildSubmitButton(),
+            ],
           ),
         ),
       ),
@@ -188,52 +191,54 @@ class _ReportPageState extends State<ReportPage> {
     required String hint,
     int maxLines = 1,
   }) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[900]!),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: hsSemiBold.copyWith(fontSize: 17, color: DailozColor.textgray)),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
+          decoration: InputDecoration(
+              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              hintText: hint,
+              border: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: DailozColor.greyy)
+              )
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[900]!, width: 2),
-        ),
-        filled: true,
-        fillColor: Colors.grey[100],
-      ),
+      ],
     );
   }
 
   Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedTarget,
-      decoration: InputDecoration(
-        labelText: 'Cible',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[900]!),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Cible", style: hsSemiBold.copyWith(fontSize: 14, color: DailozColor.textgray)),
+        DropdownButtonFormField<String>(
+          value: _selectedTarget,
+          style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
+          decoration: InputDecoration(
+              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              border: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: DailozColor.greyy)
+              )
+          ),
+          onChanged: _onTargetChanged,
+          items: <String>['ADMIN', 'TEACHER', 'STUDENT']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value == 'ADMIN' ? 'Admin' :
+              value == 'TEACHER' ? 'Coach' :
+              value == 'STUDENT' ? 'Adhérent' : 'Inconnu'),
+            );
+          }).toList(),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[900]!, width: 2),
-        ),
-        filled: true,
-        fillColor: Colors.grey[100],
-      ),
-      onChanged: _onTargetChanged,
-      items: <String>['ADMIN', 'TEACHER', 'STUDENT']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value == 'ADMIN' ? 'Admin' :
-          value == 'TEACHER' ? 'Coach' :
-          value == 'STUDENT' ? 'Adhérent' : 'Inconnu'),
-        );
-      }).toList(),
+      ],
     );
   }
 
@@ -246,60 +251,62 @@ class _ReportPageState extends State<ReportPage> {
       return Text('Aucune personne disponible pour la cible sélectionnée.');
     }
 
-    return DropdownButtonFormField<String>(
-      value: _selectedPerson,
-      decoration: InputDecoration(
-        labelText: 'Personne',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[900]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[900]!, width: 2),
-        ),
-        filled: true,
-        fillColor: Colors.grey[100],
-      ),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedPerson = newValue;
-        });
-      },
-      items: _userList.map<DropdownMenuItem<String>>((user) {
-        return DropdownMenuItem<String>(
-          value: user['id'],
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(user['profilePicture'] ?? ''),
-                radius: 16,
-              ),
-              SizedBox(width: 8),
-              Text(user['name'] ?? 'Inconnu'),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Personne", style: hsSemiBold.copyWith(fontSize: 14, color: DailozColor.textgray)),
+        DropdownButtonFormField<String>(
+          value: _selectedPerson,
+          style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
+          decoration: InputDecoration(
+              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              border: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: DailozColor.greyy)
+              )
           ),
-        );
-      }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedPerson = newValue;
+            });
+          },
+          items: _userList.map<DropdownMenuItem<String>>((user) {
+            return DropdownMenuItem<String>(
+              value: user['id'],
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(user['profilePicture'] ?? ''),
+                    radius: 16,
+                  ),
+                  SizedBox(width: 8),
+                  Text(user['name'] ?? 'Inconnu'),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
   Widget _buildSubmitButton() {
-    return ElevatedButton(
-      onPressed: _submitReport,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[900],
-        padding:const EdgeInsets.symmetric(vertical: 13.0,horizontal: 30.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      splashColor: DailozColor.transparent,
+      highlightColor: DailozColor.transparent,
+      onTap: _submitReport,
+      child: Container(
+        width: double.infinity,
+        height: 56,
+        decoration: BoxDecoration(
+            color: DailozColor.appcolor,
+            borderRadius: BorderRadius.circular(14)
         ),
-      ),
-      child: const Text(
-        'Envoyer',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+        child: Center(
+          child: Text(
+            "Envoyer",
+            style: hsSemiBold.copyWith(fontSize: 16, color: DailozColor.white),
+          ),
         ),
       ),
     );

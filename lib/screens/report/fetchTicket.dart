@@ -3,6 +3,8 @@ import 'package:sportdivers/Provider/ReportPorivder/ticketProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
 class TicketsScreen extends StatefulWidget {
   static String id = 'fetch_ticket';
@@ -22,13 +24,13 @@ class _TicketsScreenState extends State<TicketsScreen> {
 
   String formatDate(String dateTimeString) {
     final DateTime dateTime = DateTime.parse(dateTimeString);
-    final DateFormat formatter = DateFormat('dd MMMM'); // Formats to "24 août"
+    final DateFormat formatter = DateFormat('dd MMMM');
     return formatter.format(dateTime);
   }
 
   String formatTime(String dateTimeString) {
     final DateTime dateTime = DateTime.parse(dateTimeString);
-    return DateFormat('HH:mm').format(dateTime); // Formats to "14:30"
+    return DateFormat('HH:mm').format(dateTime);
   }
 
   void _showTicketDetails(BuildContext context, Map<String, dynamic> ticket) {
@@ -37,7 +39,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      isScrollControlled: true, // Allows the modal to take up more space
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.all(20),
@@ -51,11 +53,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   'Détails du ticket',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
-                  ),
+                  style: hsSemiBold.copyWith(fontSize: 22, color: DailozColor.appcolor),
                 ),
               ),
               Flexible(
@@ -65,16 +63,11 @@ class _TicketsScreenState extends State<TicketsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildDetailRow(
-                            'Date', formatDate(ticket['createdAt'])),
-                        _buildDetailRow(
-                            'Heure', formatTime(ticket['createdAt'])),
-                        _buildDetailRow(
-                            'Raison', ticket['reason'] ?? 'Aucune raison'),
-                        _buildDetailRow('Commentaire',
-                            ticket['comment'] ?? 'Aucun commentaire'),
-                        _buildDetailRow('Créé par',
-                            '${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}'),
+                        _buildDetailRow('Date', formatDate(ticket['createdAt'])),
+                        _buildDetailRow('Heure', formatTime(ticket['createdAt'])),
+                        _buildDetailRow('Raison', ticket['reason'] ?? 'Aucune raison'),
+                        _buildDetailRow('Commentaire', ticket['comment'] ?? 'Aucun commentaire'),
+                        _buildDetailRow('Créé par', '${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}'),
                       ],
                     ),
                   ),
@@ -90,26 +83,17 @@ class _TicketsScreenState extends State<TicketsScreen> {
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              '$label:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.blue[900],
-              ),
-            ),
+          Text(
+            '$label:',
+            style: hsSemiBold.copyWith(fontSize: 14, color: DailozColor.textgray),
           ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16),
-            ),
+          SizedBox(height: 4),
+          Text(
+            value,
+            style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
           ),
         ],
       ),
@@ -119,141 +103,140 @@ class _TicketsScreenState extends State<TicketsScreen> {
   @override
   Widget build(BuildContext context) {
     final ticketsProvider = Provider.of<TicketsProvider>(context);
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 60,
-        shadowColor: Colors.grey.withOpacity(0.3),
-        elevation: 5,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.blue[900],
-        title: const Text(
-          'Mes tickets',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 26,
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              height: height/20,
+              width: height/20,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: DailozColor.white,
+                  boxShadow: const [
+                    BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                  ]
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width/56),
+                child: const Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
+            ),
           ),
         ),
+        title: Text("Mes tickets", style: hsSemiBold.copyWith(fontSize: 22)),
       ),
       body: ticketsProvider.isLoading
           ? _buildShimmerLoading()
           : ticketsProvider.errorMessage.isNotEmpty
-              ? Center(child: Text(ticketsProvider.errorMessage))
-              : ticketsProvider.tickets.isEmpty
-                  ? const Center(child: Text('Aucun billet trouvé'))
-                  : ListView.builder(
-                      itemCount: ticketsProvider.tickets.length,
-                      itemBuilder: (context, index) {
-                        final reversedTickets =
-                            ticketsProvider.tickets.reversed.toList();
-                        final ticket = reversedTickets[index];
-                        final date = formatDate(ticket['createdAt']);
-                        final time = formatTime(ticket['createdAt']);
-                        return GestureDetector(
-                          onTap: () => _showTicketDetails(context, ticket),
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 3,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 12),
-                                        decoration: BoxDecoration(
-                                          color: index == 0
-                                              ? Colors.blue[900]
-                                              : Colors.grey[300],
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              date,
-                                              style: TextStyle(
-                                                color: index == 0
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              time,
-                                              style: TextStyle(
-                                                color: index == 0
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 24,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              ticket['reason'] ??
-                                                  'Aucune raison',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                              maxLines: 1,
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Commentaire : ${ticket['comment'] ?? 'Aucun commentaire'}',
-                                              style: TextStyle(fontSize: 14),
-                                              maxLines: 1,
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Créé par : ${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}',
-                                              style:
-                                                  const TextStyle(fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                            Icons.calendar_today_outlined),
-                                        onPressed: () {
-                                          // Ajoutez votre fonctionnalité ici pour ajouter au calendrier
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+          ? Center(child: Text(ticketsProvider.errorMessage, style: hsMedium.copyWith(color: DailozColor.textgray)))
+          : ticketsProvider.tickets.isEmpty
+          ? Center(child: Text('Aucun Ticket trouvé', style: hsMedium.copyWith(color: DailozColor.textgray)))
+          : ListView.builder(
+        itemCount: ticketsProvider.tickets.length,
+        itemBuilder: (context, index) {
+          final reversedTickets = ticketsProvider.tickets.reversed.toList();
+          final ticket = reversedTickets[index];
+          final date = formatDate(ticket['createdAt']);
+          final time = formatTime(ticket['createdAt']);
+          return GestureDetector(
+            onTap: () => _showTicketDetails(context, ticket),
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              decoration: BoxDecoration(
+                color: DailozColor.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: const [
+                  BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: index == 0 ? DailozColor.appcolor : DailozColor.bggray,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        );
-                      },
+                          child: Column(
+                            children: [
+                              Text(
+                                date,
+                                style: hsMedium.copyWith(
+                                  fontSize: 14,
+                                  color: index == 0 ? DailozColor.white : DailozColor.black,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                time,
+                                style: hsSemiBold.copyWith(
+                                  fontSize: 18,
+                                  color: index == 0 ? DailozColor.white : DailozColor.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ticket['reason'] ?? 'Aucune raison',
+                                style: hsSemiBold.copyWith(fontSize: 16, color: DailozColor.black),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Commentaire : ${ticket['comment'] ?? 'Aucun commentaire'}',
+                                style: hsMedium.copyWith(fontSize: 14, color: DailozColor.textgray),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Créé par : ${ticket['createdBy']['profile']['firstName']} ${ticket['createdBy']['profile']['lastName']}',
+                                style: hsMedium.copyWith(fontSize: 14, color: DailozColor.textgray),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.calendar_today_outlined, color: DailozColor.textgray),
+                          onPressed: () {
+                            // Add functionality for adding to calendar
+                          },
+                        ),
+                      ],
                     ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -261,46 +244,42 @@ class _TicketsScreenState extends State<TicketsScreen> {
     return ListView.builder(
       itemCount: 6,
       itemBuilder: (context, index) {
-        return Card(
+        return Container(
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          decoration: BoxDecoration(
+            color: DailozColor.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: const [
+              BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+            ],
           ),
-          elevation: 3,
-          child: ListTile(
-            title: Shimmer.fromColors(
-              baseColor: Colors.grey[400]!,
-              highlightColor: Colors.grey[200]!,
-              child: Container(
-                width: double.infinity,
-                height: 20.0,
-                color: Colors.white,
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Shimmer.fromColors(
-                  baseColor: Colors.grey[400]!,
-                  highlightColor: Colors.grey[200]!,
-                  child: Container(
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 20.0,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
                     width: double.infinity,
                     height: 14.0,
                     color: Colors.white,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Shimmer.fromColors(
-                  baseColor: Colors.grey[400]!,
-                  highlightColor: Colors.grey[200]!,
-                  child: Container(
+                  const SizedBox(height: 8),
+                  Container(
                     width: 150.0,
                     height: 14.0,
                     color: Colors.white,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

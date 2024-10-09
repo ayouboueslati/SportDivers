@@ -99,16 +99,13 @@ class MyApp extends StatelessWidget {
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
 
-
-          // Get the FCM token when the user logs in
-          if (authProvider.isAuthenticated) {
-            Provider.of<FCMHandler>(context, listen: false).getToken().then((token) {
-              // Send this token to your server
-              authProvider.updateFCMToken(token);
-            });
-          }
-
-
+          // // Get the FCM token when the user logs in
+          // if (authProvider.isAuthenticated) {
+          //   Provider.of<FCMHandler>(context, listen: false).getToken().then((token) {
+          //     // Send this token to your server
+          //     authProvider.updateFCMToken(token);
+          //   });
+          // }
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'SprotDivers',
@@ -128,10 +125,10 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
 
-            //home: CustomLoaderPage(),
+            home: CustomLoaderPage(),
 
             //tests
-            home: MatchListPage(),
+          //  home: MatchListPage(),
             //initialRoute: LoginScreen.id,
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {

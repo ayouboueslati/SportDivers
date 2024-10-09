@@ -5,6 +5,8 @@ import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:sportdivers/screens/auth/login_screen.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 import 'package:sportdivers/screens/profile/ModifyProfile.dart';
 import 'package:intl/intl.dart';
 
@@ -29,8 +31,10 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
   }
 
   void _fetchUserData() async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
     final token = authProvider.token;
 
     if (token != null) {
@@ -40,54 +44,77 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: DailozColor.white,
       appBar: AppBar(
-        toolbarHeight: 60,
-        shadowColor: Colors.grey.withOpacity(0.3),
-        elevation: 5,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            //Navigator.pop(context);
-            Navigator.pushReplacementNamed(context, HomePage.id);
-          },
-        ),
-        backgroundColor: Colors.blue[900],
-        title: const Text(
-          'Profil',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              height: height / 20,
+              width: height / 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DailozColor.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: DailozColor.grey.withOpacity(0.3), blurRadius: 5)
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width / 56),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
+            ),
           ),
         ),
+        title: Text(
+          'Profil',
+          style: hsBold.copyWith(
+            color: DailozColor.black,
+            fontSize: 22,
+          ),
+        ),
+        backgroundColor: DailozColor.white,
+        elevation: 0,
       ),
       body: Consumer<ProfileProvider>(
         builder: (context, profileProvider, child) {
           if (profileProvider.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(color: DailozColor.appcolor));
           } else if (profileProvider.userData == null) {
             return Center(
               child: Text('Aucune donnée disponible',
-                  style: TextStyle(fontSize: 18, color: Colors.black87)),
+                  style: hsMedium.copyWith(
+                      fontSize: 18, color: DailozColor.black)),
             );
           } else {
             final userData = profileProvider.userData!['userData'];
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(width / 36),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    _buildProfileImage(userData),
-                    const SizedBox(height: 24),
-                    _buildInfoCard(userData),
-                    const SizedBox(height: 30),
-                    _buildModifyProfileButton(context, userData),
-                    const SizedBox(height: 15),
-                    _buildLogoutButton(context),
+                    _buildProfileImage(userData, height),
+                    SizedBox(height: height / 24),
+                    _buildInfoCard(userData, height, width),
+                    SizedBox(height: height / 30),
+                    _buildModifyProfileButton(context, userData, height, width),
+                    SizedBox(height: height / 60),
+                    _buildLogoutButton(context, height, width),
                   ],
                 ),
               ),
@@ -98,103 +125,85 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     );
   }
 
-  Widget _buildProfileImage(Map<String, dynamic> userData) {
+  Widget _buildProfileImage(Map<String, dynamic> userData, double height) {
     return Center(
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.blue[900]!, width: 4),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
+      child: Container(
+        height: height / 7,
+        width: height / 7,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: DailozColor.appcolor, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: DailozColor.black.withOpacity(0.1),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
-            child: CircleAvatar(
-              radius: 70,
-              backgroundImage: _profileImage != null
-                  ? FileImage(_profileImage!)
-                  : (userData['profilePicture'] != null && userData['profilePicture'].isNotEmpty
+          ],
+        ),
+        child: CircleAvatar(
+          backgroundImage: _profileImage != null
+              ? FileImage(_profileImage!)
+              : (userData['profilePicture'] != null &&
+                      userData['profilePicture'].isNotEmpty
                   ? NetworkImage(userData['profilePicture']) as ImageProvider
                   : AssetImage('assets/default_profile_image.png')),
-              child: (_profileImage == null && (userData['profilePicture'] == null || userData['profilePicture'].isEmpty))
-                  ? Icon(Icons.person, size: 40, color: Colors.white70)
-                  : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard(Map<String, dynamic> userData) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('Informations personnelles',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[900])),
-              Divider(thickness: 2, color: Colors.blue[200]),
-              _buildInfoRow(Icons.person, 'Nom et Prénom',
-                  '${userData['lastName']} ${userData['firstName']}'),
-              _buildInfoRow(Icons.alternate_email, 'E-mail', userData['email']),
-              _buildInfoRow(Icons.phone, 'Téléphone', userData['phone']),
-              _buildInfoRow(Icons.location_on, 'Adresse', userData['address']),
-              _buildInfoRow(Icons.cake, 'Date de naissance',
-                  _formatDate(userData['birthdate'])),
-              _buildInfoRow(Icons.calendar_today, 'Date d\'inscription',
-                  _formatDate(userData['inscriptionDate'])),
-              // _buildInfoRow(Icons.sports_soccer, 'Catégorie',
-              //     userData['group']['category']['designation']),
-              // _buildInfoRow(Icons.group, 'Groupe',
-              //     userData['group']['designation']),
-            ],
-          ),
+          child: (_profileImage == null &&
+                  (userData['profilePicture'] == null ||
+                      userData['profilePicture'].isEmpty))
+              ? const Icon(Icons.person, size: 40, color: DailozColor.white)
+              : null,
         ),
       ),
     );
   }
 
-  String _formatDate(String? dateString) {
-    if (dateString == null) return 'Non renseigné';
-    try {
-      final date = DateTime.parse(dateString);
-      return DateFormat('dd/MM/yyyy').format(date);
-    } catch (e) {
-      return 'Date invalide';
-    }
+  Widget _buildInfoCard(
+      Map<String, dynamic> userData, double height, double width) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: EdgeInsets.all(width / 36),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Informations Personnelles',
+                style: hsSemiBold.copyWith(
+                    fontSize: 18, color: DailozColor.appcolor)),
+            const Divider(thickness: 1, color: DailozColor.bggray),
+            _buildInfoRow(Icons.person, 'Nom',
+                '${userData['lastName']} ${userData['firstName']}'),
+            _buildInfoRow(Icons.email, 'E-mail', userData['email']),
+            _buildInfoRow(Icons.phone, 'Téléphone', userData['phone']),
+            _buildInfoRow(Icons.location_on, 'Adresse', userData['address']),
+            _buildInfoRow(
+                Icons.cake, 'Date de naissance', _formatDate(userData['birthdate'])),
+            _buildInfoRow(Icons.calendar_today, 'Date d\'inscription',
+                _formatDate(userData['inscriptionDate'])),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInfoRow(IconData icon, String label, String? value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, color: Colors.blue[700], size: 24),
-          const SizedBox(width: 16),
+          Icon(icon, color: DailozColor.appcolor, size: 20),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: _labelStyle()),
-                const SizedBox(height: 4),
-                Text(value ?? 'Non renseigné', style: _valueStyle()),
+                Text(label,
+                    style: hsMedium.copyWith(
+                        fontSize: 14, color: DailozColor.textgray)),
+                Text(value ?? 'Non fourni',
+                    style: hsMedium.copyWith(
+                        fontSize: 16, color: DailozColor.black)),
               ],
             ),
           ),
@@ -203,24 +212,10 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     );
   }
 
-  TextStyle _labelStyle() {
-    return TextStyle(
-      fontSize: 16,
-      color: Colors.blue[700],
-      fontWeight: FontWeight.w600,
-    );
-  }
-
-  TextStyle _valueStyle() {
-    return const TextStyle(
-      fontSize: 16,
-      color: Colors.black87,
-    );
-  }
-
-  Widget _buildModifyProfileButton(BuildContext context, Map<String, dynamic> userData) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  Widget _buildModifyProfileButton(BuildContext context,
+      Map<String, dynamic> userData, double height, double width) {
+    return SizedBox(
+      width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
           Navigator.push(
@@ -231,66 +226,74 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[900],
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: DailozColor.appcolor,
+          foregroundColor: DailozColor.white,
+          padding: EdgeInsets.symmetric(vertical: height / 60),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 4,
         ),
-        child: const Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.mode_edit_outline_outlined, size: 24),
-              SizedBox(width: 8),
-              Text(
-                'Modifier Votre Profil',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.edit, size: 20),
+            SizedBox(width: width / 36),
+            Text(
+              'Modifier votre profil',
+              style: hsSemiBold.copyWith(fontSize: 16),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  Widget _buildLogoutButton(BuildContext context, double height, double width) {
+    return SizedBox(
+      width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
           _logout(context);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[900],
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          backgroundColor: DailozColor.white,
+          foregroundColor: DailozColor.appcolor,
+          padding: EdgeInsets.symmetric(vertical: height / 60),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: DailozColor.appcolor),
           ),
-          elevation: 4,
+          elevation: 0,
         ),
-        child: const Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.logout, size: 24),
-              SizedBox(width: 8),
-              Text(
-                'Déconnexion',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.logout, size: 20),
+            SizedBox(width: width / 36),
+            Text(
+              'Déconnexion',
+              style: hsSemiBold.copyWith(fontSize: 16),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'Non fourni';
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('dd/MM/yyyy').format(date);
+    } catch (e) {
+      return 'Date invalide';
+    }
+  }
+
   void _logout(BuildContext context) async {
-    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     await authProvider.logoutUser();
     Navigator.pushReplacementNamed(context, LoginScreen.id);
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
 import '../../Provider/VideosProvider/videoProvider.dart';
@@ -74,31 +76,52 @@ class _VideoAppState extends State<VideoApp> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Video Demo',
       home: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 60,
-          shadowColor: Colors.grey.withOpacity(0.3),
-          elevation: 5,
-          iconTheme: const IconThemeData(color: Colors.white),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          backgroundColor: Colors.blue[900],
-          title: const Text(
-            'Lecteur Vidéo',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              height: height / 20,
+              width: height / 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DailozColor.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: DailozColor.grey.withOpacity(0.3), blurRadius: 5)
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width / 56),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
             ),
           ),
         ),
+        title: Text(
+          'Lecteur Vidéo',
+          style: hsBold.copyWith(
+            color: DailozColor.black,
+            fontSize: 22,
+          ),
+        ),
+        backgroundColor: DailozColor.white,
+        elevation: 0,
+      ),
         body: _error != null
             ? Center(child: Text(_error!))
             : _videoControllers.isEmpty

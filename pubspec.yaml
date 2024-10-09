@@ -74,6 +74,15 @@ dependencies:
   flutter_local_notifications: ^17.2.3
 
 
+  get:
+  sizer: ^2.0.15
+  intl:
+  dots_indicator: ^2.1.0
+  pinput: ^2.2.31
+  nb_utils: ^4.6.25
+  easy_date_timeline: ^1.1.3
+
+
 
 dev_dependencies:
   flutter_test:
@@ -121,10 +130,21 @@ flutter:
     - assets/images/password.png
     - assets/images/icons/default_avatar.png
     - assets/images/ResetPassword.png
+    - assets/images/SportDivers.png
+    - assets/images/icons/chat.png
+    - assets/images/icons/film.png
+    - assets/images/icons/caution.png
+    - assets/images/icons/payment.png
+    - assets/images/icons/employee.png
+    - assets/images/icons/byod.png
+    - assets/images/icons/phone.png
     - assets/images/gafsa.png
     - assets/images/CA.png
     - assets/images/barca.png
     - assets/images/inter.png
+
+    - assets/dailoz_assets/dailoz_pngimage/
+    - assets/dailoz_assets/dailoz_svgimage/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -149,6 +169,22 @@ flutter:
       fonts:
         - asset: assets/fonts/Ubuntu-Regular.ttf
         - asset: assets/fonts/Ubuntu-Bold.ttf
+
+    - family: HindSiliguriBold
+      fonts:
+        - asset: assets/dailoz_assets/dailoz_fonts/HindSiliguri-Bold.ttf
+    - family: HindSiliguriLight
+      fonts:
+        - asset: assets/dailoz_assets/dailoz_fonts/HindSiliguri-Light.ttf
+    - family: HindSiliguriMedium
+      fonts:
+        - asset: assets/dailoz_assets/dailoz_fonts/HindSiliguri-Medium.ttf
+    - family: HindSiliguriRegular
+      fonts:
+        - asset: assets/dailoz_assets/dailoz_fonts/HindSiliguri-Regular.ttf
+    - family: HindSiliguriSemiBold
+      fonts:
+        - asset: assets/dailoz_assets/dailoz_fonts/HindSiliguri-SemiBold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

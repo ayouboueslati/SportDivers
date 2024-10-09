@@ -4,6 +4,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:sportdivers/Provider/DashboardProvider/DashboardCoachProvider.dart';
 import 'package:sportdivers/models/DashboardCoachModel.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
 class StatDashboardCoach extends StatefulWidget {
   static String id = 'Stat_Dashboard_Coach';
@@ -43,12 +45,10 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
         _dateRange = picked;
       });
 
-      // Format dates as per your requirement (yyyy-MM-dd)
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       String startDate = formatter.format(_dateRange.start);
       String endDate = formatter.format(_dateRange.end);
 
-      // Call the provider with the new date range
       Provider.of<DashboardCoachProvider>(context, listen: false)
           .fetchDashboardStats(startDate: startDate, endDate: endDate);
     }
@@ -58,7 +58,6 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Format initial dates
       final DateFormat formatter = DateFormat('yyyy-MM-dd');
       String startDate = formatter.format(_dateRange.start);
       String endDate = formatter.format(_dateRange.end);
@@ -70,64 +69,69 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
+
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 60,
-        shadowColor: Colors.grey.withOpacity(0.3),
-        elevation: 5,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.blue[900],
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   title: Text(
+      //     'Dashboard',
+      //     style: hsSemiBold.copyWith(fontSize: 18),
+      //   ),
+      //   backgroundColor: DailozColor.white,
+      //   elevation: 0,
+      //   leading: Padding(
+      //     padding: const EdgeInsets.all(10),
+      //     child: InkWell(
+      //       splashColor: DailozColor.transparent,
+      //       highlightColor: DailozColor.transparent,
+      //       onTap: () => Navigator.pop(context),
+      //       child: Container(
+      //         height: height / 20,
+      //         width: height / 20,
+      //         decoration: BoxDecoration(
+      //           borderRadius: BorderRadius.circular(5),
+      //           color: DailozColor.white,
+      //           boxShadow: [
+      //             BoxShadow(
+      //               color: DailozColor.grey.withOpacity(0.3),
+      //               blurRadius: 5,
+      //             )
+      //           ],
+      //         ),
+      //         child: Padding(
+      //           padding: EdgeInsets.only(left: width / 56),
+      //           child: Icon(
+      //             Icons.arrow_back_ios,
+      //             size: 18,
+      //             color: DailozColor.black,
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
       body: Consumer<DashboardCoachProvider>(
-        builder: (context, DashboardCoachProvider, child) {
-          if (DashboardCoachProvider.isLoading) {
+        builder: (context, dashboardProvider, child) {
+          if (dashboardProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (DashboardCoachProvider.error.isNotEmpty) {
-            return Center(
-                child: Text('Error: ${DashboardCoachProvider.error}'));
-          } else if (DashboardCoachProvider.stats != null) {
-            final stats = DashboardCoachProvider.stats!;
+          } else if (dashboardProvider.error.isNotEmpty) {
+            return Center(child: Text('Error: ${dashboardProvider.error}'));
+          } else if (dashboardProvider.stats != null) {
+            final stats = dashboardProvider.stats!;
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 25,),
                     _buildDateRangePicker(),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildSmallCard(
-                            'Nombre De Groupes',
-                            '${stats.groupsCount}',
-                            Icons.check_circle_outline,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildSmallCard(
-                            'Nombre De Séances',
-                            '${stats.sessionsCount}',
-                            Icons.cancel_outlined,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: height/36),
+                    _buildPriorityCard(stats),
+                    SizedBox(height: height/36),
                     _buildAverageGradesCard(stats.averageGradesPerMonth),
                   ],
                 ),
@@ -143,162 +147,122 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
 
   Widget _buildDateRangePicker() {
     final DateFormat formatter = DateFormat('MMM d, yyyy');
-    return Card(
-      elevation: 15,
-      shadowColor: Colors.blue.withOpacity(0.4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: DailozColor.bggray,
       ),
       child: InkWell(
         onTap: () => _selectDateRange(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Filtrer par date',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[900],
-                    ),
-                  ),
-                  Icon(Icons.date_range, color: Colors.blue[900]),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Du',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[600])),
-                      Text(
-                        formatter.format(_dateRange.start),
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue[900],
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Icon(Icons.arrow_forward, color: Colors.blue[900]),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text('Au',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[600])),
-                      Text(
-                        formatter.format(_dateRange.end),
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[900]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Appuyez pour modifier la plage de dates',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.blue[700],
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSmallCard(String title, String number, IconData icon) {
-    return Card(
-      elevation: 15,
-      shadowColor: Colors.blue.withOpacity(0.4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //Icon(icon, size: 40, color: Colors.blue[900]),
-            const SizedBox(height: 8),
             Text(
-              title,
-              style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.blue[900],
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+              'Filtrer par date',
+              style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
             ),
-            const SizedBox(height: 4),
-            Text(number,
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900])),
+            SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  formatter.format(_dateRange.start),
+                  style: hsRegular.copyWith(fontSize: 16, color: DailozColor.textblue),
+                ),
+                Icon(Icons.arrow_forward, color: DailozColor.textblue),
+                Text(
+                  formatter.format(_dateRange.end),
+                  style: hsRegular.copyWith(fontSize: 16, color: DailozColor.textblue),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAverageGradesCard(List<MonthlyGrade> grades) {
-    return Card(
-      elevation: 15,
-      shadowColor: Colors.blue.withOpacity(0.4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+  Widget _buildPriorityCard(DashboardStats stats) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: DailozColor.bggray,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Moyenne Des Notes Par Mois',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900])),
-            const SizedBox(height: 20),
-            Container(
-              height: 300,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: 10,
-                  barTouchData: BarTouchData(
-                    enabled: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      //tooltipBgColor: Colors.blueAccent,
-                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                        return BarTooltipItem(
-                          '${grades[group.x].month}\n${rod.toY.toStringAsFixed(2)}',
-                          const TextStyle(color: Colors.white),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildPriorityItem('Groupes', stats.groupsCount, DailozColor.lightred),
+              _buildPriorityItem('Séances', stats.sessionsCount, DailozColor.purple),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPriorityItem(String title, int count, Color color) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 30,
+          backgroundColor: color.withOpacity(0.2),
+          child: Text(
+            count.toString(),
+            style: hsSemiBold.copyWith(fontSize: 24, color: color),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(title, style: hsRegular.copyWith(fontSize: 14, color: DailozColor.textgray)),
+      ],
+    );
+  }
+
+  Widget _buildAverageGradesCard(List<MonthlyGrade> grades) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: DailozColor.bggray,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Notes moyennes par mois',
+            style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
+          ),
+          SizedBox(height: 20),
+          Container(
+            height: 300,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(show: false),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          value.toInt().toString(),
+                          style: hsRegular.copyWith(fontSize: 12, color: DailozColor.textgray),
                         );
                       },
                     ),
                   ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (double value, TitleMeta meta) {
-                          // Custom parsing for "YYYY-MM" format
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      getTitlesWidget: (value, meta) {
+                        if (value.toInt() >= 0 && value.toInt() < grades.length) {
                           final parts = grades[value.toInt()].month.split('-');
                           if (parts.length == 2) {
                             final year = int.parse(parts[0]);
@@ -308,68 +272,43 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
                                 DateFormat('MMM').format(date),
-                                style: const TextStyle(
-                                  color: Color(0xff7589a2),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
+                                style: hsRegular.copyWith(fontSize: 14, color: DailozColor.textgray),
                               ),
                             );
                           }
-                          return const Text(''); // Fallback if parsing fails
-                        },
-                        reservedSize: 40,
-                      ),
-                      // axisNameWidget: Text('Mois', style: TextStyle(color: Colors.blue[900], fontWeight: FontWeight.bold)),
+                        }
+                        return const Text('');
+                      },
                     ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        interval: 2,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            value.toInt().toString(),
-                            style: const TextStyle(
-                                color: Color(0xff7589a2),
-                                fontWeight: FontWeight.bold),
-                          );
-                        },
-                      ),
-                      // axisNameWidget: Text('Note Moyenne', style: TextStyle(color: Colors.blue[900], fontWeight: FontWeight.bold)),
-                    ),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
                   ),
-                  borderData: FlBorderData(show: false),
-                  gridData: const FlGridData(
-                    show: true,
-                    drawHorizontalLine: true,
-                    horizontalInterval: 2,
-                    drawVerticalLine: false,
-                  ),
-                  barGroups: grades
-                      .asMap()
-                      .entries
-                      .map((entry) => BarChartGroupData(
-                            x: entry.key,
-                            barRods: [
-                              BarChartRodData(
-                                toY: entry.value.value,
-                                color: Colors.lightBlueAccent,
-                                width: 22,
-                                borderRadius: BorderRadius.circular(4),
-                              )
-                            ],
-                          ))
-                      .toList(),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
+                borderData: FlBorderData(show: false),
+                minX: 0,
+                maxX: grades.length.toDouble() - 1,
+                minY: 0,
+                maxY: 10,
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: grades.asMap().entries.map((entry) {
+                      return FlSpot(entry.key.toDouble(), entry.value.value);
+                    }).toList(),
+                    isCurved: true,
+                    color: DailozColor.textblue,
+                    barWidth: 11,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: DailozColor.textblue.withOpacity(0.1),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

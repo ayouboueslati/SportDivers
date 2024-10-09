@@ -6,6 +6,7 @@ import 'package:sportdivers/Provider/ChatProvider/usersChat.dart';
 import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:sportdivers/models/ChatModel.dart';
 import 'package:sportdivers/screens/Service/SocketService.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/messages/FullScreenImageViewer.dart';
 import 'package:provider/provider.dart';
 import '../../models/user_model.dart';
@@ -175,15 +176,9 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  _chatBubble(Message message, bool isMe, bool isSameUser) {
+  Widget _chatBubble(Message message, bool isMe, bool isSameUser) {
     final userProvider = Provider.of<usersChatProvider>(context, listen: false);
     final sender = userProvider.getUserById(message.sender.id);
-
-    print('Sender ID: ${message.sender.id}');
-    print('Sender: ${sender?.toJson()}');
-    print('Sender picture URL: ${sender?.picture}');
-
-    // Format the time
     final timeString = DateFormat('HH:mm').format(message.timestamp);
 
     Widget _senderAvatar() {
@@ -191,219 +186,147 @@ class _ChatScreenState extends State<ChatScreen> {
         radius: 15,
         backgroundImage: sender?.picture != null
             ? NetworkImage(sender!.picture!)
-            : AssetImage('assets/images/icons/default_avatar.png')
-                as ImageProvider,
-        backgroundColor: Colors.grey[300],
+            : AssetImage('assets/images/icons/default_avatar.png') as ImageProvider,
+        backgroundColor: DailozColor.grey,
         child: sender?.picture == null
-            ? Text(sender?.firstName[0].toUpperCase() ?? '')
+            ? Text(sender?.firstName[0].toUpperCase() ?? '', style: TextStyle(color: DailozColor.white))
             : null,
       );
     }
 
     Widget _messageContent() {
-        if (message.type == 'IMAGE' && message.fileName != null) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => FullScreenImageViewer(imageUrl: message.fileName!),
-              ));
-            },
-            child: Hero(
-              tag: message.fileName!,
-              child: Image.network(
-                message.fileName!,
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
-                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    width: 200,
-                    height: 200,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
+      if (message.type == 'IMAGE' && message.fileName != null) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => FullScreenImageViewer(imageUrl: message.fileName!),
+            ));
+          },
+          child: Hero(
+            tag: message.fileName!,
+            child: Image.network(
+              message.fileName!,
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: 200,
+                  height: 200,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                          : null,
+                      color: DailozColor.appcolor,
                     ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  print('Error loading image: $error');
-                  return Container(
-                    width: 200,
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.error, color: Colors.red),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                print('Error loading image: $error');
+                return Container(
+                  width: 200,
+                  height: 200,
+                  color: DailozColor.bggray,
+                  child: Icon(Icons.error, color: DailozColor.purple),
+                );
+              },
             ),
-          );;
+          ),
+        );
       } else {
         return Text(
           message.text,
           style: TextStyle(
-            color: isMe ? Colors.white : Colors.black54,
+            color: isMe ? DailozColor.white : DailozColor.black,
             fontSize: 15,
           ),
         );
       }
     }
 
-    if (isMe) {
-      return Column(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.topRight,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.80,
+    return Column(
+      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.75,
+          ),
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            color: isMe ? DailozColor.appcolor : DailozColor.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: DailozColor.grey.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 3,
+                offset: Offset(0, 1),
               ),
-              padding: const EdgeInsets.all(15),
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.blue[900],
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.7),
-                    spreadRadius: 2,
-                    blurRadius: 4,
+            ],
+          ),
+          child: _messageContent(),
+        ),
+        if (!isSameUser)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, bottom: 8),
+            child: Row(
+              mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: <Widget>[
+                if (!isMe) _senderAvatar(),
+                SizedBox(width: 8),
+                Text(
+                  timeString,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: DailozColor.textgray,
                   ),
-                ],
-              ),
-              child:  _messageContent(),
+                ),
+                if (isMe) SizedBox(width: 8),
+                if (isMe) _senderAvatar(),
+              ],
             ),
           ),
-          !isSameUser
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      timeString,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black45,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    _senderAvatar(),
-                  ],
-                )
-              : Container(),
-        ],
-      );
-    } else {
-      return Column(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.topLeft,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.80,
-              ),
-              padding: const EdgeInsets.all(15),
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(0),
-                  bottomRight: Radius.circular(20),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.7),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-              child: _messageContent(),
-            ),
-          ),
-          !isSameUser
-              ? Row(
-                  children: <Widget>[
-                    _senderAvatar(),
-                    const SizedBox(width: 10),
-                    Text(
-                      timeString,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black45,
-                      ),
-                    ),
-                  ],
-                )
-              : Container(),
-        ],
-      );
-    }
+      ],
+    );
   }
 
-  _sendMessageArea() {
+  Widget _sendMessageArea() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      height: 55,
-      margin: const EdgeInsets.only(
-        left: 15.0,
-        right: 15.0,
-        top: 0.0,
-        bottom: 10.0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: Colors.grey[200],
+        color: DailozColor.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.7),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
+            color: DailozColor.grey.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: Offset(0, -1),
           ),
         ],
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           IconButton(
-            icon: const Icon(Icons.photo),
-            iconSize: 25,
-            color: Colors.blue[900],
+            icon: Icon(Icons.photo, color: DailozColor.appcolor),
             onPressed: _pickImage,
-          ),
-          Transform.translate(
-            offset: const Offset(-12, 0),
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(Icons.emoji_emotions_outlined),
-              iconSize: 25,
-              color: Colors.blue[900],
-              onPressed: () {},
-            ),
           ),
           Expanded(
             child: TextField(
               controller: _messageController,
-              decoration: const InputDecoration.collapsed(
-                hintText: 'Send a message..',
+              decoration: InputDecoration(
+                hintText: 'Envoyer un message...',
+                hintStyle: TextStyle(color: DailozColor.textgray),
+                border: InputBorder.none,
               ),
               textCapitalization: TextCapitalization.sentences,
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send),
-            iconSize: 25,
-            color: Colors.blue[900],
+            icon: Icon(Icons.send, color: DailozColor.appcolor),
             onPressed: () => _sendMessage(context),
           ),
         ],
@@ -414,88 +337,63 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: DailozColor.bggray,
       appBar: AppBar(
-        toolbarHeight: 60,
-        backgroundColor: Colors.white,
-        shadowColor: Colors.grey.withOpacity(0.7),
-        elevation: 8,
-        title: Transform.translate(
-          offset: const Offset(-12, 0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 25,
-                backgroundImage: widget.isGroupChat
-                    ? null
-                    : (widget.user!.picture != null
-                        ? NetworkImage(widget.user!.picture!)
-                        : AssetImage('assets/images/icons/default_avatar.png')
-                            as ImageProvider),
-                backgroundColor: Colors.grey[300],
-                child: widget.isGroupChat
-                    ? Text(widget.group!.designation[0])
-                    : null,
-              ),
-              const SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Calculate responsive font size
-                      double screenWidth = MediaQuery.of(context).size.width;
-                      double fontSize = 18 * (screenWidth / 375.0);
-                      fontSize = fontSize.clamp(16.0, 28.0);
-
-                      return Text(
-                        widget.isGroupChat
-                            ? widget.group!.designation
-                            : "${widget.user!.firstName} ${widget.user!.lastName}",
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54,
-                        ),
-                      );
-                    },
-                  ),
-                  Text(
-                    widget.isGroupChat
-                        ? "Group"
-                        : "",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        backgroundColor: DailozColor.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          color: Colors.blue[900],
+          icon: Icon(Icons.arrow_back_ios, color: DailozColor.black),
           onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: widget.isGroupChat
+                  ? null
+                  : (widget.user!.picture != null
+                  ? NetworkImage(widget.user!.picture!)
+                  : AssetImage('assets/images/icons/default_avatar.png') as ImageProvider),
+              backgroundColor: DailozColor.grey,
+              child: widget.isGroupChat
+                  ? Text(widget.group!.designation[0], style: TextStyle(color: DailozColor.white))
+                  : null,
+            ),
+            SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.isGroupChat
+                      ? widget.group!.designation
+                      : "${widget.user!.firstName} ${widget.user!.lastName}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: DailozColor.black,
+                  ),
+                ),
+                Text(
+                  widget.isGroupChat ? "Groupe" : "",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: DailozColor.textgray,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.blue[900],
-              size: 30,
-            ),
+            icon: Icon(Icons.more_vert, color: DailozColor.black),
             onSelected: (value) {
-              switch (value) {
-                case 'Réclamation':
-                  // Implement search functionality
-                  break;
+              if (value == 'Réclamation') {
+                // Implement réclamation functionality
               }
             },
             itemBuilder: (BuildContext context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'Réclamation',
                 child: Text('Réclamation'),
               ),
@@ -509,7 +407,6 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Consumer2<MessagesProvider, UserProvider>(
               builder: (context, messagesProvider, userProvider, child) {
                 final messages = messagesProvider.messages.reversed.toList();
-
                 return ListView.builder(
                   controller: _scrollController,
                   reverse: true,

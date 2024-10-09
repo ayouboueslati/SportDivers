@@ -4,10 +4,13 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  connectivity_plus
   file_selector_windows
   firebase_core
   flutter_localization
   flutter_secure_storage_windows
+  nb_utils
+  smart_auth
   url_launcher_windows
 )
 
