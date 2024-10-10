@@ -98,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: Consumer<ProfileProvider>(
         builder: (context, profileProvider, child) {
           if (profileProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator(color: DailozColor.appcolor));
+            return  Center(child: CircularProgressIndicator(color: Colors.blue[800]));
           }
           return SingleChildScrollView(
             child: Padding(
@@ -138,7 +138,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             width: height / 7,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: DailozColor.appcolor, width: 2),
+              border: Border.all(color: Colors.blue[800]!, width: 2),
               boxShadow: [
                 BoxShadow(
                   color: DailozColor.black.withOpacity(0.1),
@@ -162,9 +162,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             right: 0,
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
                 shape: BoxShape.circle,
-                color: DailozColor.appcolor,
+                color: Colors.blue[800],
               ),
               child: const Icon(Icons.edit, size: 20, color: DailozColor.white),
             ),
@@ -199,14 +199,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
-        prefixIcon: Icon(icon, color: DailozColor.appcolor),
+        prefixIcon: Icon(icon, color: Colors.blue[800]),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: DailozColor.bggray),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: DailozColor.appcolor, width: 2),
+          borderSide:  BorderSide(color: Colors.blue[800]!, width: 2),
         ),
         filled: true,
         fillColor: DailozColor.bggray,
@@ -220,7 +220,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: ElevatedButton(
         onPressed: _saveChanges,
         style: ElevatedButton.styleFrom(
-          backgroundColor: DailozColor.appcolor,
+          backgroundColor: Colors.blue[800],
           foregroundColor: DailozColor.white,
           padding: EdgeInsets.symmetric(vertical: height / 60),
           shape: RoundedRectangleBorder(

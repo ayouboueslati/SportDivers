@@ -28,7 +28,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
       final authProvider =
-      Provider.of<AuthenticationProvider>(context, listen: false);
+          Provider.of<AuthenticationProvider>(context, listen: false);
 
       try {
         final message = await authProvider.requestPasswordReset(email: email);
@@ -60,37 +60,40 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
+        padding:
+            EdgeInsets.symmetric(horizontal: width / 36, vertical: height / 36),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: height/12),
+              SizedBox(height: height / 8),
               Text(
-                "Forgot_password".tr,
-                style: hsSemiBold.copyWith(fontSize: 36, color: DailozColor.appcolor),
+                "Mot de passe oublié".tr,
+                style:
+                    hsSemiBold.copyWith(fontSize: 36, color: Colors.blue[900]),
               ),
-              SizedBox(height: height/16),
+              SizedBox(height: height / 16),
               TextFormField(
                 controller: _emailController,
-                style: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+                style: hsMedium.copyWith(fontSize: 16),
                 decoration: InputDecoration(
-                    hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+                    hintStyle: hsMedium.copyWith(
+                        fontSize: 16, color: DailozColor.textgray),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(12),
                       child: SvgPicture.asset(
                         DailozSvgimage.icemail,
-                        height: height/36,
-                        colorFilter: const ColorFilter.mode(DailozColor.textgray, BlendMode.srcIn),
+                        height: height / 36,
+                        colorFilter: ColorFilter.mode(
+                            Colors.blue[900]!, BlendMode.srcIn),
                       ),
                     ),
-                    hintText: "Email ID or Username",
+                    hintText: "E-mail",
                     border: UnderlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: DailozColor.greyy)
-                    )
-                ),
+                        borderSide:
+                            const BorderSide(color: DailozColor.greyy))),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer votre e-mail';
@@ -103,34 +106,34 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: height/20),
+              SizedBox(height: height / 20),
               InkWell(
                 splashColor: DailozColor.transparent,
                 highlightColor: DailozColor.transparent,
                 onTap: _requestPasswordReset,
                 child: Container(
-                  width: width/1,
-                  height: height/15,
+                  width: width / 1,
+                  height: height / 15,
                   decoration: BoxDecoration(
-                      color: DailozColor.appcolor,
-                      borderRadius: BorderRadius.circular(14)
-                  ),
+                      color: Colors.blue[900],
+                      borderRadius: BorderRadius.circular(14)),
                   child: Center(
                     child: Text(
-                      "Send".tr,
-                      style: hsSemiBold.copyWith(fontSize: 16, color: DailozColor.white),
+                      "Envoyer".tr,
+                      style: hsSemiBold.copyWith(
+                          fontSize: 16, color: DailozColor.white),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: height/20),
+              SizedBox(height: height / 20),
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
                     'Retour à la connexion',
                     style: hsMedium.copyWith(
-                      color: DailozColor.appcolor,
+                      color: Colors.blue[900],
                       fontSize: 16,
                     ),
                   ),

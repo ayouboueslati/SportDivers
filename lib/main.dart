@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/SendMsgProvider.dart';
@@ -42,6 +43,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sportdivers/service/FCMHandler.dart';
+import 'package:sportdivers/service/NotificationService.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -53,6 +55,10 @@ void main() async {
   print('------------------------------------------------------');
   print(await FirebaseMessaging.instance.getToken());
   print('------------------------------------------------------');
+
+  // Initialize NotificationService
+  await NotificationService().init();
+
   runApp(MyApp());
 }
 
@@ -99,13 +105,6 @@ class MyApp extends StatelessWidget {
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
 
-          // // Get the FCM token when the user logs in
-          // if (authProvider.isAuthenticated) {
-          //   Provider.of<FCMHandler>(context, listen: false).getToken().then((token) {
-          //     // Send this token to your server
-          //     authProvider.updateFCMToken(token);
-          //   });
-          // }
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'SprotDivers',
@@ -127,9 +126,8 @@ class MyApp extends StatelessWidget {
 
             home: CustomLoaderPage(),
 
-            //tests
-          //  home: MatchListPage(),
-            //initialRoute: LoginScreen.id,
+
+
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
                     Navigator.pushReplacementNamed(context, HomePage.id);

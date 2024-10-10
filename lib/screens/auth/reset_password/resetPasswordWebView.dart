@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:sportdivers/screens/auth/reset_password/PasswordResetSuccess.dart';
+import 'package:get/get.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   static String id = 'reset_pass';
@@ -36,117 +39,126 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthenticationProvider>(context);
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 60,
-        shadowColor: Colors.grey.withOpacity(0.3),
-        elevation: 5,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-        backgroundColor: Colors.blue[900],
-        title: const Text(
-          'Changer le mot de passe',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            splashColor: DailozColor.transparent,
+            highlightColor: DailozColor.transparent,
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              height: height / 20,
+              width: height / 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DailozColor.white,
+                boxShadow: const [
+                   BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: width / 56),
+                child:const Icon(
+                  Icons.arrow_back_ios,
+                  size: 18,
+                  color: DailozColor.black,
+                ),
+              ),
+            ),
           ),
         ),
+        title: Text(
+          'Changer votre mot de passe'.tr,
+          style: hsSemiBold.copyWith(fontSize: 18),
+        ),
+        backgroundColor: DailozColor.white,
+        elevation: 0,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue[50]!, Colors.white],
-          ),
-        ),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                const SizedBox(height: 20),
+                SizedBox(height: height / 36),
                 Center(
                   child: Image.asset(
                     'assets/images/ResetPassword.png',
-                    height: 150,
+                    height: height / 5,
                   ),
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: height / 36),
                 Text(
-                  'Réinitialiser le mot de passe',
-                  style: TextStyle(
+                  'Réinitialiser le mot de passe'.tr,
+                  style: hsSemiBold.copyWith(
                     fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[900],
+                    color: Colors.blue[800],
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: height / 36),
                 _buildPasswordTextField(
                   _oldPasswordController,
-                  'Ancien mot de passe',
+                  'Ancien mot de passe'.tr,
                   _isOldPasswordVisible,
-                  (value) => setState(() => _isOldPasswordVisible = value),
+                      (value) => setState(() => _isOldPasswordVisible = value),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: height / 36),
                 _buildPasswordTextField(
                   _newPasswordController,
-                  'Nouveau mot de passe',
+                  'Nouveau mot de passe'.tr,
                   _isNewPasswordVisible,
-                  (value) => setState(() => _isNewPasswordVisible = value),
+                      (value) => setState(() => _isNewPasswordVisible = value),
                 ),
                 if (_passwordErrorMessage.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    padding: EdgeInsets.only(top: 10.0),
                     child: Text(
                       _passwordErrorMessage,
-                      style: TextStyle(color: Colors.red[700], fontSize: 12),
+                      style: hsRegular.copyWith(color: DailozColor.lightred, fontSize: 12),
                     ),
                   ),
-                const SizedBox(height: 20),
+                SizedBox(height: height / 36),
                 _buildPasswordTextField(
                   _confirmPasswordController,
-                  'Confirmer le mot de passe',
+                  'Confirmer le mot de passe'.tr,
                   _isConfirmPasswordVisible,
-                  (value) => setState(() => _isConfirmPasswordVisible = value),
+                      (value) => setState(() => _isConfirmPasswordVisible = value),
                 ),
                 if (authProvider.resMessage.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    padding: EdgeInsets.only(top: 10.0),
                     child: Text(
                       authProvider.resMessage,
-                      style: TextStyle(color: Colors.red[700], fontSize: 12),
+                      style: hsRegular.copyWith(color: DailozColor.lightred, fontSize: 12),
                     ),
                   ),
-                const SizedBox(height: 40),
+                SizedBox(height: height / 26),
                 ElevatedButton(
-                  onPressed:
-                      authProvider.isLoading ? null : _handlePasswordReset,
+                  onPressed: authProvider.isLoading ? null : _handlePasswordReset,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14.0),
-                    backgroundColor: Colors.blue[900],
+                    padding: EdgeInsets.symmetric(vertical: 14.0),
+                    backgroundColor: Colors.blue[800],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14.0),
                     ),
                     elevation: 5,
                   ),
                   child: authProvider.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'METTRE À JOUR LE MOT DE PASSE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                    'METTRE À JOUR LE MOT DE PASSE'.tr,
+                    style: hsSemiBold.copyWith(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -157,11 +169,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Widget _buildPasswordTextField(
-    TextEditingController controller,
-    String label,
-    bool isPasswordVisible,
-    Function(bool) onVisibilityChanged,
-  ) {
+      TextEditingController controller,
+      String label,
+      bool isPasswordVisible,
+      Function(bool) onVisibilityChanged,
+      ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -178,30 +190,29 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       child: TextField(
         controller: controller,
         obscureText: !isPasswordVisible,
+        style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.blue[900]),
+          labelStyle: hsMedium.copyWith(color: DailozColor.textgray),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue[100]!),
+            borderSide: BorderSide(color: DailozColor.bgpurple),
             borderRadius: BorderRadius.circular(15),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue[900]!),
+            borderSide: BorderSide(color: DailozColor.appcolor),
             borderRadius: BorderRadius.circular(15),
           ),
           filled: true,
           fillColor: Colors.white,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           suffixIcon: IconButton(
             icon: Icon(
               isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Colors.blue[900],
+              color: Colors.blue[800]
             ),
             onPressed: () => onVisibilityChanged(!isPasswordVisible),
           ),
         ),
-        style: TextStyle(color: Colors.blue[900]),
       ),
     );
   }
@@ -210,7 +221,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (_validatePassword(_newPasswordController.text)) {
       if (_newPasswordController.text == _confirmPasswordController.text) {
         final authProvider =
-            Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<AuthenticationProvider>(context, listen: false);
         await authProvider.resetPassword(
           oldPassword: _oldPasswordController.text,
           newPassword: _newPasswordController.text,
@@ -223,15 +234,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Les mots de passe ne correspondent pas'),
-            backgroundColor: Colors.red[700],
+            content: Text('Les mots de passe ne correspondent pas'.tr),
+            backgroundColor: DailozColor.lightred,
           ),
         );
       }
     } else {
       setState(() {
         _passwordErrorMessage =
-            'Le mot de passe doit comporter au moins 6 caractères, inclure une lettre majuscule et un chiffre.';
+            'Le mot de passe doit comporter au moins 6 caractères, inclure une lettre majuscule et un chiffre.'.tr;
       });
     }
   }

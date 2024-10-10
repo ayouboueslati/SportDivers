@@ -4,11 +4,22 @@ import 'package:sportdivers/models/PollsModel.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
-import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_icons.dart';
 
-class PollSurveyPage extends StatelessWidget {
+class PollSurveyPage extends StatefulWidget {
   static const String id = 'Poll_Survey_Page';
 
+  @override
+  _PollSurveyPageState createState() => _PollSurveyPageState();
+}
+
+class _PollSurveyPageState extends State<PollSurveyPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PollProvider>(context, listen: false).fetchPollData();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final pollProvider = Provider.of<PollProvider>(context);
@@ -31,13 +42,13 @@ class PollSurveyPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: DailozColor.white,
-                boxShadow: [
+                boxShadow: const[
                   BoxShadow(color: DailozColor.textgray, blurRadius: 5)
                 ],
               ),
               child: Padding(
                 padding: EdgeInsets.only(left: width / 56),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_back_ios,
                   size: 18,
                   color: DailozColor.black,
@@ -48,13 +59,13 @@ class PollSurveyPage extends StatelessWidget {
         ),
         title: Text(
           'Sondages',
-          style: hsSemiBold.copyWith(fontSize: 18),
+          style: hsSemiBold.copyWith(fontSize: 22),
         ),
         backgroundColor: DailozColor.white,
         elevation: 0,
       ),
       body: pollProvider.isLoading
-          ? Center(child: CircularProgressIndicator(color: DailozColor.appcolor))
+          ? Center(child: CircularProgressIndicator(color: Colors.blue[900]))
           : pollProvider.pollInstances.isEmpty
           ? _buildNoPollsDialog(context)
           : SingleChildScrollView(
@@ -67,7 +78,7 @@ class PollSurveyPage extends StatelessWidget {
                 'Sondages disponibles',
                 style: hsSemiBold.copyWith(
                   fontSize: 24,
-                  color: DailozColor.black,
+                  color: Colors.blue[900],
                 ),
               ),
               SizedBox(height: height / 36),
@@ -78,8 +89,9 @@ class PollSurveyPage extends StatelessWidget {
                     _buildQuestionCard(pollInstance, width, height),
                     SizedBox(height: height / 36),
                     ...pollInstance.poll.options.asMap().entries.map(
-                            (entry) => _buildOptionCard(pollProvider,
-                            pollInstance, entry.key, width, height)),
+                          (entry) => _buildOptionCard(pollProvider,
+                          pollInstance, entry.key, width, height),
+                    ),
                     SizedBox(height: height / 36),
                     _buildSubmitButton(
                         pollProvider, pollInstance, width, height),
@@ -100,21 +112,21 @@ class PollSurveyPage extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.poll_outlined,
                 size: 64,
-                color: DailozColor.appcolor,
+                color: Colors.blue[900],
               ),
               SizedBox(height: 20),
               Text(
                 'Aucun sondage disponible',
                 style: hsBold.copyWith(
                   fontSize: 24,
-                  color: DailozColor.appcolor,
+                  color: Colors.blue[900],
                 ),
               ),
               SizedBox(height: 12),
@@ -129,9 +141,9 @@ class PollSurveyPage extends StatelessWidget {
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: DailozColor.lightred,
+                  backgroundColor: Colors.blue[900],
                   foregroundColor: DailozColor.white,
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -154,7 +166,7 @@ class PollSurveyPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: DailozColor.lightred,
+        color: Colors.blue[900],
         borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
@@ -163,14 +175,14 @@ class PollSurveyPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Question',
-              style: hsMedium.copyWith(
-                fontSize: 18,
-                color: DailozColor.white.withOpacity(0.8),
-              ),
-            ),
-            SizedBox(height: height / 100),
+            // Text(
+            //   'Question',
+            //   style: hsMedium.copyWith(
+            //     fontSize: 18,
+            //     color: DailozColor.white.withOpacity(0.8),
+            //   ),
+            // ),
+            // SizedBox(height: height / 100),
             Text(
               pollInstance.poll.text,
               style: hsMedium.copyWith(
@@ -196,30 +208,33 @@ class PollSurveyPage extends StatelessWidget {
     final isSelected = pollProvider.selectedPollId == pollInstance.id &&
         pollProvider.selectedOptionId == option.id;
     final isPreviousAnswer = userAnswer == option.id;
+    final canChangeVote = pollProvider.isChangeVoteModeActive(pollInstance.id);
 
     return InkWell(
       splashColor: DailozColor.transparent,
       highlightColor: DailozColor.transparent,
-      onTap: () {
-        pollProvider.selectPoll(pollInstance.id);
-        pollProvider.selectOption(option.id);
-      },
+      onTap: (canChangeVote || userAnswer == null)
+          ? () => pollProvider.selectOption(pollInstance.id, option.id)
+          : null,
       child: Row(
         children: [
           Icon(
-            isPreviousAnswer || isSelected
+            (isPreviousAnswer && !canChangeVote) || isSelected
                 ? Icons.check_box_sharp
                 : Icons.check_box_outline_blank,
             size: 22,
-            color: isPreviousAnswer || isSelected
-                ? DailozColor.appcolor
+            color: (isPreviousAnswer && !canChangeVote) || isSelected
+                ? Colors.blue[900]
                 : DailozColor.textgray,
           ),
           SizedBox(width: width / 36),
           Expanded(
             child: Text(
               option.text,
-              style: hsRegular.copyWith(fontSize: 16, color: DailozColor.black),
+              style: hsRegular.copyWith(
+                fontSize: 16,
+                color: (canChangeVote || userAnswer == null) ? DailozColor.black : DailozColor.textgray,
+              ),
             ),
           ),
         ],
@@ -233,6 +248,8 @@ class PollSurveyPage extends StatelessWidget {
       double width,
       double height,
       ) {
+    bool hasUserAnswer = pollProvider.getUserAnswer(pollInstance.id) != null;
+    bool isChangeVoteMode = pollProvider.isChangeVoteModeActive(pollInstance.id);
     bool isSelected = pollProvider.selectedPollId == pollInstance.id &&
         pollProvider.selectedOptionId != null;
 
@@ -240,16 +257,18 @@ class PollSurveyPage extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: DailozColor.lightred,
+          backgroundColor: Colors.blue[900],
           foregroundColor: DailozColor.white,
           padding: EdgeInsets.symmetric(vertical: height / 56),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
         ),
-        onPressed: isSelected ? () => pollProvider.submitVote() : null,
+        onPressed: hasUserAnswer && !isChangeVoteMode
+            ? () => pollProvider.toggleChangeVoteMode(pollInstance.id)
+            : (isSelected ? () => pollProvider.submitVote() : null),
         child: Text(
-          pollProvider.getUserAnswer(pollInstance.id) != null
+          hasUserAnswer && !isChangeVoteMode
               ? 'Changer de vote'
               : 'Soumettre le vote',
           style: hsSemiBold.copyWith(fontSize: 16),

@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:sportdivers/Menu/MenuPage.dart';
 import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:sportdivers/screens/auth/login_screen.dart';
+import 'package:sportdivers/screens/auth/reset_password/resetPasswordWebView.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 import 'package:sportdivers/screens/profile/ModifyProfile.dart';
@@ -92,8 +92,8 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
       body: Consumer<ProfileProvider>(
         builder: (context, profileProvider, child) {
           if (profileProvider.isLoading) {
-            return const Center(
-                child: CircularProgressIndicator(color: DailozColor.appcolor));
+            return  Center(
+                child: CircularProgressIndicator(color: Colors.blue[800]));
           } else if (profileProvider.userData == null) {
             return Center(
               child: Text('Aucune donnée disponible',
@@ -114,6 +114,8 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
                     SizedBox(height: height / 30),
                     _buildModifyProfileButton(context, userData, height, width),
                     SizedBox(height: height / 60),
+                    _buildChangePwdButton(context, userData, height, width),
+                    SizedBox(height: height / 60),
                     _buildLogoutButton(context, height, width),
                   ],
                 ),
@@ -132,7 +134,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
         width: height / 7,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: DailozColor.appcolor, width: 2),
+          border: Border.all(color: Colors.blue[800]!, width: 2),
           boxShadow: [
             BoxShadow(
               color: DailozColor.black.withOpacity(0.1),
@@ -170,7 +172,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
           children: <Widget>[
             Text('Informations Personnelles',
                 style: hsSemiBold.copyWith(
-                    fontSize: 18, color: DailozColor.appcolor)),
+                    fontSize: 18, color: Colors.blue[800])),
             const Divider(thickness: 1, color: DailozColor.bggray),
             _buildInfoRow(Icons.person, 'Nom',
                 '${userData['lastName']} ${userData['firstName']}'),
@@ -192,7 +194,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, color: DailozColor.appcolor, size: 20),
+          Icon(icon, color: Colors.blue[800], size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -226,7 +228,7 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: DailozColor.appcolor,
+          backgroundColor: Colors.blue[800],
           foregroundColor: DailozColor.white,
           padding: EdgeInsets.symmetric(vertical: height / 60),
           shape: RoundedRectangleBorder(
@@ -249,6 +251,44 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
     );
   }
 
+  Widget _buildChangePwdButton(BuildContext context,
+      Map<String, dynamic> userData, double height, double width) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResetPasswordScreen(token: authProvider.token ?? ''),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[800],
+          foregroundColor: DailozColor.white,
+          padding: EdgeInsets.symmetric(vertical: height / 60),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 4,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.lock_rounded, size: 20),
+            SizedBox(width: width / 36),
+            Text(
+              'Changer votre mot de passe',
+              style: hsSemiBold.copyWith(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildLogoutButton(BuildContext context, double height, double width) {
     return SizedBox(
       width: double.infinity,
@@ -258,11 +298,11 @@ class _ProfileScreen1State extends State<ProfileScreen1> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: DailozColor.white,
-          foregroundColor: DailozColor.appcolor,
+          foregroundColor: Colors.blue[800],
           padding: EdgeInsets.symmetric(vertical: height / 60),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: DailozColor.appcolor),
+            side:  BorderSide(color: Colors.blue[800]!),
           ),
           elevation: 0,
         ),

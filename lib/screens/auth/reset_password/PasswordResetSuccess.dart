@@ -17,10 +17,10 @@ class PasswordResetSuccessScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Icon(
+            Icon(
               Icons.check_circle_outline,
               size: 100,
-              color: Colors.deepPurple,
+              color: Colors.blue[800],
             ),
             const SizedBox(height: 20),
             const Text(
@@ -57,12 +57,18 @@ class PasswordResetSuccessScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Colors.blue[800],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: const Text('Déconnecter'),
+              child: const Text(
+                'Déconnecter',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ],
         ),

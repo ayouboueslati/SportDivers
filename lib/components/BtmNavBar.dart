@@ -36,9 +36,9 @@ class BottomNavigation extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             _buildNavigationItem(DailozSvgimage.home, DailozSvgimage.homefill, height, width),
-            _buildNavigationItem(DailozSvgimage.task, DailozSvgimage.taskfill, height, width),
-            _buildNavigationItem(DailozSvgimage.graphic, DailozSvgimage.graphicfill, height, width),
-            _buildNavigationItem(DailozSvgimage.folder, DailozSvgimage.folderfill, height, width),
+            _buildNavigationItem(DailozSvgimage.chart, DailozSvgimage.chartfill, height, width),
+            _buildNavigationItem(DailozSvgimage.calendar, DailozSvgimage.calendarfill, height, width),
+            _buildNavigationItem(DailozSvgimage.chat, DailozSvgimage.chatfill, height, width),
           ],
         ),
       ),

@@ -38,4 +38,10 @@ class DailozSvgimage {
   static String homefill = "assets/dailoz_assets/dailoz_svgimage/homefill.svg";
   static String task = "assets/dailoz_assets/dailoz_svgimage/task.svg";
   static String taskfill = "assets/dailoz_assets/dailoz_svgimage/taskfill.svg";
+  static String calendar = "assets/dailoz_assets/dailoz_svgimage/calendar.svg";
+  static String calendarfill = "assets/dailoz_assets/dailoz_svgimage/calendarfill.svg";
+  static String chat = "assets/dailoz_assets/dailoz_svgimage/chat.svg";
+  static String chatfill = "assets/dailoz_assets/dailoz_svgimage/chatfill.svg";
+  static String chart = "assets/dailoz_assets/dailoz_svgimage/chart.svg";
+  static String chartfill = "assets/dailoz_assets/dailoz_svgimage/chartfill.svg";
 }

@@ -14,6 +14,7 @@ class PollProvider with ChangeNotifier {
   String? errorMessage;
   String? selectedPollId;
   String? selectedOptionId;
+  Map<String, bool> changeVoteMode = {};
 
   PollProvider() {
     fetchPollData();
@@ -115,14 +116,38 @@ class PollProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleChangeVoteMode(String pollId) {
+    changeVoteMode[pollId] = !(changeVoteMode[pollId] ?? false);
+    if (changeVoteMode[pollId]!) {
+      // Entering change vote mode, reset selection
+      if (selectedPollId == pollId) {
+        selectedOptionId = null;
+      }
+    } else {
+      // Exiting change vote mode, reset selection
+      if (selectedPollId == pollId) {
+        selectedPollId = null;
+        selectedOptionId = null;
+      }
+    }
+    notifyListeners();
+  }
+
+  bool isChangeVoteModeActive(String pollId) {
+    return changeVoteMode[pollId] ?? false;
+  }
+
   void selectPoll(String pollId) {
     selectedPollId = pollId;
     notifyListeners();
   }
 
-  void selectOption(String optionId) {
-    selectedOptionId = optionId;
-    notifyListeners();
+  void selectOption(String pollId, String optionId) {
+    if (isChangeVoteModeActive(pollId) || getUserAnswer(pollId) == null) {
+      selectedPollId = pollId;
+      selectedOptionId = optionId;
+      notifyListeners();
+    }
   }
 
   Future<void> submitVote() async {
@@ -153,11 +178,10 @@ class PollProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        // Save user's answer
         userAnswers[selectedPollId!] = selectedOptionId!;
-
-        // Fetch updated vote percentages
+        changeVoteMode[selectedPollId!] = false;
         await fetchVotePercentages();
+        await fetchVoteCounts();
       } else {
         throw Exception('Failed to submit vote: ${response.statusCode} - ${response.body}');
       }

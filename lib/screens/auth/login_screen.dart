@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _checkAuthState() async {
     final authProvider =
-    Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<AuthenticationProvider>(context, listen: false);
     if (authProvider.isAuthenticated) {
       Navigator.pushReplacement(
         context,
@@ -74,24 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _dismissKeyboard() {
     FocusScope.of(context).unfocus();
-  }
-
-  void _navigateBasedOnRole(BuildContext context, String role) {
-    if (role.toLowerCase() == 'STUDENT') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage(role: role)),
-      );
-    } else if (role.toLowerCase() == 'TEACHER') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePageCoach(role: role)),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unknown user role: $role')),
-      );
-    }
   }
 
   @override
@@ -130,54 +112,54 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: _emailController,
                         style: hsMedium.copyWith(
-                            fontSize: 16, color: DailozColor.textgray),
+                            fontSize: 16, color: DailozColor.black),
                         decoration: InputDecoration(
-                            hintStyle: hsMedium.copyWith(
-                                fontSize: 16, color: DailozColor.textgray),
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: SvgPicture.asset(DailozSvgimage.icemail,
-                                  height: height / 36,
-                                  colorFilter: const ColorFilter.mode(
-                                      DailozColor.textgray, BlendMode.srcIn)),
-                            ),
-                            hintText: "CIN",
-                            border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                    color: DailozColor.greyy))),
+                          hintStyle: hsMedium.copyWith(
+                              fontSize: 16, color: DailozColor.textgray),
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SvgPicture.asset(DailozSvgimage.icemail,
+                                height: height / 36,
+                                colorFilter: ColorFilter.mode(
+                                    Colors.blue[900]!, BlendMode.srcIn)),
+                          ),
+                          hintText: "CIN",
+                          border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.blue[900]!)),
+                        ),
                       ),
                       SizedBox(height: height / 30),
                       TextField(
                         controller: _passwordController,
                         obscureText: _obscureText,
                         style: hsMedium.copyWith(
-                            fontSize: 16, color: DailozColor.textgray),
+                            fontSize: 16, color: DailozColor.black),
                         decoration: InputDecoration(
-                            hintStyle: hsMedium.copyWith(
-                                fontSize: 16, color: DailozColor.textgray),
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: SvgPicture.asset(DailozSvgimage.iclock,
-                                  height: height / 36,
-                                  colorFilter: const ColorFilter.mode(
-                                      DailozColor.textgray, BlendMode.srcIn)),
+                          hintStyle: hsMedium.copyWith(
+                              fontSize: 16, color: DailozColor.textgray),
+                          prefixIcon: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SvgPicture.asset(DailozSvgimage.iclock,
+                                height: height / 36,
+                                colorFilter: ColorFilter.mode(
+                                    Colors.blue[900]!, BlendMode.srcIn)),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () =>
-                                  setState(() => _obscureText = !_obscureText),
-                              color: DailozColor.textgray,
-                            ),
-                            hintText: "Mot de passe",
-                            border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                    color: DailozColor.greyy))),
+                            onPressed: () =>
+                                setState(() => _obscureText = !_obscureText),
+                            color: DailozColor.textgray,
+                          ),
+                          hintText: "Mot de passe",
+                          border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.blue[900]!)),
+                        ),
                       ),
                       SizedBox(height: height / 45),
                       Row(
