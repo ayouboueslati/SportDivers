@@ -79,4 +79,59 @@ class ChatRoomsProvider with ChangeNotifier {
         .map((item) => GroupChatRoom.fromJson(item as Map<String, dynamic>))
         .toList();
   }
+
+  Future<void> markMessagesAsSeen(String roomId, bool isGroup) async {
+    final url = Uri.parse('${Constants.baseUrl}/chats/mark-seen');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'roomId': roomId,
+          'isGroup': isGroup,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Update the local state
+        if (isGroup) {
+          int index = _groupChatRooms.indexWhere((room) => room.id == roomId);
+          if (index != -1) {
+            _groupChatRooms[index] = GroupChatRoom(
+              id: _groupChatRooms[index].id,
+              group: _groupChatRooms[index].group,
+              lastMessage: _groupChatRooms[index].lastMessage,
+              unseenMsgs: 0,
+            );
+          }
+        } else {
+          int index = _chatRooms.indexWhere((room) => room.id == roomId);
+          if (index != -1) {
+            _chatRooms[index] = ChatRoom(
+              id: _chatRooms[index].id,
+              firstUser: _chatRooms[index].firstUser,
+              secondUser: _chatRooms[index].secondUser,
+              lastMessage: _chatRooms[index].lastMessage,
+              unseenMsgs: 0,
+            );
+          }
+        }
+        notifyListeners();
+      } else {
+        throw Exception('Failed to mark messages as seen');
+      }
+    } catch (error) {
+      print('Error marking messages as seen: $error');
+    }
+  }
 }

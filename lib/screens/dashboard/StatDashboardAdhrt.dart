@@ -28,6 +28,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       initialDateRange: _dateRange,
+        locale:const Locale('fr', 'FR'),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -201,8 +202,8 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildPriorityItem('Présence', stats.presenceCount, DailozColor.lightred),
-              _buildPriorityItem('Absence', stats.absenceCount, DailozColor.purple),
+              _buildPriorityItem('Présence', stats.presenceCount, DailozColor.lightgreen),
+              _buildPriorityItem('Absence', stats.absenceCount, DailozColor.lightred),
             ],
           ),
         ],
@@ -241,7 +242,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
             'Taux d\'absence',
             style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ...absenceRatio.entries
               .map((entry) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -263,6 +264,9 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
   }
 
   Widget _buildAverageGradesCard(List<MonthlyGrade> grades) {
+    // Sort the grades by date to ensure they're in chronological order
+    grades.sort((a, b) => a.month.compareTo(b.month));
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -273,7 +277,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Notes moyennes par mois',
+            'Moyenne note par mois',
             style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
           ),
           SizedBox(height: 20),
@@ -299,6 +303,7 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 30,
+                      interval: 1,
                       getTitlesWidget: (value, meta) {
                         if (value.toInt() >= 0 && value.toInt() < grades.length) {
                           final parts = grades[value.toInt()].month.split('-');
@@ -334,9 +339,9 @@ class _StatDashboardAdhrtState extends State<StatDashboardAdhrt> {
                     }).toList(),
                     isCurved: true,
                     color: DailozColor.textblue,
-                    barWidth: 11,
+                    barWidth: 3,
                     isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
+                    dotData: FlDotData(show: true),
                     belowBarData: BarAreaData(
                       show: true,
                       color: DailozColor.textblue.withOpacity(0.1),

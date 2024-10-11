@@ -6,7 +6,6 @@ import 'package:sportdivers/screens/report/fetchTicket.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/ReportPorivder/ticketProvider.dart';
 
-
 class ReportPage extends StatefulWidget {
   static const String id = 'Report_Page';
 
@@ -36,12 +35,14 @@ class _ReportPageState extends State<ReportPage> {
       final reason = _reasonController.text;
       final comment = _commentController.text;
 
-      Provider.of<TicketsProvider>(context, listen: false).submitReport(
+      Provider.of<TicketsProvider>(context, listen: false)
+          .submitReport(
         reason: reason,
         comment: comment,
         target: _selectedTarget!,
         person: _selectedTarget == 'ADMIN' ? '' : (_selectedPerson ?? ''),
-      ).then((_) {
+      )
+          .then((_) {
         showReusableToast(
           context: context,
           message: 'Rapport soumis avec succès',
@@ -58,7 +59,9 @@ class _ReportPageState extends State<ReportPage> {
         // Navigate to another page after success
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TicketsScreen()), // Replace with your destination
+          MaterialPageRoute(
+              builder: (context) =>
+                  TicketsScreen()), // Replace with your destination
         );
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -78,7 +81,6 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-
   void _onTargetChanged(String? newValue) {
     setState(() {
       _selectedTarget = newValue;
@@ -89,7 +91,8 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Future<void> _fetchUsers() async {
-    final ticketsProvider = Provider.of<TicketsProvider>(context, listen: false);
+    final ticketsProvider =
+        Provider.of<TicketsProvider>(context, listen: false);
     if (_selectedTarget == 'STUDENT' || _selectedTarget == 'TEACHER') {
       setState(() {
         isLoading = true;
@@ -128,17 +131,16 @@ class _ReportPageState extends State<ReportPage> {
               Navigator.pop(context);
             },
             child: Container(
-              height: height/20,
-              width: height/20,
+              height: height / 20,
+              width: height / 20,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: DailozColor.white,
                   boxShadow: const [
                     BoxShadow(color: DailozColor.textgray, blurRadius: 5)
-                  ]
-              ),
+                  ]),
               child: Padding(
-                padding: EdgeInsets.only(left: width/56),
+                padding: EdgeInsets.only(left: width / 56),
                 child: const Icon(
                   Icons.arrow_back_ios,
                   size: 18,
@@ -152,31 +154,34 @@ class _ReportPageState extends State<ReportPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
+          padding: EdgeInsets.symmetric(
+              horizontal: width / 36, vertical: height / 36),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Détails du Rapport", style: hsSemiBold.copyWith(fontSize: 20, color: DailozColor.textgray)),
-              SizedBox(height: height/36),
+              Text("Détails du Rapport",
+                  style: hsSemiBold.copyWith(
+                      fontSize: 20, color: Colors.blue[800])),
+              SizedBox(height: height / 36),
               _buildTextField(
                 controller: _reasonController,
                 label: 'Raison',
                 hint: 'Entrez la raison de votre rapport',
               ),
-              SizedBox(height: height/36),
+              SizedBox(height: height / 36),
               _buildTextField(
                 controller: _commentController,
                 label: 'Commentaire',
                 hint: 'Fournissez des détails supplémentaires',
                 maxLines: 5,
               ),
-              SizedBox(height: height/36),
+              SizedBox(height: height / 36),
               _buildDropdown(),
               if (_selectedTarget != 'ADMIN') ...[
-                SizedBox(height: height/36),
+                SizedBox(height: height / 36),
                 _buildPersonDropdown(),
               ],
-              SizedBox(height: height/26),
+              SizedBox(height: height / 26),
               _buildSubmitButton(),
             ],
           ),
@@ -194,19 +199,21 @@ class _ReportPageState extends State<ReportPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: hsSemiBold.copyWith(fontSize: 17, color: DailozColor.textgray)),
+        Text(
+            label,
+            style: hsSemiBold.copyWith(fontSize: 17, color: Colors.blue[800])
+        ),
         TextField(
           controller: controller,
           maxLines: maxLines,
-          style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
+          style: hsMedium.copyWith(fontSize: 16, color:Colors.black),
           decoration: InputDecoration(
-              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              hintStyle:
+                  hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
               hintText: hint,
               border: UnderlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: DailozColor.greyy)
-              )
-          ),
+                  borderSide: const BorderSide(color: DailozColor.greyy))),
         ),
       ],
     );
@@ -216,25 +223,30 @@ class _ReportPageState extends State<ReportPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Cible", style: hsSemiBold.copyWith(fontSize: 14, color: DailozColor.textgray)),
+        Text("Cible",
+            style:
+                hsSemiBold.copyWith(fontSize: 14, color: Colors.blue[800])),
         DropdownButtonFormField<String>(
           value: _selectedTarget,
           style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
           decoration: InputDecoration(
-              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              hintStyle:
+                  hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
               border: UnderlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: DailozColor.greyy)
-              )
-          ),
+                  borderSide: const BorderSide(color: DailozColor.greyy))),
           onChanged: _onTargetChanged,
           items: <String>['ADMIN', 'TEACHER', 'STUDENT']
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value == 'ADMIN' ? 'Admin' :
-              value == 'TEACHER' ? 'Coach' :
-              value == 'STUDENT' ? 'Adhérent' : 'Inconnu'),
+              child: Text(value == 'ADMIN'
+                  ? 'Admin'
+                  : value == 'TEACHER'
+                      ? 'Coach'
+                      : value == 'STUDENT'
+                          ? 'Adhérent'
+                          : 'Inconnu'),
             );
           }).toList(),
         ),
@@ -254,17 +266,18 @@ class _ReportPageState extends State<ReportPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Personne", style: hsSemiBold.copyWith(fontSize: 14, color: DailozColor.textgray)),
+        Text("Personne",
+            style:
+                hsSemiBold.copyWith(fontSize: 14, color: Colors.blue[800])),
         DropdownButtonFormField<String>(
           value: _selectedPerson,
           style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
           decoration: InputDecoration(
-              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              hintStyle:
+                  hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
               border: UnderlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: DailozColor.greyy)
-              )
-          ),
+                  borderSide: const BorderSide(color: DailozColor.greyy))),
           onChanged: (String? newValue) {
             setState(() {
               _selectedPerson = newValue;
@@ -300,8 +313,7 @@ class _ReportPageState extends State<ReportPage> {
         height: 56,
         decoration: BoxDecoration(
             color: DailozColor.appcolor,
-            borderRadius: BorderRadius.circular(14)
-        ),
+            borderRadius: BorderRadius.circular(14)),
         child: Center(
           child: Text(
             "Envoyer",

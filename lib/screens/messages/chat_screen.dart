@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/usersChat.dart';
@@ -47,6 +48,16 @@ class _ChatScreenState extends State<ChatScreen> {
     currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
     _initializeChat();
     SocketService.socket!.on('new-message', handleNewMessage);
+
+    // // Mark messages as seen when opening the chat
+    // if (widget.isGroupChat) {
+    //   Provider.of<ChatRoomsProvider>(context, listen: false)
+    //       .markMessagesAsSeen(widget.group!.id, true);
+    // } else {
+    //   Provider.of<ChatRoomsProvider>(context, listen: false)
+    //       .markMessagesAsSeen(chatRoomId!, false);
+    // }
+
   }
 
   dynamic handleNewMessage(dynamic data) {
@@ -277,15 +288,36 @@ class _ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: <Widget>[
                 if (!isMe) _senderAvatar(),
-                SizedBox(width: 8),
+               const  SizedBox(width: 8),
+                if (!isMe)
+                  Text(
+                    sender?.firstName?.capitalize() ?? '',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                const SizedBox(width: 8),
                 Text(
                   timeString,
                   style: TextStyle(
                     fontSize: 12,
-                    color: DailozColor.textgray,
+                      color: Colors.grey[500],
                   ),
                 ),
-                if (isMe) SizedBox(width: 8),
+                if (isMe)
+                  const SizedBox(width: 8),
+                if (isMe)
+                  Text(
+                    sender?.firstName?.capitalize() ?? '',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                const SizedBox(width: 8),
                 if (isMe) _senderAvatar(),
               ],
             ),

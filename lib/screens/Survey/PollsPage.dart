@@ -65,7 +65,7 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
         elevation: 0,
       ),
       body: pollProvider.isLoading
-          ? Center(child: CircularProgressIndicator(color: Colors.blue[900]))
+          ? Center(child: CircularProgressIndicator(color: Colors.blue[800]))
           : pollProvider.pollInstances.isEmpty
           ? _buildNoPollsDialog(context)
           : SingleChildScrollView(
@@ -78,7 +78,7 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
                 'Sondages disponibles',
                 style: hsSemiBold.copyWith(
                   fontSize: 24,
-                  color: Colors.blue[900],
+                  color: Colors.blue[800],
                 ),
               ),
               SizedBox(height: height / 36),
@@ -119,14 +119,14 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
               Icon(
                 Icons.poll_outlined,
                 size: 64,
-                color: Colors.blue[900],
+                color: Colors.blue[800],
               ),
               SizedBox(height: 20),
               Text(
                 'Aucun sondage disponible',
                 style: hsBold.copyWith(
                   fontSize: 24,
-                  color: Colors.blue[900],
+                  color: Colors.blue[800],
                 ),
               ),
               SizedBox(height: 12),
@@ -141,7 +141,7 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[900],
+                  backgroundColor: Colors.blue[800],
                   foregroundColor: DailozColor.white,
                   padding:const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -166,7 +166,7 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.blue[900],
+        color: Colors.blue[800],
         borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
@@ -224,7 +224,7 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
                 : Icons.check_box_outline_blank,
             size: 22,
             color: (isPreviousAnswer && !canChangeVote) || isSelected
-                ? Colors.blue[900]
+                ? Colors.blue[800]
                 : DailozColor.textgray,
           ),
           SizedBox(width: width / 36),
@@ -257,7 +257,9 @@ class _PollSurveyPageState extends State<PollSurveyPage> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[900],
+          backgroundColor: hasUserAnswer && !isChangeVoteMode
+              ? Colors.redAccent
+              : Colors.greenAccent,
           foregroundColor: DailozColor.white,
           padding: EdgeInsets.symmetric(vertical: height / 56),
           shape: RoundedRectangleBorder(

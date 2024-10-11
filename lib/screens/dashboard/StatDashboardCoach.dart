@@ -28,6 +28,7 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       initialDateRange: _dateRange,
+      locale:const Locale('fr', 'FR'),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -225,6 +226,9 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
   }
 
   Widget _buildAverageGradesCard(List<MonthlyGrade> grades) {
+    // Sort the grades by date to ensure they're in chronological order
+    grades.sort((a, b) => a.month.compareTo(b.month));
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -235,7 +239,7 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Notes moyennes par mois',
+            'Moyenne note par mois',
             style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
           ),
           SizedBox(height: 20),
@@ -261,6 +265,7 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 30,
+                      interval: 1,
                       getTitlesWidget: (value, meta) {
                         if (value.toInt() >= 0 && value.toInt() < grades.length) {
                           final parts = grades[value.toInt()].month.split('-');
@@ -296,9 +301,9 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                     }).toList(),
                     isCurved: true,
                     color: DailozColor.textblue,
-                    barWidth: 11,
+                    barWidth: 3,
                     isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
+                    dotData: FlDotData(show: true),
                     belowBarData: BarAreaData(
                       show: true,
                       color: DailozColor.textblue.withOpacity(0.1),

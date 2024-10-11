@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
@@ -59,7 +60,7 @@ void main() async {
   // Initialize NotificationService
   await NotificationService().init();
 
-  runApp(MyApp());
+  initializeDateFormatting('fr_FR', null).then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {

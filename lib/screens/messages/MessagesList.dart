@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:provider/provider.dart';
@@ -22,13 +23,46 @@ class MessagesList extends StatefulWidget {
 class _MessagesListState extends State<MessagesList> {
   late SocketService _socketService;
   String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
     _socketService = Provider.of<SocketService>(context, listen: false);
+    _initializeSocket();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ChatRoomsProvider>(context, listen: false).fetchChatRooms();
     });
+  }
+
+  void _initializeSocket() async {
+    final authProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    final token = authProvider.token;
+    if (token != null) {
+      _socketService.connect(token);
+      _setupSocketListeners();
+    } else {
+      print('No token available. Unable to connect to socket.');
+    }
+  }
+
+  void _setupSocketListeners() {
+    SocketService.socket?.on('new-message', (data) {
+      // Handle new message event
+      Provider.of<ChatRoomsProvider>(context, listen: false).fetchChatRooms();
+    });
+
+    SocketService.socket?.on('user-status-changed', (data) {
+      // Handle user status change event
+      Provider.of<usersChatProvider>(context, listen: false).fetchUsers();
+    });
+  }
+
+  @override
+  void dispose() {
+    SocketService.socket?.off('new-message');
+    SocketService.socket?.off('user-status-changed');
+    super.dispose();
   }
 
   @override
@@ -89,15 +123,15 @@ class _MessagesListState extends State<MessagesList> {
 
               return Column(
                 children: [
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 50),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(15.0),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextFormField(
                             cursorColor: DailozColor.black,
-                            style: const TextStyle(fontSize: 16, color: DailozColor.textgray),
+                            style: const TextStyle(fontSize: 16, color: DailozColor.black),
                             decoration: InputDecoration(
                               hintText: 'Rechercher une discussion',
                               filled: true,
@@ -124,7 +158,7 @@ class _MessagesListState extends State<MessagesList> {
                             },
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        //const SizedBox(width: 10),
                         // Container(
                         //     decoration: BoxDecoration(
                         //       borderRadius: BorderRadius.circular(14),
