@@ -49,7 +49,7 @@ class AuthenticationProvider extends ChangeNotifier {
   }
 
   //stay connected
-  Future<bool> loadAuthState() async {
+  Future<void> loadAuthState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('token');
     _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
@@ -59,7 +59,6 @@ class AuthenticationProvider extends ChangeNotifier {
       _userData = json.decode(userDataString);
     }
     notifyListeners();
-    return _isAuthenticated;
   }
 
   Future<void> _saveAuthState() async {
@@ -293,33 +292,6 @@ class AuthenticationProvider extends ChangeNotifier {
       }
     } catch (e) {
       throw Exception('Error occurred while requesting password reset: $e');
-    }
-  }
-
-  Future<void> refreshUserData() async {
-    if (_token != null) {
-      try {
-        final response = await http.get(
-          Uri.parse('${Constants.baseUrl}/auth/user-data'),
-          headers: {
-            'Authorization': 'Bearer $_token',
-          },
-        );
-
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          _userData = data['userData'];
-          _accountType = data['userData']['accountType'] ?? '';
-          await _saveAuthState();
-          notifyListeners();
-        } else {
-          // Handle error or token expiration
-          await logoutUser();
-        }
-      } catch (e) {
-        print('Error refreshing user data: $e');
-        await logoutUser();
-      }
     }
   }
 }

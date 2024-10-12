@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
@@ -263,18 +264,26 @@ class _ReportPageState extends State<ReportPage> {
       return Text('Aucune personne disponible pour la cible sélectionnée.');
     }
 
+    // Get the current user
+    final currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
+
+    // Filter out the current user from the list
+    final filteredUserList = _userList.where((user) => user['id'] != currentUser?.id).toList();
+
+    if (filteredUserList.isEmpty) {
+      return Text('Aucune autre personne disponible pour la cible sélectionnée.');
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Personne",
-            style:
-                hsSemiBold.copyWith(fontSize: 14, color: Colors.blue[800])),
+            style: hsSemiBold.copyWith(fontSize: 14, color: Colors.blue[800])),
         DropdownButtonFormField<String>(
           value: _selectedPerson,
           style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
           decoration: InputDecoration(
-              hintStyle:
-                  hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
+              hintStyle: hsMedium.copyWith(fontSize: 16, color: DailozColor.textgray),
               border: UnderlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: DailozColor.greyy))),
@@ -283,7 +292,7 @@ class _ReportPageState extends State<ReportPage> {
               _selectedPerson = newValue;
             });
           },
-          items: _userList.map<DropdownMenuItem<String>>((user) {
+          items: filteredUserList.map<DropdownMenuItem<String>>((user) {
             return DropdownMenuItem<String>(
               value: user['id'],
               child: Row(
@@ -302,7 +311,6 @@ class _ReportPageState extends State<ReportPage> {
       ],
     );
   }
-
   Widget _buildSubmitButton() {
     return InkWell(
       splashColor: DailozColor.transparent,

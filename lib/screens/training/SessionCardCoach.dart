@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/components/TranslationSessionType.dart';
 import 'package:sportdivers/screens/dashboard/CoachDashboardScreen.dart';
 import 'package:shimmer/shimmer.dart';
@@ -25,6 +26,26 @@ class SessionCardCoach extends StatefulWidget {
 }
 
 class _SessionCardCoachState extends State<SessionCardCoach> {
+  bool isSessionEnded() {
+    final now = DateTime.now();
+    final endTime = _combineDateTime(widget.sessionDate, widget.session.endTime);
+    return now.isAfter(endTime);
+  }
+
+  DateTime _combineDateTime(DateTime date, String timeString) {
+    // Parse the ISO 8601 string
+    DateTime parsedDateTime = DateTime.parse(timeString);
+
+    // Combine the date from sessionDate with the time from parsedDateTime
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      parsedDateTime.hour,
+      parsedDateTime.minute,
+      parsedDateTime.second,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     if (widget.isLoading) {
@@ -35,16 +56,24 @@ class _SessionCardCoachState extends State<SessionCardCoach> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CoachDashboardScreen(
-              sessionDate: widget.sessionDate,
-              sessionId: widget.session.id,
-              groupId: widget.session.schedule.group?.id ?? '',
+        if (isSessionEnded()) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CoachDashboardScreen(
+                sessionDate: widget.sessionDate,
+                sessionId: widget.session.id,
+                groupId: widget.session.schedule.group?.id ?? '',
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          showReusableToast(
+            context: context,
+            message: 'Vous ne pouvez accéder au tableau de bord qu\'après la fin de la session.',
+            duration: Duration(seconds: 5),
+          );
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16, left: 16, right: 16),

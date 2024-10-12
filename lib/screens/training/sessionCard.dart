@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/components/TranslationSessionType.dart';
 import 'package:sportdivers/screens/training/rateSession.dart';
 import 'package:shimmer/shimmer.dart';
@@ -25,6 +26,26 @@ class SessionCard extends StatefulWidget {
 }
 
 class _SessionCardState extends State<SessionCard> {
+  bool isSessionEnded() {
+    final now = DateTime.now();
+    final endTime = _combineDateTime(widget.sessionDate, widget.session.endTime);
+    return now.isAfter(endTime);
+  }
+
+  DateTime _combineDateTime(DateTime date, String timeString) {
+    // Parse the ISO 8601 string
+    DateTime parsedDateTime = DateTime.parse(timeString);
+
+    // Combine the date from sessionDate with the time from parsedDateTime
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      parsedDateTime.hour,
+      parsedDateTime.minute,
+      parsedDateTime.second,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     if (widget.isLoading) {
@@ -35,15 +56,23 @@ class _SessionCardState extends State<SessionCard> {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return RateSessionDialog(
-              session: widget.session,
-              sessionDate: widget.sessionDate,
-            );
-          },
-        );
+        if (isSessionEnded()) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RateSessionDialog(
+                session: widget.session,
+                sessionDate: widget.sessionDate,
+              );
+            },
+          );
+        } else {
+          showReusableToast(
+            context: context,
+            message: 'Vous ne pouvez évaluer la session qu\'une fois celle-ci terminée.',
+            duration: Duration(seconds: 5),
+          );
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),

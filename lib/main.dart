@@ -105,7 +105,6 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<AuthenticationProvider>(
         builder: (context, authProvider, child) {
-
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'SprotDivers',
@@ -126,8 +125,6 @@ class MyApp extends StatelessWidget {
             ],
 
             home: CustomLoaderPage(),
-
-
 
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {

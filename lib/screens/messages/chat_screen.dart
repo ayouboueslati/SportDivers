@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/SendMsgProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/usersChat.dart';
@@ -41,10 +40,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final ScrollController _scrollController = ScrollController();
 
+
+  late MessagesProvider _messagesProvider;
+  late ChatProvider _chatProvider;
+
   @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
+
+    _messagesProvider = Provider.of<MessagesProvider>(context, listen: false);
+    _chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
     currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
     _initializeChat();
     SocketService.socket!.on('new-message', handleNewMessage);
@@ -110,6 +117,12 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     try {
       chatRoomId = await chatProvider.getChatRoomId('USER', widget.user!.id);
+
+      print('Obtained chatRoomId: $chatRoomId');
+      if (chatRoomId == null) {
+        print('ChatRoomId is null. User ID: ${widget.user!.id}, Current User ID: ${currentUser?.id}');
+      }
+
       await Provider.of<MessagesProvider>(context, listen: false)
           .fetchPrivateMessages(chatRoomId!);
     } catch (e) {
@@ -137,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     SocketService.socket!.off('new-message', handleNewMessage);
-    Provider.of<MessagesProvider>(context, listen: false).clearMessages();
+    _messagesProvider.clearMessages();
     super.dispose();
   }
 

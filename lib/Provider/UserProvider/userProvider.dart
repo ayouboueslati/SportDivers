@@ -11,7 +11,7 @@ class UserProvider with ChangeNotifier {
   // Set the current user and save to persistent storage
   Future<void> setCurrentUser(User user) async {
     _currentUser = user;
-    notifyListeners();
+
 
     // Save to SharedPreferences
     final prefs = await SharedPreferences.getInstance();
@@ -23,6 +23,8 @@ class UserProvider with ChangeNotifier {
       'type': user.type,
       'groupId': user.groupId,
     }));
+
+    notifyListeners();
   }
 
   // Load the current user from persistent storage
