@@ -19,7 +19,7 @@ class RateSessionDialog extends StatefulWidget {
 }
 
 class _RateSessionDialogState extends State<RateSessionDialog> {
-  double _rating = 3;
+  double _rating = 0;
   TextEditingController _commentController = TextEditingController();
   bool _isLoading = false;
 

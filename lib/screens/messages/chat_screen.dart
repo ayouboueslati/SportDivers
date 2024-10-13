@@ -429,22 +429,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(Icons.more_vert, color: DailozColor.black),
-            onSelected: (value) {
-              if (value == 'Réclamation') {
-                // Implement réclamation functionality
-              }
-            },
-            itemBuilder: (BuildContext context) => [
-              PopupMenuItem(
-                value: 'Réclamation',
-                child: Text('Réclamation'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: Column(
         children: <Widget>[

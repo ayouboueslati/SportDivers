@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/TrainingSchedule/CoachDashboardProvider.dart';
+import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
@@ -111,9 +112,27 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
         ),
         backgroundColor: DailozColor.white,
         elevation: 0,
+        actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: ElevatedButton.icon(
+            icon: const Icon(Icons.save, color: Colors.white),
+            label: Text('Valider', style: hsMedium.copyWith(color: Colors.white)),
+            onPressed: _saveAttendanceAndGrades,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green[600],
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          ),
+        ),
+      ],
+
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: DailozColor.appcolor))
+          ?  Center(child: CircularProgressIndicator(color: Colors.blue[800]))
           : ListView.builder(
         itemCount: students.length,
         itemBuilder: (context, index) {
@@ -135,7 +154,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                     backgroundImage: student['profile']['profilePicture'] != null
                         ? NetworkImage(student['profile']['profilePicture'])
                         : null,
-                    backgroundColor: DailozColor.appcolor,
+                    backgroundColor: Colors.blue[800],
                     child: student['profile']['profilePicture'] == null
                         ? Text(
                       student['profile']['firstName'][0],
@@ -152,7 +171,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                           '${student['profile']['firstName']} ${student['profile']['lastName']}',
                           style: hsSemiBold.copyWith(
                             fontSize: 18,
-                            color: DailozColor.appcolor,
+                            color: Colors.blue[800],
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -162,7 +181,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                               'Présent:',
                               style: hsMedium.copyWith(
                                 fontSize: 16,
-                                color: DailozColor.appcolor,
+                                color: Colors.blue[800],
                               ),
                             ),
                             Switch(
@@ -172,7 +191,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                                   attendance[studentId] = value;
                                 });
                               },
-                              activeColor: DailozColor.appcolor,
+                              activeColor: Colors.blue[800],
                             ),
                           ],
                         ),
@@ -181,7 +200,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: DailozColor.appcolor,
+                      backgroundColor: Colors.blue[800],
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       shape: RoundedRectangleBorder(
@@ -197,12 +216,12 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.save, color: Colors.white),
-        label: Text('Valider', style: hsMedium.copyWith(color: Colors.white)),
-        onPressed: _saveAttendanceAndGrades,
-        backgroundColor: DailozColor.appcolor,
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   icon: const Icon(Icons.save, color: Colors.white),
+      //   label: Text('Valider', style: hsMedium.copyWith(color: Colors.white)),
+      //   onPressed: _saveAttendanceAndGrades,
+      //   backgroundColor: Colors.blue[800],
+      // ),
     );
   }
 
@@ -213,7 +232,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Noter l\'étudiant', style: hsBold.copyWith(color: DailozColor.appcolor)),
+              title: Text('Noter l\'étudiant', style: hsBold.copyWith(color: Colors.blue[800])),
               content: Container(
                 width: double.maxFinite,
                 child: Column(
@@ -228,12 +247,12 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
               ),
               actions: [
                 TextButton(
-                  child: Text('Annuler', style: hsMedium.copyWith(color: DailozColor.appcolor)),
+                  child: Text('Annuler', style: hsMedium.copyWith(color: Colors.blue[800])),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: DailozColor.appcolor,
+                    backgroundColor: Colors.blue[800],
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
@@ -258,18 +277,18 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
       children: [
         Text(
           label,
-          style: hsSemiBold.copyWith(color: DailozColor.appcolor),
+          style: hsSemiBold.copyWith(color: Colors.blue[800]),
         ),
         Row(
           children: [
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: DailozColor.appcolor,
+                  activeTrackColor: Colors.blue[800],
                   inactiveTrackColor: DailozColor.appcolor.withOpacity(0.3),
-                  thumbColor: DailozColor.appcolor,
+                  thumbColor: Colors.blue[800],
                   overlayColor: DailozColor.appcolor.withAlpha(32),
-                  valueIndicatorColor: DailozColor.appcolor,
+                  valueIndicatorColor: Colors.blue[800],
                 ),
                 child: Slider(
                   value: ratings[studentId]![gradeKey]!,
@@ -290,7 +309,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
               alignment: Alignment.center,
               child: Text(
                 ratings[studentId]![gradeKey]!.round().toString(),
-                style: hsBold.copyWith(color: DailozColor.appcolor),
+                style: hsBold.copyWith(color: Colors.blue[800]),
               ),
             ),
           ],
@@ -305,15 +324,10 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
   }
 
   void _showAverageGradeToast(double average) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Moyenne des notes: ${average.toStringAsFixed(2)}',
-          style: hsRegular.copyWith(color: Colors.white),
-        ),
-        backgroundColor: DailozColor.appcolor,
-        duration: Duration(seconds: 3),
-      ),
+    showReusableToast(
+      context: context,
+      message: 'Moyenne des notes: ${average.toStringAsFixed(2)}',
+      duration: Duration(seconds: 5),
     );
   }
 
@@ -336,11 +350,10 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
 
     try {
       await apiProvider.setAttendance(widget.sessionId, attendanceData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Présence et notes enregistrées avec succès', style: hsRegular),
-          backgroundColor: DailozColor.appcolor,
-        ),
+      showReusableToast(
+        context: context,
+        message: 'Présence et notes enregistrées avec succès',
+        duration: Duration(seconds: 5),
       );
       Navigator.pop(context);
     } catch (e) {

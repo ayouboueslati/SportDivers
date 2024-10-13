@@ -17,10 +17,32 @@ class StatDashboardCoach extends StatefulWidget {
 }
 
 class _StatDashboardCoachState extends State<StatDashboardCoach> {
-  DateTimeRange _dateRange = DateTimeRange(
-    start: DateTime.now().subtract(Duration(days: 30)),
-    end: DateTime.now(),
-  );
+  late DateTimeRange _dateRange;
+
+  // DateTimeRange _dateRange = DateTimeRange(
+  //   start: DateTime.now().subtract(Duration(days: 30)),
+  //   end: DateTime.now(),
+  // );
+
+  @override
+  void initState() {
+    super.initState();
+
+    final now = DateTime.now();
+    _dateRange = DateTimeRange(
+      start: DateTime(now.year, now.month, 1),
+      end: DateTime(now.year, now.month + 1, 0),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      String startDate = formatter.format(_dateRange.start);
+      String endDate = formatter.format(_dateRange.end);
+
+      Provider.of<DashboardCoachProvider>(context, listen: false)
+          .fetchDashboardStats(startDate: startDate, endDate: endDate);
+    });
+  }
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
@@ -28,7 +50,7 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       initialDateRange: _dateRange,
-      locale:const Locale('fr', 'FR'),
+      locale: const Locale('fr', 'FR'),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -53,19 +75,6 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
       Provider.of<DashboardCoachProvider>(context, listen: false)
           .fetchDashboardStats(startDate: startDate, endDate: endDate);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final DateFormat formatter = DateFormat('yyyy-MM-dd');
-      String startDate = formatter.format(_dateRange.start);
-      String endDate = formatter.format(_dateRange.end);
-
-      Provider.of<DashboardCoachProvider>(context, listen: false)
-          .fetchDashboardStats(startDate: startDate, endDate: endDate);
-    });
   }
 
   @override
@@ -124,15 +133,18 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
             final stats = dashboardProvider.stats!;
             return SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
+                padding: EdgeInsets.symmetric(
+                    horizontal: width / 36, vertical: height / 36),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 25,),
+                    const SizedBox(
+                      height: 25,
+                    ),
                     _buildDateRangePicker(),
-                    SizedBox(height: height/36),
+                    SizedBox(height: height / 36),
                     _buildPriorityCard(stats),
-                    SizedBox(height: height/36),
+                    SizedBox(height: height / 36),
                     _buildAverageGradesCard(stats.averageGradesPerMonth),
                   ],
                 ),
@@ -161,7 +173,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
           children: [
             Text(
               'Filtrer par date',
-              style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
+              style:
+                  hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black),
             ),
             SizedBox(height: 12),
             Row(
@@ -169,12 +182,14 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
               children: [
                 Text(
                   formatter.format(_dateRange.start),
-                  style: hsRegular.copyWith(fontSize: 16, color: DailozColor.textblue),
+                  style: hsRegular.copyWith(
+                      fontSize: 16, color: DailozColor.textblue),
                 ),
                 Icon(Icons.arrow_forward, color: DailozColor.textblue),
                 Text(
                   formatter.format(_dateRange.end),
-                  style: hsRegular.copyWith(fontSize: 16, color: DailozColor.textblue),
+                  style: hsRegular.copyWith(
+                      fontSize: 16, color: DailozColor.textblue),
                 ),
               ],
             ),
@@ -194,13 +209,14 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildPriorityItem('Groupes', stats.groupsCount, DailozColor.lightred),
-              _buildPriorityItem('Séances', stats.sessionsCount, DailozColor.purple),
+              _buildPriorityItem(
+                  'Groupes', stats.groupsCount, DailozColor.lightred),
+              _buildPriorityItem(
+                  'Séances', stats.sessionsCount, DailozColor.purple),
             ],
           ),
         ],
@@ -220,7 +236,9 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
           ),
         ),
         SizedBox(height: 8),
-        Text(title, style: hsRegular.copyWith(fontSize: 14, color: DailozColor.textgray)),
+        Text(title,
+            style:
+                hsRegular.copyWith(fontSize: 14, color: DailozColor.textgray)),
       ],
     );
   }
@@ -256,7 +274,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: hsRegular.copyWith(fontSize: 12, color: DailozColor.textgray),
+                          style: hsRegular.copyWith(
+                              fontSize: 12, color: DailozColor.textgray),
                         );
                       },
                     ),
@@ -267,7 +286,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                       reservedSize: 30,
                       interval: 1,
                       getTitlesWidget: (value, meta) {
-                        if (value.toInt() >= 0 && value.toInt() < grades.length) {
+                        if (value.toInt() >= 0 &&
+                            value.toInt() < grades.length) {
                           final parts = grades[value.toInt()].month.split('-');
                           if (parts.length == 2) {
                             final year = int.parse(parts[0]);
@@ -277,7 +297,8 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
                                 DateFormat('MMM').format(date),
-                                style: hsRegular.copyWith(fontSize: 14, color: DailozColor.textgray),
+                                style: hsRegular.copyWith(
+                                    fontSize: 14, color: DailozColor.textgray),
                               ),
                             );
                           }
@@ -286,8 +307,10 @@ class _StatDashboardCoachState extends State<StatDashboardCoach> {
                       },
                     ),
                   ),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
