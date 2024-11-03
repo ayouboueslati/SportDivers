@@ -7,6 +7,7 @@ import 'package:sportdivers/Provider/ProfileProvider/profileProvider.dart';
 import 'package:sportdivers/components/AppDrawer.dart';
 import 'package:sportdivers/components/BtmNavBar.dart';
 import 'package:sportdivers/models/event.dart';
+import 'package:sportdivers/screens/Championnat/TournamentsPage.dart';
 import 'package:sportdivers/screens/Survey/PollsPage.dart';
 import 'package:sportdivers/screens/Tutorials/tutorials.dart';
 import 'package:sportdivers/screens/auth/login_screen.dart';
@@ -247,20 +248,22 @@ class _HomePageState extends State<HomePage> {
         //     TrainingScheduleScreenCoach.id),
         // _buildTaskCard('Messages', "assets/images/icons/chat.png",
         //     Colors.purple[100]!, MessagesList.id, MessagesList.id),
-        _buildTaskCard('Video', "assets/images/icons/film.png",
-            Colors.blue[100]!, VideoApp.id, VideoApp.id),
-        _buildTaskCard('Assistance', "assets/images/icons/caution.png",
-            Colors.orange[100]!, ReportPage.id, ReportPage.id),
         if (widget.role != 'TEACHER') ...[
           _buildTaskCard('Sondages', "assets/images/icons/phone.png",
               Colors.red[100]!, PollSurveyPage.id, PollSurveyPage.id),
           _buildTaskCard('Paiements', "assets/images/icons/payment.png",
               Colors.teal[100]!, PaymentScreen.id, PaymentScreen.id),
+          _buildTaskCard('Video', "assets/images/icons/film.png",
+              Colors.blue[100]!, VideoApp.id, VideoApp.id),
         ],
+        _buildTaskCard('Assistance', "assets/images/icons/caution.png",
+            Colors.orange[100]!, ReportPage.id, ReportPage.id),
         _buildTaskCard('Profil', "assets/images/icons/employee.png",
             Colors.green[100]!, ProfileScreen1.id, ProfileScreen1.id),
         _buildTaskCard('Tickets', "assets/images/icons/byod.png",
             Colors.purple[100]!, TicketsScreen.id, TicketsScreen.id),
+         _buildTaskCard('Championnat', "assets/images/icons/*****.png",
+            Colors.purple[100]!,TournamentScreen.id, TournamentScreen.id),
       ],
     );
   }
