@@ -127,7 +127,7 @@ class MatchListPage extends StatelessWidget {
 
   Widget _buildMatchItem(BuildContext context, Match match, double height, double width) {
     return Container(
-      margin: EdgeInsets.only(bottom: height/46),
+      margin: EdgeInsets.only(bottom: height / 46),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: DailozColor.white,
@@ -144,18 +144,24 @@ class MatchListPage extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            // Navigator.push logic remains the same
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MatchDetailsPage(match: match),
+              ),
+            );
           },
           child: Padding(
-            padding: EdgeInsets.all(width/24),
+            padding: EdgeInsets.all(width / 24),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: width/36,
-                        vertical: height/120,
+                        horizontal: width / 36,
+                        vertical: height / 120,
                       ),
                       decoration: BoxDecoration(
                         color: DailozColor.bggray,
@@ -172,8 +178,8 @@ class MatchListPage extends StatelessWidget {
                     const Spacer(),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: width/36,
-                        vertical: height/120,
+                        horizontal: width / 36,
+                        vertical: height / 120,
                       ),
                       decoration: BoxDecoration(
                         color: DailozColor.bggray,
@@ -189,10 +195,10 @@ class MatchListPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: height/66),
-                _buildTeamRow(match.firstTeam.designation, match.firstTeam.logo ?? '', height),
-                SizedBox(height: height/80),
-                _buildTeamRow(match.secondTeam.designation, match.secondTeam.logo ?? '', height),
+                SizedBox(height: height / 66),
+                _buildTeamRow(match.firstTeam.designation, match.firstTeam.photo ?? '', height),
+                SizedBox(height: height / 80),
+                _buildTeamRow(match.secondTeam.designation, match.secondTeam.photo ?? '', height),
               ],
             ),
           ),
@@ -226,8 +232,8 @@ class MatchListPage extends StatelessWidget {
 
   Widget _buildTeamAvatar(String logoUrl, double height) {
     return Container(
-      height: height/26,
-      width: height/26,
+      height: height / 26,
+      width: height / 26,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: DailozColor.white,
@@ -237,7 +243,7 @@ class MatchListPage extends StatelessWidget {
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(height/52),
+        borderRadius: BorderRadius.circular(height / 52),
         child: logoUrl.isNotEmpty
             ? Image.network(
           logoUrl,

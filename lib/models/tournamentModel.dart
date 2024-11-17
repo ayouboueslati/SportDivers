@@ -116,11 +116,13 @@ class Team {
   final String id;
   final String designation;
   final Category category;
+  final String photo;
 
   Team({
     required this.id,
     required this.designation,
     required this.category,
+    required this.photo,
   });
 
   factory Team.fromJson(Map<String, dynamic> json) {
@@ -128,9 +130,11 @@ class Team {
       id: json['id'],
       designation: json['designation'],
       category: Category.fromJson(json['category']),
+      photo: json['photo'] ?? '', // Use an empty string if 'photo' is not present
     );
   }
 }
+
 
 // Category Model
 class Category {
