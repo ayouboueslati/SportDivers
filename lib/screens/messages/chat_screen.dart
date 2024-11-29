@@ -395,7 +395,7 @@ class _ChatScreenState extends State<ChatScreen> {
             CircleAvatar(
               radius: 20,
               backgroundImage: widget.isGroupChat
-                  ? null
+                  ? NetworkImage(widget.group!.photo!)
                   : (widget.user!.picture != null
                   ? NetworkImage(widget.user!.picture!)
                   : AssetImage('assets/images/icons/default_avatar.png') as ImageProvider),

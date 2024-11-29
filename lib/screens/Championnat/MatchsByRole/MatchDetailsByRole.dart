@@ -20,6 +20,36 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
   int _selectedIndex = 0;
   final List<String> _tabs = ['DÉTAILS', 'CLASSEMENTS'];
 
+  void _navigateToConvocation() {
+    // Find the first team the coach is allowed to convocate for
+    String? teamId;
+
+    if (widget.match.coachTeams.contains(widget.match.firstTeam.id)) {
+      teamId = widget.match.firstTeam.id;
+    } else if (widget.match.coachTeams.contains(widget.match.secondTeam.id)) {
+      teamId = widget.match.secondTeam.id;
+    }
+
+    if (teamId != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ConvocationPage(
+            teamId: teamId!, // Use the found team ID
+            matchId: widget.match.id,
+            coachTeams: widget.match.coachTeams,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vous n\'êtes pas autorisé à convoquer pour ce match'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
   void _showTeamSelectionDialog() {
     showDialog(
       context: context,
@@ -163,8 +193,7 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                       ),
                       Flexible(
                         child: ElevatedButton.icon(
-                          onPressed: _showTeamSelectionDialog,
-                          // Replace the existing navigation
+                          onPressed: _navigateToConvocation,
                           icon: const Icon(Icons.groups_rounded),
                           label: const Text('Convoque'),
                           style: ElevatedButton.styleFrom(

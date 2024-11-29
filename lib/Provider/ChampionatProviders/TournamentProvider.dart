@@ -58,10 +58,4 @@ class TournamentProvider extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  void registerForTournament(String tournamentId) {
-    // Implement tournament registration logic
-    print('Registering for tournament: $tournamentId');
-    // You would typically make an API call here to register
-  }
 }

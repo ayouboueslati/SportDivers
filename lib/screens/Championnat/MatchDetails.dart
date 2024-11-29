@@ -16,7 +16,7 @@ class MatchDetailsPage extends StatefulWidget {
 
 class _MatchDetailsPageState extends State<MatchDetailsPage> {
   int _selectedIndex = 0;
-  final List<String> _tabs = ['DÉTAILS', 'ÉQUIPES', 'CLASSEMENTS'];
+  final List<String> _tabs = ['DÉTAILS', 'CLASSEMENTS'];
 
   @override
   Widget build(BuildContext context) {
@@ -176,9 +176,9 @@ class _MatchDetailsPageState extends State<MatchDetailsPage> {
     switch (_selectedIndex) {
       case 0:
         return _buildMatchDetails(height, width);
+      // case 1:
+      //   return _buildTeamDetails(height, width);
       case 1:
-        return _buildTeamDetails(height, width);
-      case 2:
         return _buildLeagueStandings(height, width);
       default:
         return SizedBox.shrink();
