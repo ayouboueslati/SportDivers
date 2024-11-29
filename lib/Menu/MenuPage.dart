@@ -262,7 +262,7 @@ class _HomePageState extends State<HomePage> {
             Colors.green[100]!, ProfileScreen1.id, ProfileScreen1.id),
         _buildTaskCard('Tickets', "assets/images/icons/byod.png",
             Colors.purple[100]!, TicketsScreen.id, TicketsScreen.id),
-         _buildTaskCard('Championnat', "assets/images/icons/*****.png",
+         _buildTaskCard('Championnat', "assets/images/icons/championat.png",
             Colors.purple[100]!,TournamentScreen.id, TournamentScreen.id),
       ],
     );

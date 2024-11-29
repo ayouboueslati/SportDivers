@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/TournamentProvider.dart';
 import 'package:sportdivers/models/tournamentModel.dart';
+import 'package:sportdivers/screens/Championnat/MatchsByRole/MatchListByRole.dart';
 import 'package:sportdivers/screens/Championnat/MatchsList.dart';
 
 class TournamentScreen extends StatelessWidget {
@@ -65,7 +66,8 @@ class TournamentScreen extends StatelessWidget {
                   final tournament = tournamentProvider.tournaments[index];
                   return TournamentItem(
                     tournament: tournament,
-                    onRegister: () => tournamentProvider.registerForTournament(tournament.id),
+                    onRegister: () =>
+                        tournamentProvider.registerForTournament(tournament.id),
                   );
                 },
               ),
@@ -118,34 +120,53 @@ class TournamentItem extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _buildInfoRow(Icons.category, 'Type', tournament.type),
-            _buildInfoRow(Icons.calendar_today, 'Date Début', tournament.formattedStartDate),
-            _buildInfoRow(Icons.calendar_month, 'Date Fin', tournament.formattedEndDate),
-            _buildInfoRow(Icons.attach_money, 'Frais d\'inscription', '${tournament.fees.toStringAsFixed(2)} DT'),
-
-            const SizedBox(height: 16),
-            _buildGroupSection('Groupes', tournament.groups),
-
-            if (tournament.externalGroups.isNotEmpty)
-              _buildGroupSection('Groupes Externes', tournament.externalGroups),
-
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, MatchListPage.id, arguments: tournament);
-                },
-                icon: Icon(Icons.remove_red_eye_outlined),
-                label: Text('Consulter'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            _buildInfoRow(Icons.calendar_today, 'Date Début',
+                tournament.formattedStartDate),
+            _buildInfoRow(
+                Icons.calendar_month, 'Date Fin', tournament.formattedEndDate),
+            _buildInfoRow(Icons.attach_money, 'Frais d\'inscription',
+                '${tournament.fees.toStringAsFixed(2)} DT'),
+            const SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, MatchListByRolePage.id, arguments: tournament);
+                    },
+                    icon: Icon(Icons.remove_red_eye_outlined),
+                    label:const Text('Vos Matchs'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[700],
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, MatchListPage.id, arguments: tournament);
+                    },
+                    icon: Icon(Icons.remove_red_eye_outlined),
+                    label: const Text('Tous Les Matchs'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[700],
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -188,19 +209,22 @@ class TournamentItem extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8),
-        ...groups.map((group) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Icon(Icons.chevron_right, color: Colors.blue[600], size: 20),
-              SizedBox(width: 8),
-              Text(
-                group.designation,
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-            ],
-          ),
-        )).toList(),
+        ...groups
+            .map((group) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(Icons.chevron_right,
+                          color: Colors.blue[600], size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        group.designation,
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
       ],
     );
   }

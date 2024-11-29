@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sportdivers/models/MatchModel.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 

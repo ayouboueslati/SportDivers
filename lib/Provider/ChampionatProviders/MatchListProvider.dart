@@ -5,8 +5,6 @@ import 'package:sportdivers/Provider/constantsProvider.dart';
 import 'package:sportdivers/models/tournamentModel.dart';
 import 'dart:convert';
 
-import 'package:sportdivers/screens/Championnat/MatchsList.dart';
-
 
 class MatchListProvider extends ChangeNotifier {
   List<MatchPhase> _phases = [];

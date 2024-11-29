@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/ConvocationProvider.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/MatchListByRoleProvider.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/MatchListProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/TournamentProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
@@ -15,9 +18,11 @@ import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:sportdivers/components/Loader.dart';
 import 'package:sportdivers/models/MatchModel.dart';
 import 'package:sportdivers/models/tournamentModel.dart';
-import 'package:sportdivers/screens/AccesArbitres/ArbitrageMatch.dart';
+import 'package:sportdivers/screens/Championnat/MatchsByRole/ArbitrageMatch.dart';
 import 'package:sportdivers/screens/Championnat/ClassementPage.dart';
+import 'package:sportdivers/screens/Championnat/MatchsByRole/ConvocationPage.dart';
 import 'package:sportdivers/screens/Championnat/MatchDetails.dart';
+import 'package:sportdivers/screens/Championnat/MatchsByRole/MatchListByRole.dart';
 import 'package:sportdivers/screens/Championnat/MatchsList.dart';
 import 'package:sportdivers/screens/Championnat/TournamentsPage.dart';
 import 'package:sportdivers/screens/Payment/PaymentScreen.dart';
@@ -100,6 +105,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DashboardCoachProvider()),
         ChangeNotifierProvider(create: (_) => PollProvider()),
         ChangeNotifierProvider(create: (_) => TournamentProvider()),
+        ChangeNotifierProvider(create: (_) => MatchListProvider()),
+        ChangeNotifierProvider(create: (_) => MatchListProviderByRole()),
+        ChangeNotifierProvider(create: (_) => ConvocationProvider()),
         Provider<FCMHandler>(
           create: (context) {
             final fcmHandler = FCMHandler();
@@ -134,12 +142,10 @@ class MyApp extends StatelessWidget {
 
             home: CustomLoaderPage(),
 
-
-           // home: TournamentScreen(),
+            // home: const ConvocationPage(),
             // home: MatchListPage(),
-             //home:ClassementPage(),
+            //home:ClassementPage(),
             // home:ArbitratorMatchPage(),
-
 
             routes: {
               LoginScreen.id: (context) => LoginScreen(onLoginPressed: () {
@@ -168,10 +174,16 @@ class MyApp extends StatelessWidget {
               StatDashboardAdhrt.id: (context) => StatDashboardAdhrt(),
               StatDashboardCoach.id: (context) => StatDashboardCoach(),
               TournamentScreen.id: (context) => TournamentScreen(),
-            //  MatchDetailsPage.id: (context) => MatchDetailsPage(match: ,),
+              //  MatchDetailsPage.id: (context) => MatchDetailsPage(match: ,),
               MatchListPage.id: (context) {
-                final tournament = ModalRoute.of(context)!.settings.arguments as Tournament;
+                final tournament =
+                    ModalRoute.of(context)!.settings.arguments as Tournament;
                 return MatchListPage(tournament: tournament);
+              },
+              MatchListByRolePage.id: (context) {
+                final tournament =
+                    ModalRoute.of(context)!.settings.arguments as Tournament;
+                return MatchListByRolePage(tournament: tournament);
               },
               ResetPasswordScreen.id: (context) =>
                   ResetPasswordScreen(token: authProvider.token ?? ''),

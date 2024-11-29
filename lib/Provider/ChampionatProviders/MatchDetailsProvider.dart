@@ -5,7 +5,8 @@ import 'package:sportdivers/Provider/constantsProvider.dart';
 import 'dart:convert';
 import 'package:sportdivers/models/tournamentModel.dart';
 
-class MatchListProvider extends ChangeNotifier {
+
+class MatchListProvider11111111111 extends ChangeNotifier {
   List<MatchPhase> _phases = [];
   bool _isLoading = false;
   String? _error;
@@ -18,7 +19,7 @@ class MatchListProvider extends ChangeNotifier {
 
       _isLoading = true;
       notifyListeners();
-      final url = '${Constants.baseUrl}//tournaments/matches/$tournamentId';
+      final url = '${Constants.baseUrl}/tournaments/matches/$tournamentId';
       try {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');

@@ -141,11 +141,14 @@ flutter:
     - assets/images/icons/employee.png
     - assets/images/icons/byod.png
     - assets/images/icons/phone.png
+    - assets/images/icons/championat.png
+
     - assets/images/gafsa.png
     - assets/images/CA.png
     - assets/images/barca.png
     - assets/images/inter.png
     - assets/images/ronaldinho.png
+
 
     - assets/dailoz_assets/dailoz_pngimage/
     - assets/dailoz_assets/dailoz_svgimage/
