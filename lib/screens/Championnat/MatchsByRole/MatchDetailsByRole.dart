@@ -18,8 +18,7 @@ class MatchDetailsByRolePage extends StatefulWidget {
 
 class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
   int _selectedIndex = 0;
-  final List<String> _tabs = ['DÉTAILS', 'ÉQUIPES', 'CLASSEMENTS'];
-
+  final List<String> _tabs = ['DÉTAILS', 'CLASSEMENTS'];
 
   void _showTeamSelectionDialog() {
     showDialog(
@@ -35,12 +34,14 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
             children: [
               _buildTeamSelectionButton(
                 teamName: widget.match.firstTeam.designation,
-                teamId: widget.match.firstTeam.id, // Assuming there's an ID field
+                teamId:
+                    widget.match.firstTeam.id, // Assuming there's an ID field
               ),
               SizedBox(height: 10),
               _buildTeamSelectionButton(
                 teamName: widget.match.secondTeam.designation,
-                teamId: widget.match.secondTeam.id, // Assuming there's an ID field
+                teamId:
+                    widget.match.secondTeam.id, // Assuming there's an ID field
               ),
             ],
           ),
@@ -57,26 +58,35 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
     );
   }
 
-  // Helper method to build team selection button
-  Widget _buildTeamSelectionButton({
-    required String teamName,
-    required String teamId
-  }) {
+  Widget _buildTeamSelectionButton(
+      {required String teamName, required String teamId}) {
     return ElevatedButton(
       onPressed: () {
         // Close the dialog
         Navigator.of(context).pop();
-
-        // Navigate to ConvocationPage with selected team
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ConvocationPage(
-              teamId: teamId, // Pass the selected team's ID
-              matchId: widget.match.id,
+        // Check if the coach can convocate for this match
+        if (widget.match.coachTeams.contains(widget.match.firstTeam.id) ||
+            widget.match.coachTeams.contains(widget.match.secondTeam.id)) {
+          // Navigate to ConvocationPage with selected team
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConvocationPage(
+                teamId: teamId, // Pass the selected team's ID
+                matchId: widget.match.id,
+                coachTeams: widget.match.coachTeams,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text('Vous n\'êtes pas autorisé à convoquer pour ce match'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: DailozColor.appcolor,
@@ -92,7 +102,6 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -152,16 +161,17 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                         "${widget.match.date.day}/${widget.match.date.month}/${widget.match.date.year} ${widget.match.date.hour.toString().padLeft(2, '0')}:${widget.match.date.minute.toString().padLeft(2, '0')}",
                         style: hsRegular.copyWith(fontSize: 14),
                       ),
-
                       Flexible(
-                        child:  ElevatedButton.icon(
-                          onPressed: _showTeamSelectionDialog, // Replace the existing navigation
+                        child: ElevatedButton.icon(
+                          onPressed: _showTeamSelectionDialog,
+                          // Replace the existing navigation
                           icon: const Icon(Icons.groups_rounded),
                           label: const Text('Convoque'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[700],
+                            backgroundColor: DailozColor.textblue,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -261,7 +271,7 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                           padding: EdgeInsets.symmetric(vertical: height / 66),
                           decoration: BoxDecoration(
                             color: _selectedIndex == idx
-                                ? DailozColor.appcolor
+                                ? DailozColor.textblue
                                 : DailozColor.transparent,
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -310,9 +320,9 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
     switch (_selectedIndex) {
       case 0:
         return _buildMatchDetails(height, width);
+      // case 1:
+      //   return _buildTeamDetails(height, width);
       case 1:
-        return _buildTeamDetails(height, width);
-      case 2:
         return _buildLeagueStandings(height, width);
       default:
         return SizedBox.shrink();
@@ -367,6 +377,21 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
             style: hsRegular.copyWith(fontSize: 14),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLeagueStandings(double height, double width) {
+    return Container(
+      decoration: BoxDecoration(
+        color: DailozColor.bggray,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Center(
+        child: Text(
+          'Classements à venir',
+          style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
+        ),
       ),
     );
   }
@@ -429,21 +454,6 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildLeagueStandings(double height, double width) {
-    return Container(
-      decoration: BoxDecoration(
-        color: DailozColor.bggray,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Center(
-        child: Text(
-          'Classements à venir',
-          style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black),
-        ),
-      ),
     );
   }
 }

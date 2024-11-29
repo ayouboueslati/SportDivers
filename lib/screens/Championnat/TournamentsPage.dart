@@ -4,6 +4,8 @@ import 'package:sportdivers/Provider/ChampionatProviders/TournamentProvider.dart
 import 'package:sportdivers/models/tournamentModel.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/MatchListByRole.dart';
 import 'package:sportdivers/screens/Championnat/MatchsList.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
+import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
 class TournamentScreen extends StatelessWidget {
   static String id = 'Tournament_Screen';
@@ -12,11 +14,43 @@ class TournamentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
     return ChangeNotifierProvider(
       create: (context) => TournamentProvider()..fetchTournaments(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Tournois'),
+          leading: Padding(
+            padding: const EdgeInsets.all(10),
+            child: InkWell(
+              splashColor: DailozColor.transparent,
+              highlightColor: DailozColor.transparent,
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                height: height / 20,
+                width: height / 20,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: DailozColor.white,
+                    boxShadow: const [
+                      BoxShadow(color: DailozColor.textgray, blurRadius: 5)
+                    ]),
+                child: Padding(
+                  padding: EdgeInsets.only(left: width / 56),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    size: 18,
+                    color: DailozColor.black,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          title: Text("Tournois", style: hsSemiBold.copyWith(fontSize: 22)),
+          centerTitle: true,
         ),
         body: Consumer<TournamentProvider>(
           builder: (context, tournamentProvider, child) {
@@ -133,14 +167,16 @@ class TournamentItem extends StatelessWidget {
                 Flexible(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.pushNamed(context, MatchListByRolePage.id, arguments: tournament);
+                      Navigator.pushNamed(context, MatchListByRolePage.id,
+                          arguments: tournament);
                     },
-                    icon: Icon(Icons.remove_red_eye_outlined),
-                    label:const Text('Vos Matchs'),
+                    icon: Icon(Icons.sports_soccer_outlined),
+                    label: const Text('Vos Matchs'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[700],
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -151,14 +187,16 @@ class TournamentItem extends StatelessWidget {
                 Flexible(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.pushNamed(context, MatchListPage.id, arguments: tournament);
+                      Navigator.pushNamed(context, MatchListPage.id,
+                          arguments: tournament);
                     },
-                    icon: Icon(Icons.remove_red_eye_outlined),
+                    icon: Icon(Icons.sports_soccer_outlined),
                     label: const Text('Tous Les Matchs'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[700],
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

@@ -10,11 +10,13 @@ class ConvocationPage extends StatefulWidget {
   static String id = 'Convocation_Screen';
   final String matchId; // New parameter
   final String teamId;
+  final List<String> coachTeams;
 
   const ConvocationPage({
     Key? key,
     required this.matchId,
     required this.teamId,
+    required this.coachTeams,
   }) : super(key: key);
 
   @override
@@ -25,7 +27,21 @@ class _ConvocationPageState extends State<ConvocationPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch students when the page loads
+    // Validate team belongs to coach before fetching
+    if (!widget.coachTeams.contains(widget.teamId)) {
+      // Show an error or prevent access
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Vous n\'êtes pas autorisé à convoquer cette équipe'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Navigator.pop(context);
+        return;
+      });
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ConvocationProvider>(context, listen: false)
           .fetchGroupStudents(widget.teamId);
@@ -127,7 +143,8 @@ class _ConvocationPageState extends State<ConvocationPage> {
   void _submitConvocation(BuildContext context, ConvocationProvider provider) async {
     final result = await provider.submitConvocation(
         matchId: widget.matchId,
-        teamId: widget.teamId
+        teamId: widget.teamId,
+        coachTeams: widget.coachTeams
     );
 
     if (result) {
@@ -221,14 +238,18 @@ class _ConvocationPageState extends State<ConvocationPage> {
   Widget _buildStudentAvatar(Student student) {
     return CircleAvatar(
       radius: 30,
-      backgroundColor: Colors.blue[800],
-      child: Text(
+      backgroundColor: DailozColor.grey,
+      backgroundImage: student.profilePicture != null
+          ? NetworkImage(student.profilePicture!)
+          : null,
+      child: student.profilePicture == null
+          ? Text(
         student.initials,
         style: hsBold.copyWith(fontSize: 24, color: Colors.white),
-      ),
+      )
+          : null,
     );
   }
-
   Widget _buildStudentInfo(
       Student student,
       bool isSelected,
@@ -242,26 +263,29 @@ class _ConvocationPageState extends State<ConvocationPage> {
             student.fullName,
             style: hsSemiBold.copyWith(
               fontSize: 18,
-              color: Colors.blue[800],
+              color: Colors.blue[600],
             ),
           ),
           const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
                 'Convoque :',
                 style: hsMedium.copyWith(
                   fontSize: 16,
-                  color: Colors.blue[800],
+                  color: Colors.green[400],
                 ),
               ),
+              const SizedBox(width: 15,),
               Switch(
                 value: isSelected,
                 onChanged: (_) {
                   provider.toggleStudentSelection(student.id);
                 },
-                activeColor: Colors.blue[800],
+                activeColor: Colors.green[400],
               ),
+              const SizedBox(width: 15,),
             ],
           ),
         ],

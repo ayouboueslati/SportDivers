@@ -51,7 +51,7 @@ android {
         release {
             keyAlias 'upload'
             keyPassword 'SportDivers2024'
-            storeFile file('android/app/upload-keystore.jks')
+            storeFile file('/upload-keystore.jks')
             storePassword 'SportDivers2024'
         }
     }

@@ -88,7 +88,12 @@ class ConvocationProvider with ChangeNotifier {
   Future<bool> submitConvocation({
     required String matchId,
     required String teamId,
+    required List<String> coachTeams,
   }) async {
+    if (!canConvocateTeam(teamId, coachTeams)) {
+      print('Coach is not authorized to convocate this team');
+      return false;
+    }
     print('Submitting convocation with matchId: $matchId, teamId: $teamId');
     if (_selectedStudentIds.isEmpty) {
       print('No students selected for submission');
@@ -130,5 +135,8 @@ class ConvocationProvider with ChangeNotifier {
       print('Exception during submitConvocation: ${e.toString()}');
       return false;
     }
+  }
+  bool canConvocateTeam(String teamId, List<String> coachTeams) {
+    return coachTeams.contains(teamId);
   }
 }

@@ -189,7 +189,7 @@ class MatchListPage extends StatelessWidget {
                         match.field.designation,
                         style: hsMedium.copyWith(
                           fontSize: 12,
-                          color: DailozColor.textgray,
+                          color: DailozColor.lightgreen,
                         ),
                       ),
                     ),
