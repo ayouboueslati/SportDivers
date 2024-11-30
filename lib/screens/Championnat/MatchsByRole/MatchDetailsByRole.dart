@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/models/MatchListByRoleModel.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/ConvocationPage.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
@@ -21,117 +22,49 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
   final List<String> _tabs = ['DÉTAILS', 'CLASSEMENTS'];
 
   void _navigateToConvocation() {
-    // Find the first team the coach is allowed to convocate for
-    String? teamId;
+    // Calculate the time difference between now and the match start
+    DateTime now = DateTime.now();
+    DateTime matchStart = widget.match.date;
 
-    if (widget.match.coachTeams.contains(widget.match.firstTeam.id)) {
-      teamId = widget.match.firstTeam.id;
-    } else if (widget.match.coachTeams.contains(widget.match.secondTeam.id)) {
-      teamId = widget.match.secondTeam.id;
-    }
+    // Check if the current time is within 48 hours before the match
+    if (matchStart.difference(now).inHours <= 48 && matchStart.isAfter(now)) {
+      // Find the first team the coach is allowed to convocate for
+      String? teamId;
 
-    if (teamId != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ConvocationPage(
-            teamId: teamId!, // Use the found team ID
-            matchId: widget.match.id,
-            coachTeams: widget.match.coachTeams,
-          ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Vous n\'êtes pas autorisé à convoquer pour ce match'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-  void _showTeamSelectionDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Sélectionner l\'équipe à convoquer',
-            style: hsSemiBold.copyWith(fontSize: 18),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildTeamSelectionButton(
-                teamName: widget.match.firstTeam.designation,
-                teamId:
-                    widget.match.firstTeam.id, // Assuming there's an ID field
-              ),
-              SizedBox(height: 10),
-              _buildTeamSelectionButton(
-                teamName: widget.match.secondTeam.designation,
-                teamId:
-                    widget.match.secondTeam.id, // Assuming there's an ID field
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Annuler', style: hsRegular),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+      if (widget.match.coachTeams.contains(widget.match.firstTeam.id)) {
+        teamId = widget.match.firstTeam.id;
+      } else if (widget.match.coachTeams.contains(widget.match.secondTeam.id)) {
+        teamId = widget.match.secondTeam.id;
+      }
+
+      if (teamId != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConvocationPage(
+              teamId: teamId!, // Use the found team ID
+              matchId: widget.match.id,
+              coachTeams: widget.match.coachTeams,
             ),
-          ],
+          ),
         );
-      },
-    );
+      } else {
+        showReusableToastRed(
+          context: context,
+          message: 'Vous n\'êtes pas autorisé à convoquer pour ce match',
+          duration: Duration(seconds: 5),
+        );
+      }
+    } else {
+      showReusableToastRed(
+        context: context,
+        message: 'La convocation n\'est possible que dans les 48 heures précédant le match',
+        duration: Duration(seconds: 5),
+      );
+    }
   }
 
-  Widget _buildTeamSelectionButton(
-      {required String teamName, required String teamId}) {
-    return ElevatedButton(
-      onPressed: () {
-        // Close the dialog
-        Navigator.of(context).pop();
-        // Check if the coach can convocate for this match
-        if (widget.match.coachTeams.contains(widget.match.firstTeam.id) ||
-            widget.match.coachTeams.contains(widget.match.secondTeam.id)) {
-          // Navigate to ConvocationPage with selected team
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConvocationPage(
-                teamId: teamId, // Pass the selected team's ID
-                matchId: widget.match.id,
-                coachTeams: widget.match.coachTeams,
-              ),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:
-                  Text('Vous n\'êtes pas autorisé à convoquer pour ce match'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: DailozColor.appcolor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Text(
-        teamName,
-        style: hsRegular.copyWith(fontSize: 16),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {

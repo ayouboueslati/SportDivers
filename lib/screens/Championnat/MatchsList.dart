@@ -84,6 +84,24 @@ class MatchListPage extends StatelessWidget {
               );
             }
 
+            // Group matches by date, filtering out finished matches
+            Map<DateTime, List<Match>> matchesByDate = {};
+            for (var phase in provider.phases) {
+              for (var match in phase.matches) {
+                bool _isMatchFinished(Match match) {
+                  return DateTime.now().isAfter(match.date.add(
+                      Duration(hours: 3))); // Assuming matches last 2 hours
+                }
+                if (!_isMatchFinished(match)) {
+                  DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
+                  if (!matchesByDate.containsKey(matchDate)) {
+                    matchesByDate[matchDate] = [];
+                  }
+                  matchesByDate[matchDate]!.add(match);
+                }
+              }
+            }
+
             return RefreshIndicator(
               onRefresh: () => provider.fetchMatches(tournament.id),
               child: SingleChildScrollView(
@@ -92,7 +110,7 @@ class MatchListPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: provider.phases.map((phase) {
+                    children: matchesByDate.entries.map((entry) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -104,14 +122,14 @@ class MatchListPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              _formatDate(phase.date),
+                              _formatDate(entry.key),
                               style: hsSemiBold.copyWith(
                                 fontSize: 16,
                                 color: DailozColor.black,
                               ),
                             ),
                           ),
-                          ...phase.matches.map((match) => _buildMatchItem(context, match, height, width)).toList(),
+                          ...entry.value.map((match) => _buildMatchItem(context, match, height, width)).toList(),
                         ],
                       );
                     }).toList(),

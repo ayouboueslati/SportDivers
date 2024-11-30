@@ -85,17 +85,24 @@ class MatchListByRolePage extends StatelessWidget {
               );
             }
 
-            // Group matches by date
+            // Group matches by date, filtering out finished matches
             Map<DateTime, List<MatchByRole>> matchesByDate = {};
             for (var match in provider.matches) {
-              DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
-              if (!matchesByDate.containsKey(matchDate)) {
-                matchesByDate[matchDate] = [];
+              bool _isMatchFinished(MatchByRole match) {
+                return DateTime.now().isAfter(match.date.add(
+                    Duration(hours: 3))); // Assuming matches last 2 hours
               }
-              matchesByDate[matchDate]!.add(match);
+              if (!_isMatchFinished(match)) {
+                DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
+                if (!matchesByDate.containsKey(matchDate)) {
+                  matchesByDate[matchDate] = [];
+                }
+                matchesByDate[matchDate]!.add(match);
+              }
             }
 
-            return RefreshIndicator(
+
+              return RefreshIndicator(
               onRefresh: () => provider.fetchMatchesByRole(tournament.id),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
