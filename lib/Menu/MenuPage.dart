@@ -240,14 +240,7 @@ class _HomePageState extends State<HomePage> {
       crossAxisSpacing: width / 36,
       mainAxisSpacing: height / 56,
       children: [
-        // _buildTaskCard(
-        //     'Calendrier',
-        //     "assets/images/icons/chat.png",
-        //     Colors.blue[100]!,
-        //     TrainingScheduleScreen.id,
-        //     TrainingScheduleScreenCoach.id),
-        // _buildTaskCard('Messages', "assets/images/icons/chat.png",
-        //     Colors.purple[100]!, MessagesList.id, MessagesList.id),
+    if (widget.role != 'ARBITER') ...[
         if (widget.role != 'TEACHER') ...[
           _buildTaskCard('Sondages', "assets/images/icons/phone.png",
               Colors.red[100]!, PollSurveyPage.id, PollSurveyPage.id),
@@ -258,12 +251,13 @@ class _HomePageState extends State<HomePage> {
         ],
         _buildTaskCard('Assistance', "assets/images/icons/caution.png",
             Colors.orange[100]!, ReportPage.id, ReportPage.id),
-        _buildTaskCard('Profil', "assets/images/icons/employee.png",
-            Colors.green[100]!, ProfileScreen1.id, ProfileScreen1.id),
         _buildTaskCard('Tickets', "assets/images/icons/byod.png",
             Colors.purple[100]!, TicketsScreen.id, TicketsScreen.id),
+    ],
+        _buildTaskCard('Profil', "assets/images/icons/employee.png",
+            Colors.green[100]!, ProfileScreen1.id, ProfileScreen1.id),
          _buildTaskCard('Championnat', "assets/images/icons/championat.png",
-            Colors.purple[100]!,TournamentScreen.id, TournamentScreen.id),
+            Colors.orange[100]!,TournamentScreen.id, TournamentScreen.id),
       ],
     );
   }

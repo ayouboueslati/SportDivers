@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/ConvocationProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchListByRoleProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchListProvider.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/TeamsClassementProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/TournamentProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/FindMessagesProvider.dart';
@@ -19,7 +20,7 @@ import 'package:sportdivers/components/Loader.dart';
 import 'package:sportdivers/models/MatchModel.dart';
 import 'package:sportdivers/models/tournamentModel.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/ArbitrageMatch.dart';
-import 'package:sportdivers/screens/Championnat/ClassementPage.dart';
+import 'package:sportdivers/screens/Championnat/TeamsClassementPage.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/ConvocationPage.dart';
 import 'package:sportdivers/screens/Championnat/MatchDetails.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/MatchListByRole.dart';
@@ -108,6 +109,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MatchListProvider()),
         ChangeNotifierProvider(create: (_) => MatchListProviderByRole()),
         ChangeNotifierProvider(create: (_) => ConvocationProvider()),
+        ChangeNotifierProvider(create: (_) => TournamentRankingProvider()),
         Provider<FCMHandler>(
           create: (context) {
             final fcmHandler = FCMHandler();
@@ -142,7 +144,7 @@ class MyApp extends StatelessWidget {
 
             home: CustomLoaderPage(),
 
-            // home: const ConvocationPage(),
+            // home:  ClassementPage(),
             // home: MatchListPage(),
             //home:ClassementPage(),
             // home:ArbitratorMatchPage(),
@@ -174,6 +176,7 @@ class MyApp extends StatelessWidget {
               StatDashboardAdhrt.id: (context) => StatDashboardAdhrt(),
               StatDashboardCoach.id: (context) => StatDashboardCoach(),
               TournamentScreen.id: (context) => TournamentScreen(),
+            //  TeamsClassementPage.id: (context) => TeamsClassementPage(),
               //  MatchDetailsPage.id: (context) => MatchDetailsPage(match: ,),
               MatchListPage.id: (context) {
                 final tournament =

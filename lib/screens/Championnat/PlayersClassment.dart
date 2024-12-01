@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
-class ButeursAssistsClassment extends StatelessWidget {
+class PlayersClassment extends StatelessWidget {
   final String teamName;
 
   // Extended sample data for top scorers and assist providers
@@ -26,7 +26,7 @@ class ButeursAssistsClassment extends StatelessWidget {
     {'name': 'Player T', 'assists': 3, 'photoUrl': 'assets/images/ronaldinho.png'},
   ];
 
-  ButeursAssistsClassment({Key? key, required this.teamName}) : super(key: key);
+  PlayersClassment({Key? key, required this.teamName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

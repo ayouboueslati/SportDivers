@@ -8,7 +8,7 @@ class MatchByRole {
   final String? arbiter;
   final Team firstTeam;
   final Team secondTeam;
-  final List<String> coachTeams;
+  final List<String>? coachTeams;
 
   MatchByRole({
     required this.id,
@@ -34,7 +34,9 @@ class MatchByRole {
       arbiter: json['arbiter'],
       firstTeam: Team.fromJson(json['firstTeam']),
       secondTeam: Team.fromJson(json['secondTeam']),
-      coachTeams: List<String>.from(json['coachTeams']),
+      coachTeams: json['coachTeams'] != null
+          ? List<String>.from(json['coachTeams'])
+          : null,
     );
   }
 
@@ -49,7 +51,7 @@ class MatchByRole {
       'arbiter': arbiter,
       'firstTeam': firstTeam.toJson(),
       'secondTeam': secondTeam.toJson(),
-      'coachTeams': coachTeams,
+      if (coachTeams != null) 'coachTeams': coachTeams,
     };
   }
 }

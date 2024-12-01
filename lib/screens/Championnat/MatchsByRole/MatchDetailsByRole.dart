@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
 import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/models/MatchListByRoleModel.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/ConvocationPage.dart';
@@ -31,9 +33,9 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
       // Find the first team the coach is allowed to convocate for
       String? teamId;
 
-      if (widget.match.coachTeams.contains(widget.match.firstTeam.id)) {
+      if (widget.match.coachTeams!.contains(widget.match.firstTeam.id)) {
         teamId = widget.match.firstTeam.id;
-      } else if (widget.match.coachTeams.contains(widget.match.secondTeam.id)) {
+      } else if (widget.match.coachTeams!.contains(widget.match.secondTeam.id)) {
         teamId = widget.match.secondTeam.id;
       }
 
@@ -44,7 +46,7 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
             builder: (context) => ConvocationPage(
               teamId: teamId!, // Use the found team ID
               matchId: widget.match.id,
-              coachTeams: widget.match.coachTeams,
+              coachTeams: widget.match.coachTeams!,
             ),
           ),
         );
@@ -124,21 +126,26 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                         "${widget.match.date.day}/${widget.match.date.month}/${widget.match.date.year} ${widget.match.date.hour.toString().padLeft(2, '0')}:${widget.match.date.minute.toString().padLeft(2, '0')}",
                         style: hsRegular.copyWith(fontSize: 14),
                       ),
-                      Flexible(
-                        child: ElevatedButton.icon(
-                          onPressed: _navigateToConvocation,
-                          icon: const Icon(Icons.groups_rounded),
-                          label: const Text('Convoque'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: DailozColor.textblue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                      // Only show the button if the user is not a student
+                      Consumer<AuthenticationProvider>(
+                        builder: (context, authProvider, child) {
+                          return authProvider.accountType != 'STUDENT'
+                              ? ElevatedButton.icon(
+                            onPressed: _navigateToConvocation,
+                            icon: const Icon(Icons.groups_rounded),
+                            label: const Text('Convoque'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: DailozColor.textblue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                        ),
+                          )
+                              : SizedBox.shrink(); // Hide the button completely for students
+                        },
                       ),
                     ],
                   ),
