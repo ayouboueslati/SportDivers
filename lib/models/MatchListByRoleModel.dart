@@ -5,7 +5,7 @@ class MatchByRole {
   final String secondTeamType;
   final TournamentPhase tournamentPhase;
   final Field field;
-  final String? arbiter;
+  final Arbiter? arbiter;
   final Team firstTeam;
   final Team secondTeam;
   final List<String>? coachTeams;
@@ -31,7 +31,9 @@ class MatchByRole {
       secondTeamType: json['secondTeamType'],
       tournamentPhase: TournamentPhase.fromJson(json['tournamentPhase']),
       field: Field.fromJson(json['field']),
-      arbiter: json['arbiter'],
+      arbiter: json['arbiter'] != null
+          ? Arbiter.fromJson(json['arbiter'])
+          : null,
       firstTeam: Team.fromJson(json['firstTeam']),
       secondTeam: Team.fromJson(json['secondTeam']),
       coachTeams: json['coachTeams'] != null
@@ -48,7 +50,7 @@ class MatchByRole {
       'secondTeamType': secondTeamType,
       'tournamentPhase': tournamentPhase.toJson(),
       'field': field.toJson(),
-      'arbiter': arbiter,
+      'arbiter': arbiter?.toJson(),
       'firstTeam': firstTeam.toJson(),
       'secondTeam': secondTeam.toJson(),
       if (coachTeams != null) 'coachTeams': coachTeams,
@@ -147,6 +149,38 @@ class Category {
     return {
       'id': id,
       'designation': designation,
+    };
+  }
+}
+
+class Arbiter {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String profilePicture;
+
+  Arbiter({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    required this.profilePicture,
+  });
+
+  factory Arbiter.fromJson(Map<String, dynamic> json) {
+    return Arbiter(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      profilePicture: json['profilePicture'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'profilePicture': profilePicture,
     };
   }
 }

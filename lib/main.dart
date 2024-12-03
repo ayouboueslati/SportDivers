@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/ConvocationProvider.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/MatchDetailsProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchListByRoleProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchListProvider.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/PlayersClassementProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/TeamsClassementProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/TournamentProvider.dart';
 import 'package:sportdivers/Provider/ChatProvider/ChatRoomsProvider.dart';
@@ -17,7 +18,6 @@ import 'package:sportdivers/Provider/ProfileProvider/EditProfileProvider.dart';
 import 'package:sportdivers/Provider/TrainingSchedule/CoachDashboardProvider.dart';
 import 'package:sportdivers/Provider/UserProvider/userProvider.dart';
 import 'package:sportdivers/components/Loader.dart';
-import 'package:sportdivers/models/MatchModel.dart';
 import 'package:sportdivers/models/tournamentModel.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/ArbitrageMatch.dart';
 import 'package:sportdivers/screens/Championnat/TeamsClassementPage.dart';
@@ -110,6 +110,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MatchListProviderByRole()),
         ChangeNotifierProvider(create: (_) => ConvocationProvider()),
         ChangeNotifierProvider(create: (_) => TournamentRankingProvider()),
+        ChangeNotifierProvider(create: (_) => PlayerRankingProvider()),
+        ChangeNotifierProvider(create: (_) => MatchDetailsProvider()),
         Provider<FCMHandler>(
           create: (context) {
             final fcmHandler = FCMHandler();

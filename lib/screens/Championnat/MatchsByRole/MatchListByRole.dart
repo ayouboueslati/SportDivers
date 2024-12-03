@@ -85,24 +85,18 @@ class MatchListByRolePage extends StatelessWidget {
               );
             }
 
-            // Group matches by date, filtering out finished matches
+
+            // Group matches by date, now including ALL matches
             Map<DateTime, List<MatchByRole>> matchesByDate = {};
             for (var match in provider.matches) {
-              bool _isMatchFinished(MatchByRole match) {
-                return DateTime.now().isAfter(match.date.add(
-                    Duration(hours: 3))); // Assuming matches last 2 hours
+              DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
+              if (!matchesByDate.containsKey(matchDate)) {
+                matchesByDate[matchDate] = [];
               }
-              if (!_isMatchFinished(match)) {
-                DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
-                if (!matchesByDate.containsKey(matchDate)) {
-                  matchesByDate[matchDate] = [];
-                }
-                matchesByDate[matchDate]!.add(match);
-              }
+              matchesByDate[matchDate]!.add(match);
             }
 
-
-              return RefreshIndicator(
+            return RefreshIndicator(
               onRefresh: () => provider.fetchMatchesByRole(tournament.id),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -217,6 +211,9 @@ class MatchListByRolePage extends StatelessWidget {
                 _buildTeamRow(match.firstTeam.designation, match.firstTeam.photo, height),
                 SizedBox(height: height / 80),
                 _buildTeamRow(match.secondTeam.designation, match.secondTeam.photo, height),
+                SizedBox(height: height / 80),
+                // New Arbiter Row
+                _buildArbiterRow(match, height, width),
               ],
             ),
           ),
@@ -280,7 +277,41 @@ class MatchListByRolePage extends StatelessWidget {
       ),
     );
   }
-
+  Widget _buildArbiterRow(MatchByRole match, double height, double width) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: DailozColor.bggray.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Icon(
+            Icons.outlined_flag,
+            size: height / 40,
+            color: DailozColor.textgray,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              match.arbiter != null
+                  ? "Arbitre : " +
+                  match.arbiter!.firstName +
+                  " " +
+                  match.arbiter!.lastName
+                  : 'Arbitre Inconnu',
+              style: hsMedium.copyWith(
+                fontSize: 14,
+                color: match.arbiter != null ? DailozColor.black : Colors.grey,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   Widget _buildDefaultAvatar() {
     return Container(
       color: DailozColor.bggray,

@@ -50,7 +50,7 @@ class MatchListPage extends StatelessWidget {
               ),
             ),
           ),
-          title: Text("Matchs à venir", style: hsSemiBold.copyWith(fontSize: 22)),
+          title: Text("Tous Les Matchs", style: hsSemiBold.copyWith(fontSize: 22)),
           centerTitle: true,
         ),
         body: Consumer<MatchListProvider>(
@@ -64,7 +64,8 @@ class MatchListPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 60),
                     const SizedBox(height: 16),
                     Text(
                       'Erreur de chargement',
@@ -84,22 +85,23 @@ class MatchListPage extends StatelessWidget {
               );
             }
 
-            // Group matches by date, filtering out finished matches
-            Map<DateTime, List<Match>> matchesByDate = {};
+            // Collect all matches from all phases
+            List<Match> allMatches = [];
             for (var phase in provider.phases) {
-              for (var match in phase.matches) {
-                bool _isMatchFinished(Match match) {
-                  return DateTime.now().isAfter(match.date.add(
-                      Duration(hours: 3))); // Assuming matches last 2 hours
-                }
-                if (!_isMatchFinished(match)) {
-                  DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
-                  if (!matchesByDate.containsKey(matchDate)) {
-                    matchesByDate[matchDate] = [];
-                  }
-                  matchesByDate[matchDate]!.add(match);
-                }
+              allMatches.addAll(phase.matches);
+            }
+
+            // Sort matches by date
+            allMatches.sort((a, b) => a.date.compareTo(b.date));
+
+            // Group matches by date
+            Map<DateTime, List<Match>> matchesByDate = {};
+            for (var match in allMatches) {
+              DateTime matchDate = DateTime(match.date.year, match.date.month, match.date.day);
+              if (!matchesByDate.containsKey(matchDate)) {
+                matchesByDate[matchDate] = [];
               }
+              matchesByDate[matchDate]!.add(match);
             }
 
             return RefreshIndicator(
@@ -107,7 +109,8 @@ class MatchListPage extends StatelessWidget {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: width/36, vertical: height/36),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: width / 36, vertical: height / 36),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: matchesByDate.entries.map((entry) {
@@ -143,7 +146,8 @@ class MatchListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMatchItem(BuildContext context, Match match, double height, double width) {
+  Widget _buildMatchItem(
+      BuildContext context, Match match, double height, double width) {
     return Container(
       margin: EdgeInsets.only(bottom: height / 46),
       decoration: BoxDecoration(
@@ -165,7 +169,7 @@ class MatchListPage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MatchDetailsPage(match: match),
+                builder: (context) => MatchDetailsPage(matchId: match.id),
               ),
             );
           },
@@ -214,9 +218,14 @@ class MatchListPage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: height / 66),
-                _buildTeamRow(match.firstTeam.designation, match.firstTeam.photo ?? '', height),
+                _buildTeamRow(match.firstTeam.designation,
+                    match.firstTeam.photo ?? '', height),
                 SizedBox(height: height / 80),
-                _buildTeamRow(match.secondTeam.designation, match.secondTeam.photo ?? '', height),
+                _buildTeamRow(match.secondTeam.designation,
+                    match.secondTeam.photo ?? '', height),
+                SizedBox(height: height / 80),
+                // New Arbiter Row
+                _buildArbiterRow(match, height, width),
               ],
             ),
           ),
@@ -239,7 +248,8 @@ class MatchListPage extends StatelessWidget {
           Expanded(
             child: Text(
               teamName,
-              style: hsSemiBold.copyWith(fontSize: 14, color: DailozColor.black),
+              style:
+                  hsSemiBold.copyWith(fontSize: 14, color: DailozColor.black),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -264,19 +274,56 @@ class MatchListPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(height / 52),
         child: logoUrl.isNotEmpty
             ? Image.network(
-          logoUrl,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(),
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-              ),
-            );
-          },
-        )
+                logoUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildDefaultAvatar(),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  );
+                },
+              )
             : _buildDefaultAvatar(),
+      ),
+    );
+  }
+
+  Widget _buildArbiterRow(Match match, double height, double width) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: DailozColor.bggray.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Icon(
+            Icons.outlined_flag,
+            size: height / 40,
+            color: DailozColor.textgray,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              match.arbiter != null
+                  ? "Arbitre : " +
+                      match.arbiter!.firstName +
+                      " " +
+                      match.arbiter!.lastName
+                  : 'Arbitre Inconnu',
+              style: hsMedium.copyWith(
+                fontSize: 14,
+                color: match.arbiter != null ? DailozColor.black : Colors.grey,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

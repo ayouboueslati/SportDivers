@@ -79,6 +79,30 @@ class Group {
   }
 }
 
+// Arbiter Model
+class Arbiter {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String? profilePicture;
+
+  Arbiter({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    this.profilePicture,
+  });
+
+  factory Arbiter.fromJson(Map<String, dynamic> json) {
+    return Arbiter(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      profilePicture: json['profilePicture'],
+    );
+  }
+}
+
 class Match {
   final String id;
   final DateTime date;
@@ -87,6 +111,7 @@ class Match {
   final Team firstTeam;
   final Team secondTeam;
   final Field field;
+  final Arbiter? arbiter;
 
   Match({
     required this.id,
@@ -96,6 +121,7 @@ class Match {
     required this.firstTeam,
     required this.secondTeam,
     required this.field,
+    this.arbiter,
   });
 
   factory Match.fromJson(Map<String, dynamic> json) {
@@ -107,10 +133,12 @@ class Match {
       firstTeam: Team.fromJson(json['firstTeam']),
       secondTeam: Team.fromJson(json['secondTeam']),
       field: Field.fromJson(json['field']),
+      arbiter: json['arbiter'] != null
+          ? Arbiter.fromJson(json['arbiter'])
+          : null,
     );
   }
 }
-
 // Team Model
 class Team {
   final String id;

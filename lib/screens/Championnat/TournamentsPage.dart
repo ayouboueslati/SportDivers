@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/TournamentProvider.dart';
 import 'package:sportdivers/models/tournamentModel.dart';
+import 'package:sportdivers/screens/Championnat/PlayersClassment.dart';
 import 'package:sportdivers/screens/Championnat/TeamsClassementPage.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/MatchListByRole.dart';
 import 'package:sportdivers/screens/Championnat/MatchsList.dart';
@@ -165,30 +166,6 @@ class TournamentItem extends StatelessWidget {
                     color: DailozColor.textblue,
                   ),
                 ),
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TeamsClassementPage(
-                              tournamentId: tournament.id),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.star_border_outlined),
-                    label: const Text('Classement'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DailozColor.lightred,
-                      foregroundColor: Colors.white,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -200,52 +177,117 @@ class TournamentItem extends StatelessWidget {
             _buildInfoRow(Icons.attach_money, 'Frais d\'inscription ',
                 '${tournament.fees.toStringAsFixed(2)} DT'),
             // Add groups information
-            const SizedBox(height: 8),
+            const SizedBox(height: 15),
             // _buildGroupCountRow('Groupes Internes ', tournament.groups.length),
             // _buildGroupCountRow('Groupes Externes ', tournament.externalGroups.length),
 
             // const SizedBox(height: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Column(
               children: [
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, MatchListByRolePage.id,
-                          arguments: tournament);
-                    },
-                    icon: Icon(Icons.sports_soccer_outlined),
-                    label: const Text('Vos Matchs'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DailozColor.textblue,
-                      foregroundColor: Colors.white,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, MatchListByRolePage.id,
+                                arguments: tournament);
+                          },
+                         // icon: const Icon(Icons.sports_soccer_outlined),
+                          label: const Text('Vos Matchs', textAlign: TextAlign.center),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: DailozColor.textblue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, MatchListPage.id,
+                                arguments: tournament);
+                          },
+                         // icon: const Icon(Icons.sports_soccer_outlined),
+                          label: const Text('Tous Les Matchs', textAlign: TextAlign.center),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: DailozColor.textblue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, MatchListPage.id,
-                          arguments: tournament);
-                    },
-                    icon: Icon(Icons.sports_soccer_outlined),
-                    label: const Text('Tous Les Matchs'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DailozColor.textblue,
-                      foregroundColor: Colors.white,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    TeamsClassementPage(tournamentId: tournament.id),
+                              ),
+                            );
+                          },
+                         // icon: const Icon(Icons.star_border_outlined),
+                          label: const Text('Classement par équipe', textAlign: TextAlign.center),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: DailozColor.lightred,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PlayersClassment(tournamentId: tournament.id),
+                              ),
+                            );
+                          },
+                         // icon: const Icon(Icons.star_border_outlined),
+                          label: const Text('Classement des joueurs', textAlign: TextAlign.center),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: DailozColor.lightred,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             )

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/ConvocationProvider.dart';
+import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/models/ConvocationStudModel.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
@@ -148,14 +149,10 @@ class _ConvocationPageState extends State<ConvocationPage> {
     );
 
     if (result) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'adhérents convoqués',
-              style: hsRegular
-          ),
-          backgroundColor: Colors.green[600],
-        ),
+      showReusableToast(
+        context: context,
+        message: 'Adhérents Convoqués Avec Succès',
+        duration: Duration(seconds: 5),
       );
       Navigator.pop(context, provider.selectedStudentIds);
     } else {
@@ -179,7 +176,7 @@ class _ConvocationPageState extends State<ConvocationPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 100, color: Colors.red),
+          const Icon(Icons.error_outline, size: 100, color: Colors.red),
           const SizedBox(height: 16),
           Text(
             errorMessage,
@@ -196,7 +193,7 @@ class _ConvocationPageState extends State<ConvocationPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.group_off, size: 100, color: Colors.grey),
+          const Icon(Icons.group_off, size: 100, color: Colors.grey),
           const SizedBox(height: 16),
           Text(
             'Aucun adhérent trouvé',

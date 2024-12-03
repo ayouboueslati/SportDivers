@@ -3,78 +3,52 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportdivers/Provider/constantsProvider.dart';
 import 'dart:convert';
-import 'package:sportdivers/models/tournamentModel.dart';
+import 'package:sportdivers/models/MatchDetailsModel.dart';
 
-
-class MatchListProvider11111111111 extends ChangeNotifier {
-  List<MatchPhase> _phases = [];
+class MatchDetailsProvider extends ChangeNotifier {
+  Match? _match;
   bool _isLoading = false;
   String? _error;
 
-  List<MatchPhase> get phases => _phases;
+  Match? get match => _match;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> fetchMatches(String tournamentId) async {
+  Future<void> fetchMatchDetails(String matchId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
-      _isLoading = true;
-      notifyListeners();
-      final url = '${Constants.baseUrl}/tournaments/matches/$tournamentId';
-      try {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-        if (token == null) {
-          throw Exception('Token not found');
-        }
+      if (token == null) {
+        throw Exception('Token not found');
+      }
 
-        final response = await http.get(
-          Uri.parse(url),
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        );
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/tournaments/matches/$matchId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as List<dynamic>;
-        final matches = data.map((item) => Match.fromJson(item)).toList();
-
-        // Group matches by date
-        Map<DateTime, List<Match>> groupedMatches = {};
-        for (var match in matches) {
-          final date = DateTime(match.date.year, match.date.month, match.date.day);
-          if (!groupedMatches.containsKey(date)) {
-            groupedMatches[date] = [];
-          }
-          groupedMatches[date]?.add(match);
-        }
-
-        // Create MatchPhase objects
-        _phases = groupedMatches.entries.map((entry) {
-          return MatchPhase(
-            date: entry.key,
-            matches: entry.value,
-          );
-        }).toList();
-
-        _error = null;
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        _match = Match.fromJson(responseData);
+        _isLoading = false;
+        notifyListeners();
       } else {
-        _error = 'Failed to fetch matches: ${response.statusCode}';
+        _error = 'Failed to load match details. Status code: ${response.statusCode}';
+        _isLoading = false;
+        notifyListeners();
       }
     } catch (e) {
-      _error = 'Error: $e';
-    } finally {
+      _error = 'An error occurred: ${e.toString()}';
       _isLoading = false;
       notifyListeners();
     }
   }
-}
-
-class MatchPhase {
-  final DateTime date;
-  final List<Match> matches;
-
-  MatchPhase({
-    required this.date,
-    required this.matches,
-  });
 }
