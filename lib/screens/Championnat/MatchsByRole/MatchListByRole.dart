@@ -324,10 +324,12 @@ class MatchListByRolePage extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+    DateTime adjustedDate = date.add(const Duration(hours: 1));
+    return '${adjustedDate.day}/${adjustedDate.month}/${adjustedDate.year}';
   }
 
   String _formatTime(DateTime date) {
-    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    DateTime adjustedDate = date.add(const Duration(hours: 1));
+    return '${adjustedDate.hour.toString().padLeft(2, '0')}:${adjustedDate.minute.toString().padLeft(2, '0')}';
   }
 }

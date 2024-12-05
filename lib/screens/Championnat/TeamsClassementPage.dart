@@ -198,7 +198,7 @@ class _TeamsClassementPageState extends State<TeamsClassementPage> {
         children: [
           Expanded(
             flex: 1,
-            child: _buildHeaderText('Pos'),
+            child: _buildHeaderText('#'),
           ),
           Expanded(
             flex: 5,

@@ -1,30 +1,38 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/ArbitratorProvider.dart';
+import 'package:sportdivers/models/MatchDetailsModel.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
 
 class ArbitratorMatchPage extends StatefulWidget {
-  const ArbitratorMatchPage({Key? key}) : super(key: key);
+  final Match match;
+
+  const ArbitratorMatchPage({Key? key, required this.match}) : super(key: key);
 
   @override
   _ArbitratorMatchPageState createState() => _ArbitratorMatchPageState();
 }
 
-class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
-  int _selectedIndex = 0;
-  final List<String> _tabs = ['MATCH CONTROL', 'ÉQUIPES', 'ACTIONS'];
+class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> with WidgetsBindingObserver {
+  late MatchActionProvider _matchActionProvider;
+
   int homeScore = 0;
   int awayScore = 0;
   bool isMatchStarted = false;
   Duration matchTime = Duration.zero;
-  late Timer _timer;
 
-  // Static match data
-  final String homeTeam = "Club Africain ";
-  final String awayTeam = "FC Barcelone";
-  final String homeTeamLogo = "assets/images/CA.png";
-  final String awayTeamLogo = "assets/images/barca.png";
+  Timer? _timer;
+  DateTime? _startTime;
+
+  // Use match details from the passed MatchByRole object
+  late String homeTeam;
+  late String awayTeam;
+  late String homeTeamLogo;
+  late String awayTeamLogo;
 
   List<Map<String, dynamic>> homeTeamPlayers = [];
   List<Map<String, dynamic>> awayTeamPlayers = [];
@@ -33,122 +41,186 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize with realistic player names
-    homeTeamPlayers = [
-      {
-        'id': 'H1',
-        'name': 'Mbappé',
-        'number': 7,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'H2',
-        'name': 'Dembélé',
-        'number': 10,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'H3',
-        'name': 'Hakimi',
-        'number': 2,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'H4',
-        'name': 'Marquinhos',
-        'number': 5,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'H5',
-        'name': 'Vitinha',
-        'number': 17,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-    ];
 
-    awayTeamPlayers = [
-      {
-        'id': 'A1',
-        'name': 'Aubameyang',
-        'number': 9,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'A2',
-        'name': 'Veretout',
-        'number': 8,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'A3',
-        'name': 'Clauss',
-        'number': 7,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'A4',
-        'name': 'Gigot',
-        'number': 4,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-      {
-        'id': 'A5',
-        'name': 'Rongier',
-        'number': 21,
-        'goals': 0,
-        'yellowCards': 0,
-        'redCards': 0,
-        'isOnField': true
-      },
-    ];
+    // Initialize the match action provider
+    _matchActionProvider = MatchActionProvider(matchId: widget.match.id);
+
+    homeTeam = widget.match.firstTeam.designation;
+    awayTeam = widget.match.secondTeam.designation;
+    homeTeamLogo = widget.match.firstTeam.photo!;
+    awayTeamLogo = widget.match.secondTeam.photo!;
+
+    // Initialize players (you might want to fetch actual player data)
+    homeTeamPlayers = _initializePlayers(true);
+    awayTeamPlayers = _initializePlayers(false);
+
+    // Calculate initial score based on match actions
+    homeScore = _calculateTeamScore(widget.match.actions, widget.match.firstTeam.id);
+    awayScore = _calculateTeamScore(widget.match.actions, widget.match.secondTeam.id);
+
+    _restoreMatchState();
+  }
+
+
+  List<Map<String, dynamic>> _initializePlayers(bool isHomeTeam) {
+    // Get the team based on whether it's home or away
+    Team team = isHomeTeam ? widget.match.firstTeam : widget.match.secondTeam;
+
+    // Check if the team has players
+    if (team.players == null || team.players!.isEmpty) {
+      // If no players, return a default placeholder
+      return [
+        {
+          'id': 'Unknown',
+          'name': 'No Players',
+          'number': 0,
+          'goals': 0,
+          'yellowCards': 0,
+          'redCards': 0,
+          'isOnField': false
+        }
+      ];
+    }
+
+    // Map the players from the model to the required format
+    return team.players!.map((player) {
+      // Calculate goals for this player from match actions
+      int goals = widget.match.actions
+          .where((action) =>
+      action.type == 'GOAL' &&
+          action.target == player.id)
+          .length;
+
+      // Calculate yellow cards
+      int yellowCards = widget.match.actions
+          .where((action) =>
+      action.type == 'YELLOW_CARD' &&
+          action.target == player.id)
+          .length;
+
+      // Calculate red cards
+      int redCards = widget.match.actions
+          .where((action) =>
+      action.type == 'RED_CARD' &&
+          action.target == player.id)
+          .length;
+
+      return {
+        'id': player.id,
+        'name': player.fullName,
+        'number': 0, // You might want to add jersey number to the Player model
+        'goals': goals,
+        'yellowCards': yellowCards,
+        'redCards': redCards,
+        'isOnField': true // Assuming all players start on the field
+      };
+    }).toList();
+  }
+
+  int _calculateTeamScore(List<dynamic> actions, String teamId) {
+    return actions
+        .where((action) => action.type == 'GOAL' && action.targetTeam == teamId)
+        .length;
+  }
+
+
+  Future<void> _restoreMatchState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Check if the stored match ID matches the current match
+    final storedMatchId = prefs.getString('current_match_id');
+    if (storedMatchId != widget.match.id) {
+      return;
+    }
+
+    setState(() {
+      // Restore match time
+      final savedSeconds = prefs.getInt('match_time_seconds') ?? 0;
+      matchTime = Duration(seconds: savedSeconds);
+
+      // Restore match started state
+      isMatchStarted = prefs.getBool('is_match_started') ?? false;
+    });
+
+    // If match was running when app was closed, restart the timer
+    if (isMatchStarted) {
+      // Calculate elapsed time since last save
+      final lastSaveTimeString = prefs.getString('last_save_time');
+      if (lastSaveTimeString != null) {
+        final lastSaveTime = DateTime.parse(lastSaveTimeString);
+        final elapsedTime = DateTime.now().difference(lastSaveTime);
+        matchTime += elapsedTime;
+      }
+
+      startMatch();
+    }
+  }
+
+  Future<void> _saveMatchState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await Future.wait([
+      prefs.setString('current_match_id', widget.match.id),
+      prefs.setInt('match_time_seconds', matchTime.inSeconds),
+      prefs.setBool('is_match_started', isMatchStarted),
+      prefs.setString('last_save_time', DateTime.now().toIso8601String())
+    ]);
   }
 
   void startMatch() {
+    // Cancel any existing timer
+    _timer?.cancel();
+
     setState(() {
       isMatchStarted = true;
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          matchTime = Duration(seconds: matchTime.inSeconds + 1);
-        });
+    });
+
+    // Start a new timer
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        matchTime += Duration(seconds: 1);
+        _saveMatchState();
       });
     });
   }
 
   void pauseMatch() {
-    _timer.cancel();
+    // Null-check before cancelling
+    _timer?.cancel();
+
     setState(() {
       isMatchStarted = false;
     });
+
+    _saveMatchState();
   }
 
+  // In your build method, modify the play/pause button
+  IconButton buildMatchControlButton() {
+    return IconButton(
+      icon: Icon(
+        isMatchStarted ? Icons.pause : Icons.play_arrow,
+        size: 50,
+      ),
+      onPressed: () {
+        // Safely handle starting or pausing the match
+        if (isMatchStarted) {
+          pauseMatch();
+        } else {
+          startMatch();
+        }
+      },
+      padding: EdgeInsets.symmetric(
+          vertical: 10, horizontal: 10),
+    );
+  }
+
+  @override
+  void dispose() {
+    // Ensure timer is cancelled when the widget is disposed
+    _timer?.cancel();
+    super.dispose();
+  }
   void addGoal(bool isHomeTeam) {
     showDialog(
       context: context,
@@ -202,21 +274,42 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
                         margin: const EdgeInsets.only(bottom: 8),
                         child: InkWell(
                           onTap: () {
-                            setState(() {
-                              if (isHomeTeam) {
-                                homeScore++;
+                            _matchActionProvider.addMatchAction(
+                                type: 'GOAL',
+                                minute: matchTime.inMinutes,
+                                targetTeam: isHomeTeam
+                                    ? widget.match.firstTeam.id
+                                    : widget.match.secondTeam.id,
+                                target: player['id']
+                            ).then((success) {
+                              if (success) {
+                                setState(() {
+                                  if (isHomeTeam) {
+                                    homeScore++;
+                                  } else {
+                                    awayScore++;
+                                  }
+                                  player['goals']++;
+                                  matchEvents.add({
+                                    'time': matchTime,
+                                    'type': 'goal',
+                                    'player': player['name'],
+                                    'team': isHomeTeam ? 'home' : 'away',
+                                  });
+                                });
+                                Navigator.pop(context);
                               } else {
-                                awayScore++;
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            _matchActionProvider.errorMessage ??
+                                                'Failed to add goal'
+                                        )
+                                    )
+                                );
                               }
-                              player['goals']++;
-                              matchEvents.add({
-                                'time': matchTime,
-                                'type': 'goal',
-                                'player': player['name'],
-                                'team': isHomeTeam ? 'home' : 'away',
-                              });
                             });
-                            Navigator.pop(context);
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -343,28 +436,51 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
                       children: (isHomeTeam ? homeTeamPlayers : awayTeamPlayers)
                           .where((player) => player['isOnField'])
                           .map((player) => Container(
-                        margin: const EdgeInsets.only(bottom: 8),
+                        // ... (existing container code)
                         child: InkWell(
                           onTap: () {
-                            setState(() {
-                              if (isYellow) {
-                                player['yellowCards']++;
-                                if (player['yellowCards'] == 2) {
-                                  player['redCards']++;
-                                  player['isOnField'] = false;
-                                }
+                            String cardType = isYellow ? 'YELLOW_CARD' : 'RED_CARD';
+
+                            _matchActionProvider.addMatchAction(
+                                type: cardType,
+                                minute: matchTime.inMinutes,
+                                targetTeam: isHomeTeam
+                                    ? widget.match.firstTeam.id
+                                    : widget.match.secondTeam.id,
+                                target: player['id']
+                            ).then((success) {
+                              if (success) {
+                                setState(() {
+                                  if (isYellow) {
+                                    player['yellowCards']++;
+                                    if (player['yellowCards'] == 2) {
+                                      player['redCards']++;
+                                      player['isOnField'] = false;
+                                    }
+                                  } else {
+                                    player['redCards']++;
+                                    player['isOnField'] = false;
+                                  }
+                                  matchEvents.add({
+                                    'time': matchTime,
+                                    'type': isYellow ? 'yellowCard' : 'redCard',
+                                    'player': player['name'],
+                                    'team': isHomeTeam ? 'home' : 'away',
+                                  });
+                                });
+                                Navigator.pop(context);
                               } else {
-                                player['redCards']++;
-                                player['isOnField'] = false;
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            _matchActionProvider.errorMessage ??
+                                                'Failed to add card'
+                                        )
+                                    )
+                                );
                               }
-                              matchEvents.add({
-                                'time': matchTime,
-                                'type': isYellow ? 'yellowCard' : 'redCard',
-                                'player': player['name'],
-                                'team': isHomeTeam ? 'home' : 'away',
-                              });
                             });
-                            Navigator.pop(context);
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -439,41 +555,51 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
 
   Widget _buildTeamDetails(bool isHomeTeam) {
     final players = isHomeTeam ? homeTeamPlayers : awayTeamPlayers;
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: DailozColor.bggray,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            isHomeTeam ? homeTeam : awayTeam,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Determine responsiveness based on available width
+        final isNarrow = constraints.maxWidth < 350;
+        final isWide = constraints.maxWidth > 600;
+
+        return Container(
+          padding: EdgeInsets.all(isNarrow ? 6 : 10),
+          decoration: BoxDecoration(
+            color: DailozColor.bggray,
+            borderRadius: BorderRadius.circular(14),
           ),
-          SizedBox(height: 10),
-          ...players
-              .map((player) => Container(
-                    margin: EdgeInsets.only(bottom: 8),
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: DailozColor.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 24,
-                              height: 24,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: DailozColor.lightgreen,
-                                shape: BoxShape.circle,
-                              ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isHomeTeam ? homeTeam : awayTeam,
+                style: TextStyle(
+                    fontSize: isNarrow ? 14 : 16,
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              SizedBox(height: 10),
+              ...players.map((player) => Container(
+                margin: EdgeInsets.only(bottom: 8),
+                padding: EdgeInsets.all(isNarrow ? 6 : 8),
+                decoration: BoxDecoration(
+                  color: DailozColor.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: isNarrow ? 20 : 24,
+                            height: isNarrow ? 20 : 24,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: DailozColor.lightgreen,
+                              shape: BoxShape.circle,
+                            ),
+                            child: FittedBox(
                               child: Text(
                                 '${player['number']}',
                                 style: TextStyle(
@@ -482,45 +608,71 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 8),
-                            Text(
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
                               player['name'],
-                              style: TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: isNarrow ? 12 : 14,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            if (player['goals'] > 0)
-                              Container(
-                                margin: EdgeInsets.only(right: 4),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.sports_soccer, size: 16),
-                                    Text('${player['goals']}'),
-                                  ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        if (player['goals'] > 0)
+                          Padding(
+                            padding: EdgeInsets.only(right: 4),
+                            child: Row(
+                              children: [
+                                Icon(
+                                    Icons.sports_soccer,
+                                    size: isNarrow ? 14 : 16
                                 ),
-                              ),
-                            if (player['yellowCards'] > 0)
-                              Container(
-                                margin: EdgeInsets.only(right: 4),
-                                child: Icon(Icons.square_rounded,
-                                    color: Colors.yellow, size: 16),
-                              ),
-                            if (player['redCards'] > 0)
-                              Icon(Icons.square_rounded,
-                                  color: Colors.red, size: 16),
-                            if (!player['isOnField'])
-                              Icon(Icons.person_off,
-                                  color: Colors.grey, size: 16),
-                          ],
-                        ),
+                                Text(
+                                  '${player['goals']}',
+                                  style: TextStyle(
+                                      fontSize: isNarrow ? 12 : 14
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (player['yellowCards'] > 0)
+                          Padding(
+                            padding: EdgeInsets.only(right: 4),
+                            child: Icon(
+                                Icons.square_rounded,
+                                color: Colors.yellow,
+                                size: isNarrow ? 14 : 16
+                            ),
+                          ),
+                        if (player['redCards'] > 0)
+                          Icon(
+                              Icons.square_rounded,
+                              color: Colors.red,
+                              size: isNarrow ? 14 : 16
+                          ),
+                        if (!player['isOnField'])
+                          Icon(
+                              Icons.person_off,
+                              color: Colors.grey,
+                              size: isNarrow ? 14 : 16
+                          ),
                       ],
                     ),
-                  ))
-              .toList(),
-        ],
-      ),
+                  ],
+                ),
+              )).toList(),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -560,7 +712,7 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
             ),
           ),
         ),
-        title: Text("PSG vs OM", style: hsSemiBold.copyWith(fontSize: 22)),
+        title: Text("Arbitrage", style: hsSemiBold.copyWith(fontSize: 22)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -611,7 +763,12 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          Icon(Icons.sports_soccer, size: width / 6),
+                          Image.network(
+                            homeTeamLogo,
+                            width: width / 6,
+                            height: width / 6,
+                            fit: BoxFit.contain,
+                          ),
                           Text(homeTeam,
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500)),
@@ -645,7 +802,12 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          Icon(Icons.sports_soccer, size: width / 6),
+                          Image.network(
+                            awayTeamLogo,
+                            width: width / 6,
+                            height: width / 6,
+                            fit: BoxFit.contain,
+                          ),
                           Text(awayTeam,
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500)),
@@ -687,26 +849,26 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
                     'Carton Jaune',
                     Icons.square_rounded,
                     Colors.yellow,
-                    () => addCard(true, true),
+                        () => addCard(true, true),
                   ),
                   _buildQuickActionButton(
                     'Carton Rouge',
                     Icons.square_rounded,
                     Colors.red,
-                    () => addCard(true, false),
+                        () => addCard(true, false),
                   ),
                   const SizedBox(width: 50,),
                   _buildQuickActionButton(
                     'Carton Jaune',
                     Icons.square_rounded,
                     Colors.yellow,
-                    () => addCard(false, true),
+                        () => addCard(false, true),
                   ),
                   _buildQuickActionButton(
                     'Carton Rouge',
                     Icons.square_rounded,
                     Colors.red,
-                    () => addCard(false, false),
+                        () => addCard(false, false),
                   ),
                 ],
               ),
@@ -802,11 +964,4 @@ class _ArbitratorMatchPageState extends State<ArbitratorMatchPage> {
     );
   }
 
-  @override
-  void dispose() {
-    if (isMatchStarted) {
-      _timer.cancel();
-    }
-    super.dispose();
-  }
 }

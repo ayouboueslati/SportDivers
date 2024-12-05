@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sportdivers/Provider/AuthProvider/auth_provider.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/ArbitratorProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchDetailsProvider.dart';
 import 'package:sportdivers/components/CustomToast.dart';
 import 'package:sportdivers/models/MatchListByRoleModel.dart';
 import 'package:sportdivers/screens/Championnat/MatchDetails.dart';
+import 'package:sportdivers/screens/Championnat/MatchsByRole/ArbitrageMatch.dart';
 import 'package:sportdivers/screens/Championnat/MatchsByRole/ConvocationPage.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_color.dart';
 import 'package:sportdivers/screens/dailoz/dailoz_gloabelclass/dailoz_fontstyle.dart';
@@ -37,8 +39,7 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
 
   int _calculateTeamScore(List<dynamic> actions, String teamId) {
     return actions
-        .where((action) =>
-    action.type == 'GOAL' && action.targetTeam == teamId)
+        .where((action) => action.type == 'GOAL' && action.targetTeam == teamId)
         .length;
   }
 
@@ -54,7 +55,8 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
 
       if (widget.match.coachTeams!.contains(widget.match.firstTeam.id)) {
         teamId = widget.match.firstTeam.id;
-      } else if (widget.match.coachTeams!.contains(widget.match.secondTeam.id)) {
+      } else if (widget.match.coachTeams!
+          .contains(widget.match.secondTeam.id)) {
         teamId = widget.match.secondTeam.id;
       }
 
@@ -79,13 +81,52 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
     } else {
       showReusableToastRed(
         context: context,
-        message: 'La convocation n\'est possible que dans les 48 heures précédant le match',
+        message:
+            'La convocation n\'est possible que dans les 48 heures précédant le match',
         duration: Duration(seconds: 5),
       );
     }
   }
 
+  void _navigateToArbitratorPage() {
+    // Calculate the time difference between now and the match start
+    DateTime now = DateTime.now();
+    DateTime matchStart = widget.match.date;
 
+    // Check if the current time is within 5 minutes before the match
+   // if (matchStart.difference(now).inMinutes >= -5 && matchStart.difference(now).inMinutes >= 1000)  {
+      // Check if the arbiter is not null and match details are loaded
+      final matchDetailsProvider =
+      Provider.of<MatchDetailsProvider>(context, listen: false);
+      if (matchDetailsProvider.match != null &&
+          matchDetailsProvider.match!.arbiter != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChangeNotifierProvider(
+              create: (context) => MatchActionProvider(
+                matchId: widget.match.id,
+              ),
+              child: ArbitratorMatchPage(match: matchDetailsProvider.match!),
+            ),
+          ),
+        );
+      } else {
+        showReusableToastRed(
+          context: context,
+          message: 'Aucun arbitre n\'a été assigné à ce match',
+          duration: Duration(seconds: 5),
+        );
+      }
+    // } else {
+    //   showReusableToastRed(
+    //     context: context,
+    //     message:
+    //     'L\'arbitrage n\'est possible que 5 minutes avant le match',
+    //     duration: Duration(seconds: 5),
+    //   );
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +201,8 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                     textAlign: TextAlign.center,
                   ),
                   ElevatedButton(
-                    onPressed: () => provider.fetchMatchDetails(widget.match.id),
+                    onPressed: () =>
+                        provider.fetchMatchDetails(widget.match.id),
                     child: Text('Réessayer'),
                   )
                 ],
@@ -196,22 +238,40 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                           // Only show the button if the user is not a student
                           Consumer<AuthenticationProvider>(
                             builder: (context, authProvider, child) {
-                              return authProvider.accountType != 'STUDENT'
-                                  ? ElevatedButton.icon(
-                                onPressed: _navigateToConvocation,
-                                icon: const Icon(Icons.groups_rounded),
-                                label: const Text('Convoque'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: DailozColor.textblue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                              if (authProvider.accountType != 'STUDENT') {
+                                if (authProvider.accountType == 'ARBITER') {
+                                  return ElevatedButton.icon(
+                                    onPressed: _navigateToArbitratorPage,
+                                    icon: const Icon(Icons.sports),
+                                    label: const Text('Arbitrer'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: DailozColor.textblue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return ElevatedButton.icon(
+                                  onPressed: _navigateToConvocation,
+                                  icon: const Icon(Icons.groups_rounded),
+                                  label: const Text('Convoque'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: DailozColor.textblue,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
-                                ),
-                              )
-                                  : SizedBox.shrink(); // Hide the button completely for students
+                                );
+                              }
+                              return SizedBox
+                                  .shrink(); // Hide the button completely for students
                             },
                           ),
                         ],
@@ -233,12 +293,13 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                             children: [
                               provider.match!.firstTeam.photo != null
                                   ? Image.network(
-                                provider.match!.firstTeam.photo!,
-                                width: width / 6,
-                                height: width / 6,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    _buildDefaultTeamImage(),
-                              )
+                                      provider.match!.firstTeam.photo!,
+                                      width: width / 6,
+                                      height: width / 6,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              _buildDefaultTeamImage(),
+                                    )
                                   : _buildDefaultTeamImage(),
                               SizedBox(height: height / 96),
                               Text(
@@ -253,11 +314,13 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                           children: [
                             Text(
                               '${_calculateTeamScore(provider.match!.actions, provider.match!.firstTeam.id)} - ${_calculateTeamScore(provider.match!.actions, provider.match!.secondTeam.id)}',
-                              style: hsSemiBold.copyWith(fontSize: 24, color: DailozColor.black),
+                              style: hsSemiBold.copyWith(
+                                  fontSize: 24, color: DailozColor.black),
                             ),
                             Text(
                               'Score',
-                              style: hsRegular.copyWith(fontSize: 12, color: DailozColor.textgray),
+                              style: hsRegular.copyWith(
+                                  fontSize: 12, color: DailozColor.textgray),
                             ),
                           ],
                         ),
@@ -266,12 +329,13 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                             children: [
                               provider.match!.secondTeam.photo != null
                                   ? Image.network(
-                                provider.match!.secondTeam.photo!,
-                                width: width / 6,
-                                height: width / 6,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    _buildDefaultTeamImage(),
-                              )
+                                      provider.match!.secondTeam.photo!,
+                                      width: width / 6,
+                                      height: width / 6,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              _buildDefaultTeamImage(),
+                                    )
                                   : _buildDefaultTeamImage(),
                               SizedBox(height: height / 96),
                               Text(
@@ -304,7 +368,7 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
                             },
                             child: Container(
                               padding:
-                              EdgeInsets.symmetric(vertical: height / 66),
+                                  EdgeInsets.symmetric(vertical: height / 66),
                               decoration: BoxDecoration(
                                 color: _selectedIndex == idx
                                     ? DailozColor.textblue
@@ -354,7 +418,8 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
     );
   }
 
-  Widget _buildTabContent(double height, double width, MatchDetailsProvider provider) {
+  Widget _buildTabContent(
+      double height, double width, MatchDetailsProvider provider) {
     switch (_selectedIndex) {
       case 0:
         return _buildMatchDetails(height, width, provider);
@@ -365,7 +430,8 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
     }
   }
 
-  Widget _buildMatchDetails(double height, double width, MatchDetailsProvider provider) {
+  Widget _buildMatchDetails(
+      double height, double width, MatchDetailsProvider provider) {
     return Container(
       padding: EdgeInsets.all(width / 36),
       decoration: BoxDecoration(
@@ -376,7 +442,8 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Détails du match',
-              style: hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black)),
+              style:
+                  hsSemiBold.copyWith(fontSize: 18, color: DailozColor.black)),
           SizedBox(height: height / 66),
           Text(
             'Date: ${provider.match!.date.day}/${provider.match!.date.month}/${provider.match!.date.year}',
@@ -399,13 +466,15 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
           // Match Timeline
           if (provider.match!.actions.isNotEmpty)
             Text('Événements du match:',
-                style: hsMedium.copyWith(fontSize: 16, color: DailozColor.black)),
+                style:
+                    hsMedium.copyWith(fontSize: 16, color: DailozColor.black)),
           SizedBox(height: height / 36),
           _buildMatchTimeline(height, width, provider),
         ],
       ),
     );
   }
+
   Widget _buildMatchTimeline(
       double height, double width, MatchDetailsProvider provider) {
     // Sort actions by minute to ensure chronological order
@@ -437,6 +506,7 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
       ),
     );
   }
+
   // Helper method to get action icon
   Widget _getActionIcon(String actionType) {
     switch (actionType) {
@@ -526,5 +596,4 @@ class _MatchDetailsByRolePageState extends State<MatchDetailsByRolePage> {
       ],
     );
   }
-
 }

@@ -4,7 +4,7 @@ class Match {
   final Field field;
   final Team firstTeam;
   final Team secondTeam;
-  final Arbiter? arbiter; // Arbiter is now nullable
+  final Arbiter? arbiter;
   final List<MatchAction> actions;
 
   Match({
@@ -13,7 +13,7 @@ class Match {
     required this.field,
     required this.firstTeam,
     required this.secondTeam,
-    this.arbiter, // Made optional with `this.arbiter`
+    this.arbiter,
     this.actions = const [],
   });
 
@@ -33,7 +33,6 @@ class Match {
     );
   }
 }
-
 
 class MatchAction {
   final String id;
@@ -95,11 +94,13 @@ class Team {
   final String id;
   final String designation;
   final String? photo;
+  final List<Player>? players;
 
   Team({
     required this.id,
     required this.designation,
-    this.photo
+    this.photo,
+    this.players,
   });
 
   factory Team.fromJson(Map<String, dynamic> json) {
@@ -107,8 +108,38 @@ class Team {
       id: json['id'],
       designation: json['designation'],
       photo: json['photo'],
+      players: json['players'] != null
+          ? (json['players'] as List)
+          .map((playerJson) => Player.fromJson(playerJson))
+          .toList()
+          : null,
     );
   }
+}
+
+class Player {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String? profilePicture;
+
+  Player({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    this.profilePicture,
+  });
+
+  factory Player.fromJson(Map<String, dynamic> json) {
+    return Player(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      profilePicture: json['profilePicture'],
+    );
+  }
+
+  String get fullName => '$firstName $lastName';
 }
 
 class Arbiter {
@@ -132,4 +163,6 @@ class Arbiter {
       profilePicture: json['profilePicture'],
     );
   }
+
+  String get fullName => '$firstName $lastName';
 }

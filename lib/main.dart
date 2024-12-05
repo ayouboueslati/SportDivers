@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:sportdivers/Provider/ChampionatProviders/ArbitratorProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/ConvocationProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchDetailsProvider.dart';
 import 'package:sportdivers/Provider/ChampionatProviders/MatchListByRoleProvider.dart';
@@ -112,6 +113,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TournamentRankingProvider()),
         ChangeNotifierProvider(create: (_) => PlayerRankingProvider()),
         ChangeNotifierProvider(create: (_) => MatchDetailsProvider()),
+        // ChangeNotifierProvider(create: (_) => MatchActionProvider()),
         Provider<FCMHandler>(
           create: (context) {
             final fcmHandler = FCMHandler();
@@ -146,7 +148,7 @@ class MyApp extends StatelessWidget {
 
             home: CustomLoaderPage(),
 
-            // home:  ClassementPage(),
+            // home:  ArbitratorMatchPage(),
             // home: MatchListPage(),
             //home:ClassementPage(),
             // home:ArbitratorMatchPage(),
